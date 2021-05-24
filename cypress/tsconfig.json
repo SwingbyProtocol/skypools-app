@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["cypress", "@percy/cypress"],
+    "sourceMap": false,
+    "isolatedModules": false
+  },
+  "include": ["../node_modules/cypress", "*/*.ts"]
+}

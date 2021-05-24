@@ -1,0 +1,55 @@
+{
+  "to": "2021-01-31T23:59:59.999Z",
+  "from": "2021-01-01T00:00:00.000Z",
+  "topEarners": [
+    {
+      "currency": "USD",
+      "swapCount": "20",
+      "swapVolume": "323.09",
+      "affiliateCode": "4b227777d4dd1fc61c6f",
+      "earningsTotal": "32.309"
+    },
+    {
+      "currency": "USD",
+      "swapCount": "15",
+      "swapVolume": "323.01827402",
+      "affiliateCode": "6b86b273ff34fce19d6b",
+      "earningsTotal": "32.301827402"
+    },
+    {
+      "currency": "USD",
+      "swapCount": "13",
+      "swapVolume": "313.01827402",
+      "affiliateCode": "b1d5781111d84f7b3fe4",
+      "earningsTotal": "31.301827402"
+    },
+    {
+      "currency": "USD",
+      "swapCount": "11",
+      "swapVolume": "293.01827402",
+      "affiliateCode": "17ba0791499db908433b",
+      "earningsTotal": "29.301827402"
+    },
+    {
+      "currency": "USD",
+      "swapCount": "9",
+      "swapVolume": "253.01827402",
+      "affiliateCode": "7b52009b64fd0a2a49e6",
+      "earningsTotal": "25.301827402"
+    },
+    {
+      "currency": "USD",
+      "swapCount": "8",
+      "swapVolume": "123.01827402",
+      "affiliateCode": "bd307a3ec329e10a2cff",
+      "earningsTotal": "12.301827402"
+    },
+    {
+      "currency": "USD",
+      "swapCount": "7",
+      "swapVolume": "113.01827402",
+      "affiliateCode": "fa35e192121eabf3dabf",
+      "earningsTotal": "11.301827402"
+    }
+  ]
+}

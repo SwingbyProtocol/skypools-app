@@ -1,0 +1,5 @@
+version: 2
+snapshot:
+  widths:
+    - 445
+  min-height: 100
