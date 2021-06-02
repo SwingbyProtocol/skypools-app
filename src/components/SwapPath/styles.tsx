@@ -1,25 +1,25 @@
 import { css } from '@linaria/core';
 import { rem } from 'polished';
 
-import { sizes } from '../../modules/styles';
+import { size } from '../../modules/styles';
 
 export const swapPath = css`
-  --coin-size: ${rem(sizes.state)};
-  --coin-min-size: ${rem(sizes.room)};
+  --coin-size: ${rem(size.state)};
+  --coin-min-size: ${rem(size.room)};
   --border-color: var(--sp-color-primary-normal);
-  --border-radius: ${rem(sizes.room)};
-  --divider-size: ${rem(sizes.room)};
-  --divider-min-size: ${rem(sizes.drawer)};
-  --divider-gap: ${rem(sizes.box)};
+  --border-radius: ${rem(size.room)};
+  --divider-size: ${rem(size.room)};
+  --divider-min-size: ${rem(size.drawer)};
+  --divider-gap: ${rem(size.box)};
 
-  --platform-box-padding: ${rem(sizes.drawer)} ${rem(sizes.room)};
-  --platform-box-min-padding: ${rem(sizes.box)} ${rem(sizes.box)};
-  --platform-item-gap: ${rem(sizes.drawer)};
-  --platform-name-gap: ${rem(sizes.box)};
-  --platform-fraction-gap: ${rem(sizes.drawer)};
-  --platform-logo-size: ${rem(sizes.street)};
-  --platform-logo-min-size: ${rem(sizes.closet)};
-  --platform-font-size: ${rem(sizes.room)};
+  --platform-box-padding: ${rem(size.drawer)} ${rem(size.room)};
+  --platform-box-min-padding: ${rem(size.box)} ${rem(size.box)};
+  --platform-item-gap: ${rem(size.drawer)};
+  --platform-name-gap: ${rem(size.box)};
+  --platform-fraction-gap: ${rem(size.drawer)};
+  --platform-logo-size: ${rem(size.street)};
+  --platform-logo-min-size: ${rem(size.closet)};
+  --platform-font-size: ${rem(size.room)};
 
   display: flex;
   flex-direction: row;
