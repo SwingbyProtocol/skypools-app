@@ -23,11 +23,11 @@ export const lightTheme = `
   --sp-color-border-normal: hsla(216, 8%, 88%);
 
   --sp-color-primary-normal: hsla(127, 51%, 47%);
-  --sp-color-primary-hover: hsla(127, 51%, 40%);
+  --sp-color-primary-active: hsla(127, 51%, 40%);
   --sp-color-primary-text: var(--sp-color-bg-normal);
 
   --sp-color-danger-normal: red;
-  --sp-color-danger-hover: red;
+  --sp-color-danger-active: red;
   --sp-color-danger-text: var(--sp-color-bg-normal);
 
   --sp-tooltip-border: none;
@@ -47,7 +47,7 @@ export const darkTheme = `
   --sp-color-border-normal: hsla(216, 8%, 88%);
 
   --sp-color-primary-normal: hsla(127, 51%, 47%);
-  --sp-color-primary-hover: hsla(127, 51%, 40%);
+  --sp-color-primary-active: hsla(127, 51%, 40%);
 
   --sp-tooltip-border: 1px solid var(--sp-color-border-normal);
   --sp-tooltip-shadow: none;

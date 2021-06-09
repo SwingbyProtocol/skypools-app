@@ -94,7 +94,7 @@ export const stateDanger = css`
 `;
 
 export const focused = css`
-  border-color: var(--sp-color-primary-hover);
+  border-color: var(--sp-color-primary-active);
 `;
 
 export const left = css`

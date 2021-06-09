@@ -93,7 +93,7 @@ export const variantPrimary = css`
 
   :hover,
   :active {
-    background: var(--sp-color-primary-hover);
+    background: var(--sp-color-primary-active);
     color: var(--sp-color-primary-text);
   }
 `;
@@ -117,7 +117,7 @@ export const variantTertiary = css`
 
   :hover,
   :active {
-    background: var(--sp-color-primary-hover);
+    background: var(--sp-color-primary-active);
     color: var(--sp-color-primary-text);
     border-color: transparent;
   }
@@ -136,7 +136,7 @@ export const shadowBase = css`
 `;
 
 export const shadowPrimary = css`
-  color: var(--sp-color-primary-hover);
+  color: var(--sp-color-primary-active);
 `;
 
 export const shadowSecondary = css`
@@ -144,7 +144,7 @@ export const shadowSecondary = css`
 `;
 
 export const shadowTertiary = css`
-  color: var(--sp-color-primary-hover);
+  color: var(--sp-color-primary-active);
 `;
 
 export const shadowCircle = css`
