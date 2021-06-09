@@ -6,7 +6,7 @@ import { size } from '../../modules/styles';
 export const swapPath = css`
   --coin-size: ${rem(size.state)};
   --coin-min-size: ${rem(size.room)};
-  --border-color: var(--sp-color-primary-normal);
+  --border-color: hsl(var(--sp-color-primary-normal));
   --border-radius: ${rem(size.room)};
   --divider-size: ${rem(size.room)};
   --divider-min-size: ${rem(size.drawer)};

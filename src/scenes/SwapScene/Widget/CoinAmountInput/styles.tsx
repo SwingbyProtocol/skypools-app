@@ -18,14 +18,14 @@ export const coinWrapper = css`
 `;
 
 export const coinChain = css`
-  color: var(--coin-chain-color, var(--sp-color-text-masked));
+  color: var(--coin-chain-color, hsl(var(--sp-color-text-masked)));
   font-size: ${rem(size.closet)};
   font-weight: 500;
   margin-bottom: ${rem(size.box)};
 `;
 
 export const coinName = css`
-  color: var(--coin-name-color, var(--sp-color-text-normal));
+  color: var(--coin-name-color, hsl(var(--sp-color-text-normal)));
   font-size: ${rem(size.room)};
   font-weight: 700;
 `;

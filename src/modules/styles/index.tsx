@@ -11,23 +11,25 @@ export const size = {
   country: 56,
 } as const;
 
+const hslParams = (value: string) => value.replace(/(hsla?\()|(\))/gi, '');
+
 export const lightTheme = `
-  --sp-color-bg-normal: hsla(0, 0%, 100%);
-  --sp-color-bg-base: hsla(240, 20%, 99%);
-  --sp-color-bg-accent: hsla(0, 0%, 98%);
+  --sp-color-bg-normal: ${hslParams('hsla(0, 0%, 100%)')};
+  --sp-color-bg-base: ${hslParams('hsla(240, 20%, 99%)')};
+  --sp-color-bg-accent: ${hslParams('hsla(0, 0%, 98%)')};
 
-  --sp-color-text-normal: hsla(217, 26%, 23%);
-  --sp-color-text-masked: hsla(215, 8%, 61%);
-  --sp-color-text-placeholder: hsla(215, 8%, 61%);
+  --sp-color-text-normal: ${hslParams('hsla(217, 26%, 23%)')};
+  --sp-color-text-masked: ${hslParams('hsla(215, 8%, 61%)')};
+  --sp-color-text-placeholder: ${hslParams('hsla(215, 8%, 61%)')};
 
-  --sp-color-border-normal: hsla(216, 8%, 88%);
+  --sp-color-border-normal: ${hslParams('hsla(216, 8%, 88%)')};
 
-  --sp-color-primary-normal: hsla(127, 51%, 47%);
-  --sp-color-primary-active: hsla(127, 51%, 40%);
+  --sp-color-primary-normal: ${hslParams('hsla(127, 51%, 47%)')};
+  --sp-color-primary-active: ${hslParams('hsla(127, 51%, 40%)')};
   --sp-color-primary-text: var(--sp-color-bg-normal);
 
-  --sp-color-danger-normal: red;
-  --sp-color-danger-active: red;
+  --sp-color-danger-normal: ${hslParams('hsl(0, 50%, 50%)')};
+  --sp-color-danger-active: ${hslParams('hsl(0, 50%, 40%)')};
   --sp-color-danger-text: var(--sp-color-bg-normal);
 
   --sp-tooltip-border: none;
@@ -37,19 +39,19 @@ export const lightTheme = `
 `;
 
 export const darkTheme = `
-  --sp-color-bg-normal: hsla(217, 6%, 19%);
-  --sp-color-bg-base: hsla(217, 6%, 15%);
-  --sp-color-bg-accent: hsla(217, 6%, 26%);
+  --sp-color-bg-normal: ${hslParams('hsla(217, 6%, 19%)')};
+  --sp-color-bg-base: ${hslParams('hsla(217, 6%, 15%)')};
+  --sp-color-bg-accent: ${hslParams('hsla(217, 6%, 26%)')};
 
   --sp-color-text-normal: red;
-  --sp-color-text-masked: hsla(215, 8%, 61%);
+  --sp-color-text-masked: ${hslParams('hsla(215, 8%, 61%)')};
 
-  --sp-color-border-normal: hsla(216, 8%, 88%);
+  --sp-color-border-normal: ${hslParams('hsla(216, 8%, 88%)')};
 
-  --sp-color-primary-normal: hsla(127, 51%, 47%);
-  --sp-color-primary-active: hsla(127, 51%, 40%);
+  --sp-color-primary-normal: ${hslParams('hsla(127, 51%, 47%)')};
+  --sp-color-primary-active: ${hslParams('hsla(127, 51%, 40%)')};
 
-  --sp-tooltip-border: 1px solid var(--sp-color-border-normal);
+  --sp-tooltip-border: 1px solid hsl(var(--sp-color-border-normal));
   --sp-tooltip-shadow: none;
 `;
 

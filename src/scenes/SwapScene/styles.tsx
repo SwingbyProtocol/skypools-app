@@ -34,7 +34,7 @@ export const chartContainer = css`
 `;
 
 export const swapPathContainer = css`
-  background: var(--sp-color-bg-accent);
+  background: hsl(var(--sp-color-bg-accent));
   padding: ${rem(size.street)} ${rem(size.town)};
 `;
 

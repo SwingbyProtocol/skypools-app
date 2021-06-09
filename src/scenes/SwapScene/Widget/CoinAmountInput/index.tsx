@@ -30,7 +30,7 @@ export const CoinAmountInput = ({ availableCoins }: Props) => {
           ...theme,
           colors: {
             ...theme.colors,
-            primary: 'var(--sp-color-primary-normal)',
+            primary: 'hsl(var(--sp-color-primary-normal))',
             primary75: 'red',
             primary50: 'green',
             primary25: 'blue',
@@ -39,8 +39,8 @@ export const CoinAmountInput = ({ availableCoins }: Props) => {
         styles={{
           option: (styles, { isSelected }) => ({
             ...styles,
-            '--coin-chain-color': isSelected ? 'var(--sp-color-primary-text)' : undefined,
-            '--coin-name-color': isSelected ? 'var(--sp-color-primary-text)' : undefined,
+            '--coin-chain-color': isSelected ? 'hsl(var(--sp-color-primary-text))' : undefined,
+            '--coin-name-color': isSelected ? 'hsl(var(--sp-color-primary-text))' : undefined,
           }),
         }}
         options={availableCoins.map((coin) => {
