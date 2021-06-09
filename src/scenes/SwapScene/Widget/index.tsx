@@ -1,11 +1,12 @@
 import { Button } from '../../../components/Button';
-import { TextInput } from '../../../components/TextInput';
+
+import { CoinAmountInput } from './CoinAmountInput';
 
 export const Widget = () => {
   return (
     <div>
       <div>from</div>
-      <TextInput size="state" value="" />
+      <CoinAmountInput availableCoins={['BTC', 'WBTC', 'ETH']} />
       <div>top</div>
       <Button variant="primary" size="state">
         swap
