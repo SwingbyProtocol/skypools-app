@@ -49,7 +49,7 @@ function withLinaria(nextConfig = {}) {
     webpack(config, options) {
       traverse(config.module.rules);
 
-      config.module.rules.push({
+      config.module.rules.unshift({
         test: /(?!_app)\.(tsx|ts|js|mjs|jsx)$/,
         exclude: /node_modules/,
         use: [
@@ -64,7 +64,7 @@ function withLinaria(nextConfig = {}) {
         ],
       });
 
-      config.module.rules.push({
+      config.module.rules.unshift({
         test: /_app\.(tsx|ts|js|mjs|jsx)$/,
         exclude: /node_modules/,
         use: [
@@ -78,6 +78,7 @@ function withLinaria(nextConfig = {}) {
           },
         ],
       });
+
       if (typeof nextConfig.webpack === 'function') {
         return nextConfig.webpack(config, options);
       }
