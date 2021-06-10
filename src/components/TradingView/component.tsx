@@ -60,7 +60,7 @@ export const TradingView = ({ data = [] }: Props) => {
       chartRef.current?.applyOptions({
         layout: {
           backgroundColor: 'transparent',
-          textColor: styles.getPropertyValue('--sp-color-text-normal'),
+          textColor: `hsl(${styles.getPropertyValue('--sp-color-text-normal')})`,
           fontFamily: styles.getPropertyValue('font-family'),
         },
         leftPriceScale: {
@@ -70,8 +70,8 @@ export const TradingView = ({ data = [] }: Props) => {
 
       areaSeriesRef.current?.applyOptions({
         baseLineColor: 'red',
-        lineColor: styles.getPropertyValue('--sp-color-primary-normal'),
-        topColor: styles.getPropertyValue('--sp-color-primary-normal'),
+        lineColor: `hsl(${styles.getPropertyValue('--sp-color-primary-normal')})`,
+        topColor: `hsl(${styles.getPropertyValue('--sp-color-primary-normal')})`,
         priceLineColor: 'red',
         baseLineVisible: false,
         priceLineVisible: false,

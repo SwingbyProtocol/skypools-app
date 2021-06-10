@@ -17,8 +17,8 @@ export const globalCss = css`
     }
 
     html {
-      background: var(--sp-color-bg-base);
-      color: var(--sp-color-text-normal);
+      background: hsl(var(--sp-color-bg-base));
+      color: hsl(var(--sp-color-text-normal));
       box-sizing: border-box;
       font-family: 'Inter', -apple-system, '.SFNSText-Regular', 'San Francisco', BlinkMacSystemFont,
         '.PingFang-SC-Regular', 'Microsoft YaHei', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial,

@@ -27,7 +27,7 @@ export const label = css`
 
 export const description = css`
   display: block;
-  color: var(--sp-color-text-normal);
+  color: hsl(var(--sp-color-text-normal));
   font-size: ${rem(size.closet)};
   margin-top: ${rem(size.box)};
 `;
@@ -37,9 +37,9 @@ export const inputContainer = css`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background: var(--sp-color-bg-base);
+  background: hsl(var(--sp-color-bg-base));
   border: 2px solid transparent;
-  color: var(--sp-color-text-normal);
+  color: hsl(var(--sp-color-text-normal));
   overflow: hidden;
   font-size: ${rem(size.house)};
 
@@ -66,7 +66,7 @@ export const input = css`
   ${transitions(['color'], 'var(--sp-duration-normal) ease-in-out')};
 
   ::placeholder {
-    color: var(--sp-color-text-placeholder);
+    color: hsl(var(--sp-color-text-placeholder));
   }
 `;
 
@@ -86,15 +86,15 @@ export const sizeCity = css`
 `;
 
 export const stateNormal = css`
-  border-color: var(--sp-color-border-normal);
+  border-color: hsl(var(--sp-color-border-normal));
 `;
 
 export const stateDanger = css`
-  border-color: var(--sp-color-danger-normal);
+  border-color: hsl(var(--sp-color-danger-normal));
 `;
 
 export const focused = css`
-  border-color: var(--sp-color-primary-hover);
+  border-color: hsl(var(--sp-color-primary-active));
 `;
 
 export const left = css`

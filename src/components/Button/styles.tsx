@@ -88,37 +88,37 @@ export const sizeStreet = css`
 `;
 
 export const variantPrimary = css`
-  background: var(--sp-color-primary-normal);
-  color: var(--sp-color-primary-text);
+  background: hsl(var(--sp-color-primary-normal));
+  color: hsl(var(--sp-color-primary-text));
 
   :hover,
   :active {
-    background: var(--sp-color-primary-hover);
-    color: var(--sp-color-primary-text);
+    background: hsl(var(--sp-color-primary-active));
+    color: hsl(var(--sp-color-primary-text));
   }
 `;
 
 export const variantSecondary = css`
   border: none;
-  background: var(--sp-color-text-normal);
-  color: $var(--sp-color-bg-normal);
+  background: hsl(var(--sp-color-text-normal));
+  color: hsl(var(--sp-color-bg-normal));
 
   :hover,
   :active {
-    background: var(--sp-color-text-masked);
-    color: $var(--sp-color-bg-normal);
+    background: hsl(var(--sp-color-text-masked));
+    color: hsl(var(--sp-color-bg-normal));
   }
 `;
 
 export const variantTertiary = css`
-  border: 2px solid var(--sp-color-primary-normal);
+  border: 2px solid hsl(var(--sp-color-primary-normal));
   background: transparent;
-  color: var(--sp-color-primary-normal);
+  color: hsl(var(--sp-color-primary-normal));
 
   :hover,
   :active {
-    background: var(--sp-color-primary-hover);
-    color: var(--sp-color-primary-text);
+    background: hsl(var(--sp-color-primary-active));
+    color: hsl(var(--sp-color-primary-text));
     border-color: transparent;
   }
 `;
@@ -136,15 +136,15 @@ export const shadowBase = css`
 `;
 
 export const shadowPrimary = css`
-  color: var(--sp-color-primary-hover);
+  color: hsl(var(--sp-color-primary-active));
 `;
 
 export const shadowSecondary = css`
-  color: var(--sp-color-text-masked);
+  color: hsl(var(--sp-color-text-masked));
 `;
 
 export const shadowTertiary = css`
-  color: var(--sp-color-primary-hover);
+  color: hsl(var(--sp-color-primary-active));
 `;
 
 export const shadowCircle = css`
