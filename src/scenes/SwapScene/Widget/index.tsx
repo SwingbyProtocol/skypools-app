@@ -1,19 +1,45 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Button } from '../../../components/Button';
+import { useCurrentCoins } from '../useCurrentCoins';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 
 export const Widget = () => {
-  const [from, setFrom] = useState<CoinAmountInputValue>({ coin: null, amount: null });
-  const [to, setTo] = useState<CoinAmountInputValue>({ coin: null, amount: null });
+  const { fromCoin, toCoin, setFromCoin, setToCoin } = useCurrentCoins();
+
+  const [amount, setAmount] = useState<CoinAmountInputValue['amount']>(null);
+
+  const from = useMemo(
+    (): CoinAmountInputValue => ({ coin: fromCoin, amount }),
+    [fromCoin, amount],
+  );
+
+  const to = useMemo((): CoinAmountInputValue => ({ coin: toCoin, amount: null }), [toCoin]);
 
   return (
     <div>
       <div>from</div>
-      <CoinAmountInput availableCoins={['BTC', 'WBTC', 'ETH']} value={from} onChange={setFrom} />
+      <CoinAmountInput
+        availableCoins={['BTC', 'WBTC', 'ETH']}
+        value={from}
+        onChange={({ coin, amount }) => {
+          setAmount(amount);
+          if (coin) {
+            setFromCoin(coin);
+          }
+        }}
+      />
       <div>top</div>
-      <CoinAmountInput availableCoins={['BTC', 'WBTC', 'ETH']} value={to} onChange={setTo} />
+      <CoinAmountInput
+        availableCoins={['BTC', 'WBTC', 'ETH']}
+        value={to}
+        onChange={({ coin }) => {
+          if (coin) {
+            setToCoin(coin);
+          }
+        }}
+      />
       <Button variant="primary" size="state">
         swap
       </Button>
