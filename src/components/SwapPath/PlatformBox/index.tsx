@@ -1,4 +1,3 @@
-import { cx } from '@linaria/core';
 import { Big, BigSource } from 'big.js';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 
@@ -24,12 +23,8 @@ type Props = {
 export const PlatformBox = ({ withFractions, withNames, className, value }: Props) => {
   return (
     <div
-      className={cx(
-        platformBox,
-        className,
-        withNames && withNamesBox,
-        withFractions && withFractionsBox,
-      )}
+      css={[platformBox, withNames && withNamesBox, withFractions && withFractionsBox]}
+      className={className}
     >
       {value.map((it) => {
         const fraction = (() => {
@@ -41,15 +36,15 @@ export const PlatformBox = ({ withFractions, withNames, className, value }: Prop
         })();
 
         return (
-          <div key={it.platform} className={item}>
-            <Coin className={itemLogo} src={`/swap/platforms/${it.platform}.svg`} />
+          <div key={it.platform} css={item}>
+            <Coin css={itemLogo} src={`/swap/platforms/${it.platform}.svg`} />
             {!!withNames && (
-              <span className={itemName}>
+              <span css={itemName}>
                 <FormattedMessage id={`generic.platform.${it.platform}`} />
               </span>
             )}
             {!!withFractions && (
-              <span className={itemFraction}>
+              <span css={itemFraction}>
                 {fraction === null ? (
                   '?'
                 ) : (

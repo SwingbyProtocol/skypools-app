@@ -1,4 +1,4 @@
-import { css } from '@linaria/core';
+import { css } from '@emotion/react';
 import { rem } from 'polished';
 
 import { size } from '../../../../modules/styles';

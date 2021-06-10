@@ -1,4 +1,3 @@
-import { cx } from '@linaria/core';
 import { rem } from 'polished';
 import React, { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -91,11 +90,11 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
         return {
           value: coin,
           label: (
-            <div key={coin} className={coinContainer}>
-              <span className={coinChainClass}>{coinChain}</span>
-              <div className={coinWrapper}>
-                <Coin src={`/swap/coins/${coin}.svg`} className={coinLogo} />
-                <span className={coinNameClass}>{coinName}</span>
+            <div key={coin} css={coinContainer}>
+              <span css={coinChainClass}>{coinChain}</span>
+              <div css={coinWrapper}>
+                <Coin src={`/swap/coins/${coin}.svg`} css={coinLogo} />
+                <span css={coinNameClass}>{coinName}</span>
               </div>
             </div>
           ),
@@ -119,9 +118,9 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
   }, [coins, selectValue, onChange, value.amount]);
 
   return (
-    <div className={cx(container, className)}>
+    <div css={container} className={className}>
       <Select
-        className={selectInput}
+        css={selectInput}
         theme={theme}
         styles={styles}
         value={selectValue}
@@ -130,7 +129,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
       />
 
       <TextInput
-        className={textInput}
+        css={textInput}
         size="country"
         value={value?.amount ?? ''}
         onChange={(evt) => onChange?.({ coin: value.coin, amount: evt.target.value ?? null })}

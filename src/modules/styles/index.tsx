@@ -1,3 +1,5 @@
+import { Global, css } from '@emotion/react';
+
 export const size = {
   box: 4,
   drawer: 8,
@@ -13,7 +15,7 @@ export const size = {
 
 const hslParams = (value: string) => value.replace(/(hsla?\()|(\))/gi, '');
 
-export const lightTheme = `
+const lightTheme = `
   --sp-color-bg-normal: ${hslParams('hsla(0, 0%, 100%)')};
   --sp-color-bg-base: ${hslParams('hsla(240, 20%, 99%)')};
   --sp-color-bg-accent: ${hslParams('hsla(0, 0%, 98%)')};
@@ -38,7 +40,7 @@ export const lightTheme = `
   --sp-duration-normal: 150;
 `;
 
-export const darkTheme = `
+const darkTheme = `
   --sp-color-bg-normal: ${hslParams('hsla(217, 6%, 19%)')};
   --sp-color-bg-base: ${hslParams('hsla(217, 6%, 15%)')};
   --sp-color-bg-accent: ${hslParams('hsla(217, 6%, 26%)')};
@@ -55,10 +57,60 @@ export const darkTheme = `
   --sp-tooltip-shadow: none;
 `;
 
-export const autoTheme = `
+const autoTheme = `
   ${lightTheme};
 
   @media (prefers-color-scheme: dark) {
     ${darkTheme};
   }
 `;
+
+export const GlobalStyles = () => (
+  <Global
+    styles={css`
+      @import url('https://rsms.me/inter/inter.css');
+
+      :root {
+        ${autoTheme};
+      }
+
+      html {
+        background: hsl(var(--sp-color-bg-base));
+        color: hsl(var(--sp-color-text-normal));
+        box-sizing: border-box;
+        font-family: 'Inter', -apple-system, '.SFNSText-Regular', 'San Francisco',
+          BlinkMacSystemFont, '.PingFang-SC-Regular', 'Microsoft YaHei', 'Segoe UI',
+          'Helvetica Neue', Helvetica, Arial, sans-serif;
+      }
+
+      @supports (font-variation-settings: normal) {
+        html {
+          font-family: 'Inter var', -apple-system, '.SFNSText-Regular', 'San Francisco',
+            BlinkMacSystemFont, '.PingFang-SC-Regular', 'Microsoft YaHei', 'Segoe UI',
+            'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      *,
+      *::before,
+      *::after {
+        font-family: inherit;
+        box-sizing: inherit;
+        color: inherit;
+      }
+
+      .sp-svg {
+        display: inline-flex;
+        height: 1em;
+        width: auto;
+        fill: currentColor;
+      }
+    `}
+  />
+);

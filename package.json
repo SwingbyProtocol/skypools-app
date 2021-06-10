@@ -13,10 +13,7 @@
     "ts-node": "ts-node --compiler-options '{\"module\":\"CommonJS\"}'"
   },
   "dependencies": {
-    "@linaria/babel-preset": "^3.0.0-beta.4",
-    "@linaria/core": "^3.0.0-beta.4",
-    "@linaria/react": "^3.0.0-beta.4",
-    "@linaria/shaker": "^3.0.0-beta.4",
+    "@emotion/react": "^11.4.0",
     "big.js": "^6.1.1",
     "bnc-onboard": "1.25.0",
     "isomorphic-unfetch": "^3.1.0",
@@ -36,7 +33,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
-    "@linaria/webpack-loader": "^3.0.0-beta.4",
+    "@emotion/babel-plugin": "^11.3.0",
     "@percy/cli": "^1.0.0-beta.50",
     "@percy/cypress": "^3.1.0",
     "@swingby-protocol/eslint-config": "^2.3.0",

@@ -1,6 +1,5 @@
 import React from 'react';
 import { BigSource } from 'big.js';
-import { cx } from '@linaria/core';
 import { useContainerQuery } from 'react-container-query';
 
 import { Icon } from '../Icon';
@@ -30,12 +29,12 @@ export const SwapPath = ({ initialCoin, value = [], className }: Props) => {
   );
 
   return (
-    <div ref={containerRef} className={cx(swapPath, className)}>
-      <div className={wrapper}>
-        <Coin className={coin} src={`/swap/coins/${initialCoin}.svg`} />
+    <div ref={containerRef} css={swapPath} className={className}>
+      <div css={wrapper}>
+        <Coin css={coin} src={`/swap/coins/${initialCoin}.svg`} />
         {value.map((it) => (
           <React.Fragment key={it.toCoin}>
-            <span className={divider}>
+            <span css={divider}>
               <Icon.CaretRight />
             </span>
 
@@ -45,11 +44,11 @@ export const SwapPath = ({ initialCoin, value = [], className }: Props) => {
               withNames={!!params.withNames}
             />
 
-            <span className={divider}>
+            <span css={divider}>
               <Icon.CaretRight />
             </span>
 
-            <Coin className={coin} src={`/swap/coins/${it.toCoin}.svg`} />
+            <Coin css={coin} src={`/swap/coins/${it.toCoin}.svg`} />
           </React.Fragment>
         ))}
       </div>

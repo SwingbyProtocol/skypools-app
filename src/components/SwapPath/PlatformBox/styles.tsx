@@ -1,4 +1,4 @@
-import { css } from '@linaria/core';
+import { css } from '@emotion/react';
 
 export const platformBox = css`
   border: 1px solid var(--border-color);

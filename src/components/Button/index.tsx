@@ -1,4 +1,3 @@
-import { cx } from '@linaria/core';
 import { rem } from 'polished';
 import React, { useCallback } from 'react';
 import { useSpring, animated } from 'react-spring';
@@ -65,9 +64,7 @@ export const Button = ({
   return (
     <Component
       role="button"
-      {...props}
-      onClick={click}
-      className={cx(
+      css={[
         buttonBase,
         variant === 'primary' && variantPrimary,
         variant === 'secondary' && variantSecondary,
@@ -81,21 +78,22 @@ export const Button = ({
         size === 'city' && sizeCity,
         size === 'town' && sizeTown,
         size === 'street' && sizeStreet,
-        className,
-      )}
+      ]}
+      {...props}
+      onClick={click}
       style={{
         width: shape === 'square' || shape === 'circle' ? rem(styleSize[size]) : undefined,
         ...style,
       }}
     >
       <animated.div
-        className={cx(
+        css={[
           shadowBase,
           variant === 'primary' && shadowPrimary,
           variant === 'secondary' && shadowSecondary,
           variant === 'tertiary' && shadowTertiary,
           shape === 'circle' && shadowCircle,
-        )}
+        ]}
         style={{
           opacity,
           boxShadow: shadow

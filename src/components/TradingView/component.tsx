@@ -89,8 +89,8 @@ export const TradingView = ({ data = [] }: Props) => {
   }, []);
 
   return (
-    <div ref={containerRef} className={container}>
-      <div ref={chartDivRef} className={wrapper} />
+    <div ref={containerRef} css={container}>
+      <div ref={chartDivRef} css={wrapper} />
     </div>
   );
 };

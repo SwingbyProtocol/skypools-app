@@ -1,4 +1,3 @@
-import { cx } from '@linaria/core';
 import { useEffect, useMemo, useState } from 'react';
 
 import { coin } from './styles';
@@ -37,5 +36,5 @@ export const Coin = ({ src: srcParam, className }: { src: string; className?: st
     return undefined;
   }, [src]);
 
-  return <div className={cx(coin, className)} style={style} />;
+  return <div css={coin} className={className} style={style} />;
 };

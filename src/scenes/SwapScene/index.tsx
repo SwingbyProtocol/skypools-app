@@ -29,16 +29,16 @@ export const SwapScene = () => {
   }, []);
 
   return (
-    <div className={swapScene}>
-      <Header className={headerContainer} />
+    <div css={swapScene}>
+      <Header css={headerContainer} />
 
-      <Card className={priceAndPathCard}>
-        <div className={chartContainer}>
+      <Card css={priceAndPathCard}>
+        <div css={chartContainer}>
           <TradingView data={data} />
         </div>
 
         <SwapPath
-          className={swapPathContainer}
+          css={swapPathContainer}
           initialCoin="BTC"
           value={[
             { toCoin: 'WBTC', via: [{ fraction: 1, platform: 'skybridge' }] },
@@ -67,7 +67,7 @@ export const SwapScene = () => {
         />
       </Card>
 
-      <Card className={widgetCard}>
+      <Card css={widgetCard}>
         <Widget />
       </Card>
     </div>

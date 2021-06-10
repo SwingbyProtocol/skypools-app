@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { nanoid } from 'nanoid';
-import { cx } from '@linaria/core';
 
 import { Testable, useBuildTestId } from '../../modules/testing';
 
@@ -71,14 +70,14 @@ export const TextInput = ({
   );
 
   return (
-    <div className={cx(container, className)} data-testid={testId}>
+    <div css={container} className={className} data-testid={testId}>
       {!!label && (
-        <label className={labelClass} htmlFor={id} data-testid={buildTestId('label')}>
+        <label css={labelClass} htmlFor={id} data-testid={buildTestId('label')}>
           {label}
         </label>
       )}
       <div
-        className={cx(
+        css={[
           inputContainer,
           isFocused && focused,
           state === 'normal' && stateNormal,
@@ -86,29 +85,29 @@ export const TextInput = ({
           size === 'city' && sizeCity,
           size === 'country' && sizeCountry,
           size === 'state' && sizeState,
-        )}
+        ]}
       >
         {left && (
-          <div className={leftClass} data-testid={buildTestId('left')}>
+          <div css={leftClass} data-testid={buildTestId('left')}>
             {left}
           </div>
         )}
         <input
           {...props}
-          className={input}
+          css={input}
           data-testid={buildTestId('native-input')}
           id={id}
           onFocus={focus}
           onBlur={blur}
         />
         {right && (
-          <div className={rightClass} data-testid={buildTestId('right')}>
+          <div css={rightClass} data-testid={buildTestId('right')}>
             {right}
           </div>
         )}
       </div>
       {!!description && (
-        <span className={descriptionClass} data-testid={buildTestId('description')}>
+        <span css={descriptionClass} data-testid={buildTestId('description')}>
           {description}
         </span>
       )}

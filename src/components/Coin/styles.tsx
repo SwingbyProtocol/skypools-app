@@ -1,4 +1,4 @@
-import { css } from '@linaria/core';
+import { css } from '@emotion/react';
 
 export const coin = css`
   border-radius: 50%;

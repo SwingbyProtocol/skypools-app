@@ -8,7 +8,7 @@ const DynamicComponent: any = dynamic(
   () => import('./component').then((it) => it.TradingView) as any,
   {
     ssr: false,
-    loading: () => <div className={loadingContainer}>…</div>,
+    loading: () => <div css={loadingContainer}>…</div>,
   },
 );
 
