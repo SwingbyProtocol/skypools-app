@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "rimraf .linaria-cache && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint .",
     "test": "echo 'No tests here so far'",
