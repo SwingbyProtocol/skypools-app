@@ -13,11 +13,11 @@ export const useCurrentCoins = () => {
     fromCoin,
     toCoin,
     setFromCoin: useCallback(
-      (value: string) => push(`/swap/${value}/${toCoin}`, '', { shallow: true }),
+      (value: string) => push(`/swap/${value}/${toCoin}`, ''),
       [push, toCoin],
     ),
     setToCoin: useCallback(
-      (value: string) => push(`/swap/${fromCoin}/${value}`, '', { shallow: true }),
+      (value: string) => push(`/swap/${fromCoin}/${value}`, ''),
       [push, fromCoin],
     ),
   };
