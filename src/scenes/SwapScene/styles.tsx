@@ -26,6 +26,7 @@ export const priceAndPathCard = css`
   grid-area: path;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 `;
 
 export const chartContainer = css`

@@ -3,6 +3,21 @@ import { rem } from 'polished';
 
 import { size } from '../../../../modules/styles';
 
+export const container = css`
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  grid-template-areas: 'coin amount';
+  grid-gap: ${rem(size.closet)};
+`;
+
+export const selectInput = css`
+  grid-area: coin;
+`;
+
+export const textInput = css`
+  grid-area: amount;
+`;
+
 export const coinContainer = css`
   display: flex;
   flex-direction: column;
