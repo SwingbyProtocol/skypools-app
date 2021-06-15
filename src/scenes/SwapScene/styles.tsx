@@ -51,6 +51,7 @@ export const widgetCard = css`
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
 `;
 
-export const history = css`
+export const historyCard = css`
   grid-area: history;
+  overflow: hidden;
 `;

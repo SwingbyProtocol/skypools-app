@@ -3,7 +3,9 @@ import { rem } from 'polished';
 
 import { size } from '../../../modules/styles';
 
-export const container = css``;
+export const container = css`
+  height: 100%;
+`;
 
 export const rowContainer = css`
   display: grid;
@@ -17,6 +19,8 @@ export const rowContainer = css`
   overflow: hidden;
   white-space: nowrap;
   font-size: ${rem(size.closet)};
+  padding: 0 ${rem(size.town)};
+  border-bottom: 1px solid hsl(var(--sp-color-border-normal));
 `;
 
 export const icon = css`

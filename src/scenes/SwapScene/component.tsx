@@ -13,7 +13,7 @@ import {
   swapScene,
   widgetCard,
   headerContainer,
-  history,
+  historyCard,
 } from './styles';
 import { Widget } from './Widget';
 import { History } from './History';
@@ -73,7 +73,9 @@ export const SwapScene = () => {
         <Widget />
       </Card>
 
-      <History css={history} />
+      <Card css={historyCard}>
+        <History />
+      </Card>
     </div>
   );
 };
