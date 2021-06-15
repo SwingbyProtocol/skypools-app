@@ -7,12 +7,12 @@ export const swapScene = css`
   display: grid;
   grid-gap: ${rem(size.town)};
   grid-template-columns: 1fr 1fr minmax(min-content, 1fr);
-  grid-template-rows: min-content 1fr 1fr 1fr;
+  grid-template-rows: min-content min-content 1fr 1fr;
   grid-template-areas:
     'header header header'
     'path path widget'
     'path path widget'
-    'path path .';
+    'path path history';
   padding: ${rem(size.town)};
   min-height: 100vh;
 `;
@@ -27,6 +27,7 @@ export const priceAndPathCard = css`
   display: flex;
   flex-direction: column;
   max-width: 100%;
+  overflow: hidden;
 `;
 
 export const chartContainer = css`
@@ -48,4 +49,8 @@ export const widgetCard = css`
   justify-self: stretch;
   border: none;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+`;
+
+export const history = css`
+  grid-area: history;
 `;

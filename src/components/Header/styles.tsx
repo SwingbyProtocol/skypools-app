@@ -12,7 +12,3 @@ export const header = css`
   align-items: center;
   padding: 0 ${rem(size.town)};
 `;
-
-export const logo = css`
-  height: ${rem(size.state)};
-`;

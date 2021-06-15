@@ -29,7 +29,8 @@
     "react-intl": "^5.18.1",
     "react-select": "^4.3.1",
     "react-spring": "^9.2.1",
-    "react-use": "^17.2.4"
+    "react-use": "^17.2.4",
+    "react-window": "^1.8.6"
   },
   "devDependencies": {
     "@babel/core": "^7.14.3",
@@ -45,6 +46,7 @@
     "@types/pino": "^6.3.8",
     "@types/react": "^17.0.6",
     "@types/react-select": "^4.0.15",
+    "@types/react-window": "^1.8.3",
     "babel-plugin-inline-react-svg": "^2.0.1",
     "cypress": "^7.3.0",
     "eslint": "^7.27.0",

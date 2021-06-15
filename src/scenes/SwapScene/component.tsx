@@ -13,8 +13,10 @@ import {
   swapScene,
   widgetCard,
   headerContainer,
+  history,
 } from './styles';
 import { Widget } from './Widget';
+import { History } from './History';
 
 export const SwapScene = () => {
   const data = useMemo(() => {
@@ -70,6 +72,8 @@ export const SwapScene = () => {
       <Card css={widgetCard}>
         <Widget />
       </Card>
+
+      <History css={history} />
     </div>
   );
 };
