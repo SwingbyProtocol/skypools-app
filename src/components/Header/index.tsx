@@ -1,15 +1,18 @@
 import Image from 'next/image';
 
-import { size } from '../../modules/styles';
+import { ConnectWallet } from '../../components/ConnectWallet';
 
-import { header } from './styles';
+import { header, logo, connect } from './styles';
 
 type Props = { className?: string };
 
 export const Header = ({ className }: Props) => {
   return (
     <header css={header} className={className}>
-      <Image src="/logo.svg" alt="Skypools" height={size.state} width={size.state * (146 / 44)} />
+      <div css={logo}>
+        <Image src="/logo.svg" alt="Skypools" layout="fill" />
+      </div>
+      <ConnectWallet css={connect} />
     </header>
   );
 };

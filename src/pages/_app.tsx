@@ -6,6 +6,7 @@ import Head from 'next/head';
 import { languages } from '../modules/i18n';
 import { Favicon } from '../components/Favicon';
 import { GlobalStyles } from '../modules/styles';
+import { OnboardProvider } from '../modules/onboard';
 
 function MyApp({ Component, pageProps, router }: AppProps) {
   const locale = (() => {
@@ -21,17 +22,19 @@ function MyApp({ Component, pageProps, router }: AppProps) {
 
   return (
     <IntlProvider messages={messages} locale={locale} defaultLocale="en">
-      <>
-        <GlobalStyles />
+      <OnboardProvider>
+        <>
+          <GlobalStyles />
 
-        <Head>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-        </Head>
+          <Head>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+          </Head>
 
-        <Favicon />
+          <Favicon />
 
-        <Component {...pageProps} />
-      </>
+          <Component {...pageProps} />
+        </>
+      </OnboardProvider>
     </IntlProvider>
   );
 }
