@@ -46,6 +46,7 @@ export const ConnectWallet = ({ className }: { className?: string }) => {
               logger.error(e);
             }
           }}
+          title={address ?? undefined}
         >
           {address ? shortenAddress({ value: address }) : <FormattedMessage id="wallet.connect" />}
         </Button>
