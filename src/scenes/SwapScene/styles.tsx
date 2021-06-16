@@ -49,9 +49,11 @@ export const widgetCard = css`
   justify-self: stretch;
   border: none;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  z-index: 2;
 `;
 
 export const historyCard = css`
   grid-area: history;
-  overflow: hidden;
+  margin-top: ${rem(-size.town - size.room)};
+  margin-bottom: ${rem(-size.town)};
 `;

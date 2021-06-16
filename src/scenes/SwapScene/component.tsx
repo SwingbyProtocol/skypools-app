@@ -73,9 +73,7 @@ export const SwapScene = () => {
         <Widget />
       </Card>
 
-      <Card css={historyCard}>
-        <History />
-      </Card>
+      <History css={historyCard} />
     </div>
   );
 };

@@ -1,12 +1,23 @@
 import { useMeasure } from 'react-use';
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import { VariableSizeList as List, ListChildComponentProps } from 'react-window';
 import Image from 'next/image';
 import { FormattedDate, FormattedNumber, useIntl } from 'react-intl';
 import { DateTime } from 'luxon';
 
 import { size } from '../../../modules/styles';
 
-import { amountIn, amountOut, container, hash, icon, rowContainer, time, type } from './styles';
+import {
+  amountIn,
+  amountOut,
+  container,
+  hash,
+  icon,
+  rowContainer,
+  time,
+  type,
+  firstRow,
+  lastRow,
+} from './styles';
 
 type Props = { className?: string };
 
@@ -24,11 +35,15 @@ const NUMBER_FORMAT_FULL: Partial<React.ComponentPropsWithoutRef<typeof Formatte
 
 const AMOUNT_IN = 1e-8;
 const AMOUNT_OUT = Number.MAX_SAFE_INTEGER;
+const data = new Array(50).fill(null);
 
-const Row = ({ style }: ListChildComponentProps) => {
+const Row = ({ style, index }: ListChildComponentProps) => {
   const { formatNumber } = useIntl();
   return (
-    <div css={rowContainer} style={style}>
+    <div
+      css={[rowContainer, index === 0 && firstRow, index === data.length - 1 && lastRow]}
+      style={style}
+    >
       <div css={icon}>
         <Image src="/swap/swap-icon.svg" layout="fill" />
       </div>
@@ -60,7 +75,20 @@ export const History = ({ className }: Props) => {
 
   return (
     <div css={container} className={className} ref={ref as any}>
-      <List width={width} height={height} itemSize={size.city} itemCount={1000}>
+      <List
+        width={width}
+        height={height}
+        itemSize={(index) =>
+          index === 0
+            ? // We are compensating the grid-gap and the rounded corner of the widget
+              size.city + size.town + size.room
+            : index === data.length - 1
+            ? // We are compensating the grid-gap
+              size.city + size.town
+            : size.city
+        }
+        itemCount={data.length}
+      >
         {Row}
       </List>
     </div>
