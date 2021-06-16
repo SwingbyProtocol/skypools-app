@@ -9,8 +9,11 @@
   "network.short.97": "BSC (T)",
   "network.short.bc": "BC",
   "network.short.bct": "BC (T)",
+  "network.invalid": "Unsupported network",
   "wallet.connect": "Connect",
   "generic.platform.uniswap-v3": "Uniswap V3",
   "generic.platform.sushiswap-v2": "SushiSwap V2",
-  "generic.platform.skybridge": "Skybridge"
+  "generic.platform.skybridge": "Skybridge",
+  "router.health-check.ok": "Network health check is OK",
+  "router.health-check.bad": "Network health check failed"
 }

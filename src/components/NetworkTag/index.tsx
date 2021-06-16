@@ -1,4 +1,4 @@
-import { FormattedMessage } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 import { isValidNetworkId, NetworkId } from '../../modules/onboard';
 
@@ -13,6 +13,7 @@ export function NetworkTag({
   network: NetworkId | number | null;
   className?: string;
 }): JSX.Element {
+  const { formatMessage } = useIntl();
   return (
     <div
       css={[
@@ -23,8 +24,11 @@ export function NetworkTag({
         network === 97 && bsct,
       ]}
       className={className}
+      title={formatMessage({
+        id: isValidNetworkId(network) ? `network.full.${network}` : 'network.invalid',
+      })}
     >
-      {isValidNetworkId(network) ? <FormattedMessage id={`network.short.${network}`} /> : '?'}
+      {isValidNetworkId(network) ? formatMessage({ id: `network.short.${network}` }) : '?'}
     </div>
   );
 }
