@@ -1,6 +1,5 @@
 import { rem } from 'polished';
-import React, { useEffect, useMemo } from 'react';
-import { useIntl } from 'react-intl';
+import { useEffect, useMemo } from 'react';
 import Select, { Theme, StylesConfig, OptionTypeBase } from 'react-select';
 
 import { Coin } from '../../../../components/Coin';
@@ -21,7 +20,7 @@ import {
 export type CoinAmountInputValue = { coin: string | null; amount: string | null };
 
 type Props = {
-  availableCoins: string[];
+  availableCoins: Array<{ symbol: string; address: string; logoUri: string }>;
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
@@ -62,45 +61,23 @@ const styles: StylesConfig<OptionTypeBase, false> = {
 };
 
 export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
-  const { formatMessage } = useIntl();
-
   const coins = useMemo(
     () =>
       availableCoins.map((coin) => {
-        const coinName = (() => {
-          const id = `generic.coin-name.${coin}`;
-          const value = formatMessage({ id });
-          if (!value || value === id) {
-            return coin;
-          }
-
-          return value;
-        })();
-
-        const coinChain = (() => {
-          const id = `generic.coin-chain.${coin}`;
-          const value = formatMessage({ id });
-          if (!value || value === id) {
-            return 'aaa';
-          }
-
-          return value;
-        })();
-
         return {
-          value: coin,
+          value: coin.address,
           label: (
-            <div key={coin} css={coinContainer}>
-              <span css={coinChainClass}>{coinChain}</span>
+            <div key={coin.address} css={coinContainer}>
+              <span css={coinChainClass}>aaa</span>
               <div css={coinWrapper}>
-                <Coin src={`/swap/coins/${coin}.svg`} css={coinLogo} />
-                <span css={coinNameClass}>{coinName}</span>
+                <Coin src={coin.logoUri} css={coinLogo} />
+                <span css={coinNameClass}>{coin.symbol}</span>
               </div>
             </div>
           ),
         };
       }),
-    [availableCoins, formatMessage],
+    [availableCoins],
   );
 
   const selectValue = useMemo(

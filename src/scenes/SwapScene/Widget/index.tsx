@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 
 import { Button } from '../../../components/Button';
+import { useTokens } from '../../../modules/1inch';
 import { useCurrentCoins } from '../useCurrentCoins';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 
 export const Widget = () => {
+  const { tokens } = useTokens();
   const { fromCoin, toCoin, setFromCoin, setToCoin } = useCurrentCoins();
 
   const [amount, setAmount] = useState<CoinAmountInputValue['amount']>(null);
@@ -21,7 +23,7 @@ export const Widget = () => {
     <div>
       <div>from</div>
       <CoinAmountInput
-        availableCoins={['BTC', 'WBTC', 'ETH']}
+        availableCoins={tokens}
         value={from}
         onChange={({ coin, amount }) => {
           setAmount(amount);
@@ -32,7 +34,7 @@ export const Widget = () => {
       />
       <div>top</div>
       <CoinAmountInput
-        availableCoins={['BTC', 'WBTC', 'ETH']}
+        availableCoins={tokens.filter((it) => it.address !== from.coin)}
         value={to}
         onChange={({ coin }) => {
           if (coin) {
