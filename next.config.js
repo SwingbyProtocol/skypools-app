@@ -11,7 +11,8 @@ module.exports = {
     return [
       {
         source: '/',
-        destination: '/swap/BTC/WBTC',
+        destination:
+          '/swap/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0xdac17f958d2ee523a2206206994597c13d831ec7',
         permanent: false,
       },
     ];

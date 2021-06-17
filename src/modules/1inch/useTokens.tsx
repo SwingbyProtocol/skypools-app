@@ -3,17 +3,26 @@ import { useEffect, useState } from 'react';
 
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
-import { useOnboard } from '../onboard';
+import { NetworkId, useOnboard } from '../onboard';
 
 import { ENDPOINT_1INCH_API } from './constants';
 
 const CHECK_EVERY_MS = Duration.fromObject({ minutes: 1 }).as('milliseconds');
 
-type Token = { symbol: string; name: string; decimals: number; address: string; logoUri: string };
+type Token = {
+  symbol: string;
+  name: string;
+  decimals: number;
+  address: string;
+  logoUri: string;
+  network: NetworkId;
+};
 
 export const useTokens = () => {
-  const { network } = useOnboard();
+  const { network: networkParam } = useOnboard();
   const [tokens, setTokens] = useState<Token[]>([]);
+
+  const network = networkParam ?? 1;
 
   useEffect(() => {
     setTokens([]);
@@ -41,6 +50,7 @@ export const useTokens = () => {
             decimals: it.decimals,
             address: it.address,
             logoUri: it.logoURI,
+            network,
           })),
         );
       } catch (err) {

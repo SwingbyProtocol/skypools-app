@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
-import { useOnboard } from '../../../../modules/onboard';
+import { NetworkId } from '../../../../modules/onboard';
 import { size } from '../../../../modules/styles';
 
 import {
@@ -19,7 +19,7 @@ import {
   coinLogo,
 } from './styles';
 
-type CoinInfo = { symbol: string; address: string; logoUri: string };
+type CoinInfo = { symbol: string; address: string; logoUri: string; network: NetworkId };
 export type CoinAmountInputValue = { coin: CoinInfo | null; amount: string | null };
 
 type OptionType = { value: CoinInfo; label: JSX.Element };
@@ -65,35 +65,53 @@ const styles: StylesConfig<OptionType, false> = {
   }),
 };
 
-export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
-  const { network } = useOnboard();
+const NATIVE_COIN_FAKE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
+export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
   const coins = useMemo(
     () =>
-      availableCoins.map((coin) => {
-        return {
-          value: coin,
-          label: (
-            <div key={coin.address} css={coinContainer}>
-              <span css={coinChainClass}>
-                {coin.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? (
-                  <FormattedMessage id="token.chain.native" />
-                ) : (
-                  <FormattedMessage
-                    id="token.chain.on-chain"
-                    values={{ chain: <FormattedMessage id={`network.short.${network}`} /> }}
-                  />
-                )}
-              </span>
-              <div css={coinWrapper}>
-                <Coin src={coin.logoUri} css={coinLogo} />
-                <span css={coinNameClass}>{coin.symbol}</span>
+      availableCoins
+        .map((coin) => {
+          return {
+            value: coin,
+            label: (
+              <div key={coin.address} css={coinContainer}>
+                <span css={coinChainClass}>
+                  {coin.address === NATIVE_COIN_FAKE_ADDRESS ? (
+                    <FormattedMessage id="token.chain.native" />
+                  ) : (
+                    <FormattedMessage
+                      id="token.chain.on-chain"
+                      values={{
+                        chain: (
+                          <FormattedMessage
+                            id={`network.${coin.network === 1 ? 'full' : 'short'}.${coin.network}`}
+                          />
+                        ),
+                      }}
+                    />
+                  )}
+                </span>
+                <div css={coinWrapper}>
+                  <Coin src={coin.logoUri} css={coinLogo} />
+                  <span css={coinNameClass}>{coin.symbol}</span>
+                </div>
               </div>
-            </div>
-          ),
-        };
-      }),
-    [availableCoins, network],
+            ),
+          };
+        })
+        .sort((a, b) => {
+          if (a.value.address === NATIVE_COIN_FAKE_ADDRESS) {
+            return -1;
+          }
+
+          if (b.value.address === NATIVE_COIN_FAKE_ADDRESS) {
+            return 1;
+          }
+
+          return a.value.symbol.localeCompare(b.value.symbol);
+        }),
+    [availableCoins],
   );
 
   const selectValue = useMemo(
