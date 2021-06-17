@@ -21,6 +21,18 @@ export const TradingView = ({ data = [] }: Props) => {
       timeScale: { fixLeftEdge: true, borderVisible: false },
       layout: { fontSize: 10 },
       grid: { vertLines: { visible: false } },
+      handleScroll: {
+        vertTouchDrag: false,
+        mouseWheel: false,
+        pressedMouseMove: true,
+        horzTouchDrag: true,
+      },
+      handleScale: {
+        mouseWheel: false,
+        pinch: true,
+        axisDoubleClickReset: true,
+        axisPressedMouseMove: true,
+      },
     });
 
     return () => {
