@@ -15,5 +15,7 @@
   "generic.platform.sushiswap-v2": "SushiSwap V2",
   "generic.platform.skybridge": "Skybridge",
   "router.health-check.ok": "Network health check is OK",
-  "router.health-check.bad": "Network health check failed"
+  "router.health-check.bad": "Network health check failed",
+  "token.chain.native": "Native",
+  "token.chain.on-chain": "On {chain}"
 }

@@ -1,9 +1,11 @@
 import { rem } from 'polished';
 import { useEffect, useMemo } from 'react';
-import Select, { Theme, StylesConfig, OptionTypeBase } from 'react-select';
+import Select, { Theme, StylesConfig, createFilter } from 'react-select';
+import { FormattedMessage } from 'react-intl';
 
 import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
+import { useOnboard } from '../../../../modules/onboard';
 import { size } from '../../../../modules/styles';
 
 import {
@@ -17,10 +19,13 @@ import {
   coinLogo,
 } from './styles';
 
-export type CoinAmountInputValue = { coin: string | null; amount: string | null };
+type CoinInfo = { symbol: string; address: string; logoUri: string };
+export type CoinAmountInputValue = { coin: CoinInfo | null; amount: string | null };
+
+type OptionType = { value: CoinInfo; label: JSX.Element };
 
 type Props = {
-  availableCoins: Array<{ symbol: string; address: string; logoUri: string }>;
+  availableCoins: CoinInfo[];
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
@@ -37,7 +42,7 @@ const theme = (theme: Theme): Theme => ({
   },
 });
 
-const styles: StylesConfig<OptionTypeBase, false> = {
+const styles: StylesConfig<OptionType, false> = {
   option: (styles, { isSelected }) => ({
     ...styles,
     '--coin-chain-color': isSelected ? 'hsl(var(--sp-color-primary-text))' : undefined,
@@ -61,14 +66,25 @@ const styles: StylesConfig<OptionTypeBase, false> = {
 };
 
 export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
+  const { network } = useOnboard();
+
   const coins = useMemo(
     () =>
       availableCoins.map((coin) => {
         return {
-          value: coin.address,
+          value: coin,
           label: (
             <div key={coin.address} css={coinContainer}>
-              <span css={coinChainClass}>aaa</span>
+              <span css={coinChainClass}>
+                {coin.address === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' ? (
+                  <FormattedMessage id="token.chain.native" />
+                ) : (
+                  <FormattedMessage
+                    id="token.chain.on-chain"
+                    values={{ chain: <FormattedMessage id={`network.short.${network}`} /> }}
+                  />
+                )}
+              </span>
               <div css={coinWrapper}>
                 <Coin src={coin.logoUri} css={coinLogo} />
                 <span css={coinNameClass}>{coin.symbol}</span>
@@ -77,7 +93,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
           ),
         };
       }),
-    [availableCoins],
+    [availableCoins, network],
   );
 
   const selectValue = useMemo(
@@ -96,13 +112,16 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
 
   return (
     <div css={container} className={className}>
-      <Select
+      <Select<OptionType>
         css={selectInput}
         theme={theme}
         styles={styles}
         value={selectValue}
         options={coins}
         onChange={(coin) => onChange?.({ amount: value.amount, coin: coin?.value ?? null })}
+        filterOption={createFilter({
+          stringify: (option: OptionType) => `${option.value.symbol} ${option.value.address}`,
+        })}
       />
 
       <TextInput

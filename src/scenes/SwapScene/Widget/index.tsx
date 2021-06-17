@@ -13,11 +13,20 @@ export const Widget = () => {
   const [amount, setAmount] = useState<CoinAmountInputValue['amount']>(null);
 
   const from = useMemo(
-    (): CoinAmountInputValue => ({ coin: fromCoin, amount }),
-    [fromCoin, amount],
+    (): CoinAmountInputValue => ({
+      coin: tokens.find(({ address }) => address === fromCoin) ?? null,
+      amount,
+    }),
+    [tokens, fromCoin, amount],
   );
 
-  const to = useMemo((): CoinAmountInputValue => ({ coin: toCoin, amount: null }), [toCoin]);
+  const to = useMemo(
+    (): CoinAmountInputValue => ({
+      coin: tokens.find(({ address }) => address === toCoin) ?? null,
+      amount: null,
+    }),
+    [toCoin, tokens],
+  );
 
   return (
     <div>
@@ -28,17 +37,17 @@ export const Widget = () => {
         onChange={({ coin, amount }) => {
           setAmount(amount);
           if (coin) {
-            setFromCoin(coin);
+            setFromCoin(coin.address);
           }
         }}
       />
       <div>top</div>
       <CoinAmountInput
-        availableCoins={tokens.filter((it) => it.address !== from.coin)}
+        availableCoins={tokens.filter((it) => it.address !== from.coin?.address)}
         value={to}
         onChange={({ coin }) => {
           if (coin) {
-            setToCoin(coin);
+            setToCoin(coin.address);
           }
         }}
       />
