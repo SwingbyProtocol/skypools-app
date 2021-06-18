@@ -1,5 +1,5 @@
 import { rem } from 'polished';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import Select, { Theme, StylesConfig, createFilter } from 'react-select';
 import { FormattedMessage } from 'react-intl';
 
@@ -65,7 +65,7 @@ const styles: StylesConfig<OptionType, false> = {
   }),
 };
 
-const NATIVE_COIN_FAKE_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+const NATIVE_COIN_FAKE_ADDRESS_REG_EXP = /^0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee$/i;
 
 export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
   const coins = useMemo(
@@ -77,7 +77,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
             label: (
               <div key={coin.address} css={coinContainer}>
                 <span css={coinChainClass}>
-                  {coin.address === NATIVE_COIN_FAKE_ADDRESS ? (
+                  {NATIVE_COIN_FAKE_ADDRESS_REG_EXP.test(coin.address) ? (
                     <FormattedMessage id="token.chain.native" />
                   ) : (
                     <FormattedMessage
@@ -101,11 +101,11 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
           };
         })
         .sort((a, b) => {
-          if (a.value.address === NATIVE_COIN_FAKE_ADDRESS) {
+          if (NATIVE_COIN_FAKE_ADDRESS_REG_EXP.test(a.value.address)) {
             return -1;
           }
 
-          if (b.value.address === NATIVE_COIN_FAKE_ADDRESS) {
+          if (NATIVE_COIN_FAKE_ADDRESS_REG_EXP.test(b.value.address)) {
             return 1;
           }
 
@@ -121,15 +121,6 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
       ) ?? null,
     [coins, value.coin],
   );
-
-  useEffect(() => {
-    if (selectValue) return;
-
-    const coin = coins[0]?.value ?? null;
-    if (!coin) return;
-
-    onChange?.({ amount: value.amount, coin });
-  }, [coins, selectValue, onChange, value.amount]);
 
   return (
     <div css={container} className={className}>
