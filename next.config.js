@@ -7,6 +7,9 @@ module.exports = {
   future: {
     webpack5: true,
   },
+  images: {
+    domains: ['img.paraswap.network', 'raw.githubusercontent.com', 'tokens.1inch.exchange'],
+  },
   async redirects() {
     return [
       {

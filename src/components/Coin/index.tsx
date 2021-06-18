@@ -1,13 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
+import NextImage from 'next/image';
+import { useEffect, useState } from 'react';
 
 import { coin } from './styles';
 
 const UNKNOWN = '/swap/coins/unknown.svg';
 
-export const Coin = ({ src: srcParam, className }: { src: string; className?: string }) => {
+export const Coin = ({
+  src: srcParam,
+  className,
+}: {
+  src: string | null | undefined;
+  className?: string;
+}) => {
   const [src, setSrc] = useState<string>(UNKNOWN);
 
   useEffect(() => {
+    if (!srcParam) {
+      return;
+    }
+
     let cancelled = false;
 
     const img = new Image();
@@ -28,13 +39,9 @@ export const Coin = ({ src: srcParam, className }: { src: string; className?: st
     };
   }, [srcParam]);
 
-  const style = useMemo(() => {
-    if (src) {
-      return { backgroundImage: `url(${src})` };
-    }
-
-    return undefined;
-  }, [src]);
-
-  return <div css={coin} className={className} style={style} />;
+  return (
+    <div css={coin} className={className}>
+      <NextImage src={src} layout="fill" />
+    </div>
+  );
 };

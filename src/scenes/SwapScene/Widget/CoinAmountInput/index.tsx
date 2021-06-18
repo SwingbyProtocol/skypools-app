@@ -93,7 +93,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
                   )}
                 </span>
                 <div css={coinWrapper}>
-                  {!!coin.logoUri && <Coin src={coin.logoUri} css={coinLogo} />}
+                  <Coin src={coin.logoUri} css={coinLogo} />
                   <span css={coinNameClass}>{coin.symbol}</span>
                 </div>
               </div>
