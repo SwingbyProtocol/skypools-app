@@ -19,7 +19,7 @@ import {
   coinLogo,
 } from './styles';
 
-type CoinInfo = { symbol: string; address: string; logoUri: string; network: NetworkId };
+type CoinInfo = { symbol: string; address: string; logoUri: string | null; network: NetworkId };
 export type CoinAmountInputValue = { coin: CoinInfo | null; amount: string | null };
 
 type OptionType = { value: CoinInfo; label: JSX.Element };
@@ -93,7 +93,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
                   )}
                 </span>
                 <div css={coinWrapper}>
-                  <Coin src={coin.logoUri} css={coinLogo} />
+                  {!!coin.logoUri && <Coin src={coin.logoUri} css={coinLogo} />}
                   <span css={coinNameClass}>{coin.symbol}</span>
                 </div>
               </div>
@@ -115,7 +115,10 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
   );
 
   const selectValue = useMemo(
-    () => coins.find((it) => it.value === value.coin) ?? null,
+    () =>
+      coins.find(
+        (it) => value.coin && it.value.address.toLowerCase() === value.coin.address.toLowerCase(),
+      ) ?? null,
     [coins, value.coin],
   );
 

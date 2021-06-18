@@ -14,7 +14,11 @@ export const Widget = () => {
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
-      coin: tokens.find(({ address }) => address === fromCoin) ?? null,
+      coin:
+        tokens.find(
+          ({ address }) =>
+            typeof fromCoin === 'string' && address.toLowerCase() === fromCoin.toLowerCase(),
+        ) ?? null,
       amount,
     }),
     [tokens, fromCoin, amount],
@@ -22,7 +26,11 @@ export const Widget = () => {
 
   const to = useMemo(
     (): CoinAmountInputValue => ({
-      coin: tokens.find(({ address }) => address === toCoin) ?? null,
+      coin:
+        tokens.find(
+          ({ address }) =>
+            typeof toCoin === 'string' && address.toLowerCase() === toCoin.toLowerCase(),
+        ) ?? null,
       amount: null,
     }),
     [toCoin, tokens],
