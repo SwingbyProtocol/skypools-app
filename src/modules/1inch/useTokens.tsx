@@ -71,7 +71,8 @@ export const useTokens = () => {
                   symbol: it.symbol ?? '',
                   decimals: it.decimals,
                   address: it.address,
-                  logoUri: it.img ?? null,
+                  logoUri:
+                    (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
                   network: it.network as NetworkId,
                 }),
               )
