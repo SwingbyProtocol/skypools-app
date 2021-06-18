@@ -8,6 +8,7 @@ import { NetworkId, useOnboard } from '../onboard';
 
 import { ENDPOINT_1INCH_API, SHOULD_USE_PARASWAP } from './constants';
 import { isSupportedNetworkId } from './isSupportedNetwork';
+import { isParaSwapApiError } from './isParaSwapApiError';
 
 const CHECK_EVERY_MS = Duration.fromObject({ minutes: 30 }).as('milliseconds');
 
@@ -59,7 +60,7 @@ export const useTokens = () => {
         } else {
           const paraSwap = new ParaSwap(network);
           const tokens = await paraSwap.getTokens();
-          if (!Array.isArray(tokens)) {
+          if (isParaSwapApiError(tokens)) {
             throw new Error(`${tokens.status}: ${tokens.message}`);
           }
 
