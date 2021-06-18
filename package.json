@@ -20,7 +20,7 @@
     "lightweight-charts": "^3.3.0",
     "luxon": "^1.27.0",
     "nanoid": "^3.1.23",
-    "next": "10.2.2",
+    "next": "11.0.0",
     "paraswap": "^4.14.1",
     "pino": "^6.11.3",
     "polished": "^4.1.2",
