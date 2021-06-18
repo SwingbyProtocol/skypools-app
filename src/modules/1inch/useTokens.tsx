@@ -36,7 +36,7 @@ export const useTokens = () => {
       if (cancelled) return;
 
       try {
-        if (SHOULD_USE_PARASWAP) {
+        if (!SHOULD_USE_PARASWAP) {
           const result = await fetcher<{
             tokens: Record<
               string,
