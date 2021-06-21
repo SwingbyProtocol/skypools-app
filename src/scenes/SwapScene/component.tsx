@@ -6,8 +6,9 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { getSwapQuote, SwapQuote } from '../../modules/para-inch';
+import { getSwapQuote, isSupportedNetworkId, SwapQuote } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
+import { useOnboard } from '../../modules/onboard';
 
 import {
   priceAndPathCard,
@@ -22,8 +23,14 @@ import { Widget } from './Widget';
 import { History } from './History';
 
 export const SwapScene = () => {
-  const { fromToken, toToken, network } = useParaInch();
+  const { network: onboarNetwork } = useOnboard();
+  const { fromToken, toToken, network, setNetwork } = useParaInch();
   const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
+
+  useEffect(() => {
+    if (!onboarNetwork || network === onboarNetwork || !isSupportedNetworkId(onboarNetwork)) return;
+    setNetwork(onboarNetwork);
+  }, [onboarNetwork, network, setNetwork]);
 
   useEffect(() => {
     const fromTokenAddress = fromToken?.address;
