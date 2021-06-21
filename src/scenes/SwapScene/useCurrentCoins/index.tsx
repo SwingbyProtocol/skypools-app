@@ -1,11 +1,38 @@
 import { useRouter } from 'next/router';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+
+import { useTokens } from '../../../modules/1inch';
 
 export const useCurrentCoins = () => {
+  const { tokens } = useTokens();
   const {
     push,
-    query: { fromCoin, toCoin },
+    query: { fromCoin: fromCoinParam, toCoin: toCoinParam },
   } = useRouter();
+
+  const fromCoin = useMemo(
+    () =>
+      tokens.find(
+        ({ address }) =>
+          typeof fromCoinParam === 'string' &&
+          address.toLowerCase() === fromCoinParam.toLowerCase(),
+      ) ?? null,
+    [tokens, fromCoinParam],
+  );
+
+  const toCoin = useMemo(() => {
+    const result =
+      tokens.find(
+        ({ address }) =>
+          typeof toCoinParam === 'string' && address.toLowerCase() === toCoinParam.toLowerCase(),
+      ) ?? null;
+
+    if (result === fromCoin) {
+      return null;
+    }
+
+    return result;
+  }, [tokens, toCoinParam, fromCoin]);
 
   return {
     fromCoin,

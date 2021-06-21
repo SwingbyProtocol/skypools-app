@@ -12,28 +12,11 @@ export const Widget = () => {
   const [amount, setAmount] = useState<CoinAmountInputValue['amount']>(null);
 
   const from = useMemo(
-    (): CoinAmountInputValue => ({
-      coin:
-        tokens.find(
-          ({ address }) =>
-            typeof fromCoin === 'string' && address.toLowerCase() === fromCoin.toLowerCase(),
-        ) ?? null,
-      amount,
-    }),
-    [tokens, fromCoin, amount],
+    (): CoinAmountInputValue => ({ coin: fromCoin, amount }),
+    [fromCoin, amount],
   );
 
-  const to = useMemo(
-    (): CoinAmountInputValue => ({
-      coin:
-        tokens.find(
-          ({ address }) =>
-            typeof toCoin === 'string' && address.toLowerCase() === toCoin.toLowerCase(),
-        ) ?? null,
-      amount: null,
-    }),
-    [toCoin, tokens],
-  );
+  const to = useMemo((): CoinAmountInputValue => ({ coin: toCoin, amount: null }), [toCoin]);
 
   const toCoins = useMemo(
     () => tokens.filter((it) => it.address !== from.coin?.address),
