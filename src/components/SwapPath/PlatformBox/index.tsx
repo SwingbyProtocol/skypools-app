@@ -20,6 +20,9 @@ type Props = {
   value: Array<{ platform: string; fraction: BigSource }>;
 };
 
+// These should be exactly the same as the icon file names in `/public`.
+const ICONS = ['pancakeswap', 'skybridge', 'sushiswap', 'uniswap'];
+
 export const PlatformBox = ({ withFractions, withNames, className, value }: Props) => {
   const { formatMessage } = useIntl();
   return (
@@ -36,9 +39,20 @@ export const PlatformBox = ({ withFractions, withNames, className, value }: Prop
           }
         })();
 
+        const logo = (() => {
+          return (
+            ICONS.find((iconName) =>
+              it.platform
+                .toLowerCase()
+                .replace(/[_\s]/gi, '')
+                .includes(iconName.replace('swap', '')),
+            ) ?? it.platform
+          );
+        })();
+
         return (
           <div key={it.platform} css={item}>
-            <Coin css={itemLogo} src={`/swap/platforms/${it.platform}.svg`} />
+            <Coin css={itemLogo} src={`/swap/platforms/${logo}.svg`} />
             {!!withNames && (
               <span css={itemName}>
                 {(() => {

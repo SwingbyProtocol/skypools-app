@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { coin } from './styles';
 
-const UNKNOWN = '/swap/coins/unknown.svg';
+const UNKNOWN = '/swap/unknown-coin.svg';
 
 export const Coin = ({
   src: srcParam,
