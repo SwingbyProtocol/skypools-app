@@ -1,5 +1,5 @@
 import { Big, BigSource } from 'big.js';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { FormattedNumber, useIntl } from 'react-intl';
 
 import { Coin } from '../../Coin';
 
@@ -21,6 +21,7 @@ type Props = {
 };
 
 export const PlatformBox = ({ withFractions, withNames, className, value }: Props) => {
+  const { formatMessage } = useIntl();
   return (
     <div
       css={[platformBox, withNames && withNamesBox, withFractions && withFractionsBox]}
@@ -40,7 +41,15 @@ export const PlatformBox = ({ withFractions, withNames, className, value }: Prop
             <Coin css={itemLogo} src={`/swap/platforms/${it.platform}.svg`} />
             {!!withNames && (
               <span css={itemName}>
-                <FormattedMessage id={`generic.platform.${it.platform}`} />
+                {(() => {
+                  const id = `generic.platform.${it.platform}`;
+                  const result = formatMessage({ id });
+                  if (result === id) {
+                    return it.platform;
+                  }
+
+                  return result;
+                })()}
               </span>
             )}
             {!!withFractions && (

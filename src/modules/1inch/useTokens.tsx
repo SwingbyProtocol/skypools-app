@@ -12,7 +12,7 @@ import { isParaSwapApiError } from './isParaSwapApiError';
 
 const CHECK_EVERY_MS = Duration.fromObject({ minutes: 30 }).as('milliseconds');
 
-type Token = {
+export type Token = {
   symbol: string;
   decimals: number;
   address: string;
