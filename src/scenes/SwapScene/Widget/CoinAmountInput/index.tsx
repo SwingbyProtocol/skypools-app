@@ -7,6 +7,7 @@ import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
 import { NetworkId } from '../../../../modules/onboard';
 import { size } from '../../../../modules/styles';
+import { isNativeToken } from '../../../../modules/para-inch';
 
 import {
   container,
@@ -65,8 +66,6 @@ const styles: StylesConfig<OptionType, false> = {
   }),
 };
 
-const NATIVE_COIN_FAKE_ADDRESS_REG_EXP = /^0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee$/i;
-
 export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
   const coins = useMemo(
     () =>
@@ -77,7 +76,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
             label: (
               <div key={coin.address} css={coinContainer}>
                 <span css={coinChainClass}>
-                  {NATIVE_COIN_FAKE_ADDRESS_REG_EXP.test(coin.address) ? (
+                  {isNativeToken(coin.address) ? (
                     <FormattedMessage id="token.chain.native" />
                   ) : (
                     <FormattedMessage
@@ -101,11 +100,11 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
           };
         })
         .sort((a, b) => {
-          if (NATIVE_COIN_FAKE_ADDRESS_REG_EXP.test(a.value.address)) {
+          if (isNativeToken(a.value.address)) {
             return -1;
           }
 
-          if (NATIVE_COIN_FAKE_ADDRESS_REG_EXP.test(b.value.address)) {
+          if (isNativeToken(b.value.address)) {
             return 1;
           }
 

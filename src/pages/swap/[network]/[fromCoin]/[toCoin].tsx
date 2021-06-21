@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { useMemo } from 'react';
 
-import { isSupportedNetworkId, getTokens } from '../../../../modules/para-inch';
+import { isSupportedNetworkId, getTokens, isNativeToken } from '../../../../modules/para-inch';
 import { ParaInchTokenProvider, ParaInchContextValue } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
 import { SwapScene } from '../../../../scenes/SwapScene';
@@ -59,6 +59,25 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
       ({ address }) =>
         typeof toCoinAddress === 'string' && address.toLowerCase() === toCoinAddress.toLowerCase(),
     ) ?? null;
+
+  if (!fromCoin || !toCoin) {
+    const newFrom =
+      fromCoin?.address ||
+      tokens.find(({ address }) => isNativeToken(address))?.address ||
+      tokens[0]?.address;
+
+    const newTo =
+      toCoin?.address || tokens.filter(({ address }) => !isNativeToken(address))?.[0]?.address;
+
+    if (newFrom && newTo) {
+      return {
+        redirect: {
+          destination: `/swap/${network}/${newFrom}/${newTo}`,
+          permanent: false,
+        },
+      };
+    }
+  }
 
   return {
     props: {
