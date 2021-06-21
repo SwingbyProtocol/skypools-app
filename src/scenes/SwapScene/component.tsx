@@ -1,12 +1,13 @@
 import { DateTime } from 'luxon';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Big } from 'big.js';
 
 import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { useSwapQuote } from '../../modules/1inch';
+import { getSwapQuote, SwapQuote } from '../../modules/para-inch';
+import { useParaInch } from '../../modules/para-inch-react';
 
 import {
   priceAndPathCard,
@@ -19,15 +20,29 @@ import {
 } from './styles';
 import { Widget } from './Widget';
 import { History } from './History';
-import { useCurrentCoins } from './useCurrentCoins';
 
 export const SwapScene = () => {
-  const { fromCoin, toCoin } = useCurrentCoins();
-  const { swapPath } = useSwapQuote({
-    fromTokenAddress: fromCoin?.address,
-    toTokenAddress: toCoin?.address,
-    amount: new Big(1).times('1e18').toFixed(),
-  });
+  const { fromToken, toToken, network } = useParaInch();
+  const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
+
+  useEffect(() => {
+    const fromTokenAddress = fromToken?.address;
+    const toTokenAddress = toToken?.address;
+    if (!fromTokenAddress || !toTokenAddress) {
+      return;
+    }
+
+    (async () => {
+      setSwapQuote(
+        await getSwapQuote({
+          fromTokenAddress,
+          toTokenAddress,
+          amount: new Big(1).times('1e18').toFixed(),
+          network,
+        }),
+      );
+    })();
+  }, [fromToken, toToken, network]);
 
   const data = useMemo(() => {
     const BASE_DATE = DateTime.fromISO('2021-05-27T13:44:12.621Z');
@@ -49,7 +64,7 @@ export const SwapScene = () => {
           <TradingView data={data} />
         </div>
 
-        {!!swapPath?.routes && <SwapPath css={swapPathContainer} value={swapPath.routes[0]} />}
+        {!!swapQuote?.routes && <SwapPath css={swapPathContainer} value={swapQuote.routes[0]} />}
       </Card>
 
       <Card css={widgetCard}>

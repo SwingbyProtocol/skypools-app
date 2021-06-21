@@ -1,22 +1,20 @@
 import { useMemo, useState } from 'react';
 
 import { Button } from '../../../components/Button';
-import { useTokens } from '../../../modules/1inch';
-import { useCurrentCoins } from '../useCurrentCoins';
+import { useParaInch } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 
 export const Widget = () => {
-  const { tokens } = useTokens();
-  const { fromCoin, toCoin, setFromCoin, setToCoin } = useCurrentCoins();
+  const { tokens, fromToken, toToken, setFromToken, setToToken } = useParaInch();
   const [amount, setAmount] = useState<CoinAmountInputValue['amount']>(null);
 
   const from = useMemo(
-    (): CoinAmountInputValue => ({ coin: fromCoin, amount }),
-    [fromCoin, amount],
+    (): CoinAmountInputValue => ({ coin: fromToken, amount }),
+    [fromToken, amount],
   );
 
-  const to = useMemo((): CoinAmountInputValue => ({ coin: toCoin, amount: null }), [toCoin]);
+  const to = useMemo((): CoinAmountInputValue => ({ coin: toToken, amount: null }), [toToken]);
 
   const toCoins = useMemo(
     () => tokens.filter((it) => it.address !== from.coin?.address),
@@ -32,7 +30,7 @@ export const Widget = () => {
         onChange={({ coin, amount }) => {
           setAmount(amount);
           if (coin) {
-            setFromCoin(coin.address);
+            setFromToken(coin.address);
           }
         }}
       />
@@ -42,7 +40,7 @@ export const Widget = () => {
         value={to}
         onChange={({ coin }) => {
           if (coin) {
-            setToCoin(coin.address);
+            setToToken(coin.address);
           }
         }}
       />
