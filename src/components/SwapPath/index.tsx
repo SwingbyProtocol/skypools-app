@@ -18,8 +18,8 @@ export const SwapPath = ({ value: valueParam = { path: [] }, className }: Props)
   const { tokens } = useParaInch();
   const [params, containerRef] = useContainerQuery(
     {
-      withFractions: { minWidth: 120 * valueParam.path[0]?.length },
-      withNames: { minWidth: 280 * valueParam.path[0]?.length },
+      withFractions: { minWidth: 120 * valueParam.path?.length },
+      withNames: { minWidth: 280 * valueParam.path?.length },
     },
     {},
   );
