@@ -40,6 +40,8 @@ export const coin = css`
   min-width: var(--coin-min-size);
   flex-grow: 0;
   flex-shrink: 1;
+  aspect-ratio: 1;
+  height: auto;
 `;
 
 export const divider = css`
