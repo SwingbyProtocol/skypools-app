@@ -16,13 +16,16 @@ type Props = {
 
 export const SwapPath = ({ value: valueParam = { path: [] }, className }: Props) => {
   const { tokens } = useParaInch();
-  const [params, containerRef] = useContainerQuery(
-    {
+
+  const query = useMemo(
+    () => ({
       withFractions: { minWidth: 120 * valueParam.path?.length },
       withNames: { minWidth: 280 * valueParam.path?.length },
-    },
-    {},
+    }),
+    [valueParam.path?.length],
   );
+
+  const [params, containerRef] = useContainerQuery(query, {});
 
   const value = useMemo(
     () => ({
@@ -30,6 +33,8 @@ export const SwapPath = ({ value: valueParam = { path: [] }, className }: Props)
       path: valueParam.path.map((it) =>
         it.map((it) => ({
           ...it,
+          platform: it.exchange,
+          fraction: it.fraction,
           fromTokenLogo:
             tokens.find(
               ({ address }) => address.toLowerCase() === it.fromTokenAddress.toLowerCase(),
@@ -54,7 +59,7 @@ export const SwapPath = ({ value: valueParam = { path: [] }, className }: Props)
             </span>
 
             <PlatformBox
-              value={it.map((it) => ({ platform: it.exchange, fraction: it.fraction }))}
+              value={it}
               withFractions={!!params.withFractions}
               withNames={!!params.withNames}
             />
