@@ -12,7 +12,7 @@ export const Coin = ({
 }: {
   src: string | null | undefined;
   className?: string;
-  loading: React.ComponentPropsWithoutRef<typeof NextImage>['loading'];
+  loading?: React.ComponentPropsWithoutRef<typeof NextImage>['loading'];
 }) => {
   const [src, setSrc] = useState<string>(srcParam ?? UNKNOWN);
 
