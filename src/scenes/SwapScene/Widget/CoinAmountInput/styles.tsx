@@ -23,6 +23,7 @@ export const coinContainer = css`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+  overflow: hidden;
 `;
 
 export const coinWrapper = css`

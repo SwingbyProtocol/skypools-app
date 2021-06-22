@@ -8,9 +8,11 @@ const UNKNOWN = '/swap/unknown-coin.svg';
 export const Coin = ({
   src: srcParam,
   className,
+  loading,
 }: {
   src: string | null | undefined;
   className?: string;
+  loading: React.ComponentPropsWithoutRef<typeof NextImage>['loading'];
 }) => {
   const [src, setSrc] = useState<string>(srcParam ?? UNKNOWN);
 
@@ -41,7 +43,7 @@ export const Coin = ({
 
   return (
     <div css={coin} className={className}>
-      <NextImage src={src} layout="fill" />
+      <NextImage src={src} layout="fill" loading={loading} />
     </div>
   );
 };

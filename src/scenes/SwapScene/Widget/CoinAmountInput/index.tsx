@@ -1,7 +1,8 @@
 import { rem } from 'polished';
 import { useMemo } from 'react';
-import Select, { Theme, StylesConfig, createFilter } from 'react-select';
+import Select, { Theme, StylesConfig, createFilter, MenuListComponentProps } from 'react-select';
 import { FormattedMessage } from 'react-intl';
+import { FixedSizeList as List } from 'react-window';
 
 import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
@@ -66,6 +67,30 @@ const styles: StylesConfig<OptionType, false> = {
   }),
 };
 
+const SELECT_ITEM_HEIGHT = 60;
+
+const MenuList = ({
+  options,
+  children,
+  maxHeight,
+  getValue,
+}: MenuListComponentProps<OptionType, false>) => {
+  const [value] = getValue();
+  const initialOffset = options.indexOf(value) * SELECT_ITEM_HEIGHT;
+
+  return (
+    <List
+      width="100%"
+      height={maxHeight}
+      itemCount={(children as any).length}
+      itemSize={SELECT_ITEM_HEIGHT}
+      initialScrollOffset={initialOffset}
+    >
+      {({ index, style }) => <div style={style}>{(children as any)[index]}</div>}
+    </List>
+  );
+};
+
 export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
   const coins = useMemo(
     () =>
@@ -92,7 +117,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
                   )}
                 </span>
                 <div css={coinWrapper}>
-                  <Coin src={coin.logoUri} css={coinLogo} />
+                  <Coin src={coin.logoUri} css={coinLogo} loading="eager" />
                   <span css={coinNameClass}>{coin.symbol}</span>
                 </div>
               </div>
@@ -124,6 +149,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
   return (
     <div css={container} className={className}>
       <Select<OptionType>
+        components={{ MenuList }}
         css={selectInput}
         theme={theme}
         styles={styles}
