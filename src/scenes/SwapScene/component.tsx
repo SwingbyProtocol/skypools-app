@@ -6,9 +6,15 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { getSwapQuote, isSupportedNetworkId, SwapQuote } from '../../modules/para-inch';
+import {
+  getSwapQuote,
+  isSupportedNetworkId,
+  SwapQuote,
+  SwapQuoteRoute,
+} from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
+import { logger } from '../../modules/logger';
 
 import {
   priceAndPathCard,
@@ -22,6 +28,12 @@ import {
 import { Widget } from './Widget';
 import { History } from './History';
 
+const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
+  path: [
+    [{ exchange: '…', fraction: new Big(1), fromTokenAddress: '0xaa', toTokenAddress: '0xaa' }],
+  ],
+};
+
 export const SwapScene = () => {
   const { network: onboarNetwork } = useOnboard();
   const { fromToken, toToken, network, setNetwork } = useParaInch();
@@ -33,6 +45,8 @@ export const SwapScene = () => {
   }, [onboarNetwork, network, setNetwork]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fromTokenAddress = fromToken?.address;
     const toTokenAddress = toToken?.address;
     if (!fromTokenAddress || !toTokenAddress) {
@@ -40,15 +54,27 @@ export const SwapScene = () => {
     }
 
     (async () => {
-      setSwapQuote(
-        await getSwapQuote({
+      try {
+        if (cancelled) return;
+
+        setSwapQuote(null);
+        const result = await getSwapQuote({
           fromTokenAddress,
           toTokenAddress,
           amount: new Big(1).times('1e18').toFixed(),
           network,
-        }),
-      );
+        });
+
+        if (cancelled) return;
+        setSwapQuote(result);
+      } catch (err) {
+        logger.error({ err }, 'Failed to load swap quote');
+      }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [fromToken, toToken, network]);
 
   const data = useMemo(() => {
@@ -71,7 +97,7 @@ export const SwapScene = () => {
           <TradingView data={data} />
         </div>
 
-        {!!swapQuote?.routes && <SwapPath css={swapPathContainer} value={swapQuote.routes[0]} />}
+        <SwapPath css={swapPathContainer} value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE} />
       </Card>
 
       <Card css={widgetCard}>
