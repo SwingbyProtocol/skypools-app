@@ -1,36 +1,42 @@
-import { DateTime } from 'luxon';
-import { useEffect, useMemo, useState } from 'react';
 import { Big } from 'big.js';
+import { useEffect, useState } from 'react';
 
 import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { getSwapQuote, isSupportedNetworkId, SwapQuote } from '../../modules/para-inch';
-import { useParaInch } from '../../modules/para-inch-react';
+import { useGetChartData } from '../../modules/history';
 import { useOnboard } from '../../modules/onboard';
-
 import {
-  priceAndPathCard,
+  getSwapQuote,
+  isSupportedNetworkId,
+  ParaInchToken,
+  SwapQuote,
+} from '../../modules/para-inch';
+import { useParaInch } from '../../modules/para-inch-react';
+
+import { History } from './History';
+import {
   chartContainer,
+  headerContainer,
+  historyCard,
+  priceAndPathCard,
   swapPathContainer,
   swapScene,
   widgetCard,
-  headerContainer,
-  historyCard,
 } from './styles';
 import { Widget } from './Widget';
-import { History } from './History';
 
 export const SwapScene = () => {
-  const { network: onboarNetwork } = useOnboard();
+  const { network: onboardNetwork } = useOnboard();
   const { fromToken, toToken, network, setNetwork } = useParaInch();
   const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
 
   useEffect(() => {
-    if (!onboarNetwork || network === onboarNetwork || !isSupportedNetworkId(onboarNetwork)) return;
-    setNetwork(onboarNetwork);
-  }, [onboarNetwork, network, setNetwork]);
+    if (!onboardNetwork || network === onboardNetwork || !isSupportedNetworkId(onboardNetwork))
+      return;
+    setNetwork(onboardNetwork);
+  }, [onboardNetwork, network, setNetwork]);
 
   useEffect(() => {
     const fromTokenAddress = fromToken?.address;
@@ -51,16 +57,21 @@ export const SwapScene = () => {
     })();
   }, [fromToken, toToken, network]);
 
-  const data = useMemo(() => {
-    const BASE_DATE = DateTime.fromISO('2021-05-27T13:44:12.621Z');
-    return new Array(500)
-      .fill(null)
-      .map((_, index) => ({
-        time: BASE_DATE.plus({ days: index }).toISO(),
-        value: Math.pow(index, 2),
-      }))
-      .sort((a, b) => a.time.localeCompare(b.time));
-  }, []);
+  const { chartData, isLoading } = useGetChartData(
+    fromToken as ParaInchToken,
+    toToken as ParaInchToken,
+  );
+
+  // const data = useMemo(() => {
+  //   const BASE_DATE = DateTime.fromISO('2021-05-27T13:44:12.621Z');
+  //   return new Array(500)
+  //     .fill(null)
+  //     .map((_, index) => ({
+  //       time: BASE_DATE.plus({ days: index }).toISO(),
+  //       value: Math.pow(index, 2),
+  //     }))
+  //     .sort((a, b) => a.time.localeCompare(b.time));
+  // }, []);
 
   return (
     <div css={swapScene}>
@@ -68,7 +79,13 @@ export const SwapScene = () => {
 
       <Card css={priceAndPathCard}>
         <div css={chartContainer}>
-          <TradingView data={data} />
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : !chartData ? (
+            <div>Chart is not available for the selected pair</div>
+          ) : (
+            <TradingView data={chartData} />
+          )}
         </div>
 
         {!!swapQuote?.routes && <SwapPath css={swapPathContainer} value={swapQuote.routes[0]} />}

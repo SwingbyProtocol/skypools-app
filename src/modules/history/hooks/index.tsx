@@ -1,0 +1,1 @@
+export { useGetChartData } from './useGetChartData';

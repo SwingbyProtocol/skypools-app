@@ -5,7 +5,9 @@ import { useIntl } from 'react-intl';
 
 import { container, wrapper } from './styles';
 
-export type Props = { data: Array<{ time: string; value: number }> };
+// Fixme
+export type Props = any;
+// export type Props = Promise<{ data: Array<{ time: string; value: number }> }>;
 
 export const TradingView = ({ data = [] }: Props) => {
   const { locale } = useIntl();
