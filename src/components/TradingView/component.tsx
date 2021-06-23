@@ -18,7 +18,7 @@ export const TradingView = ({ data = [] }: Props) => {
     chartRef.current = createChart(chartDivRef.current!, {
       leftPriceScale: { visible: true, borderVisible: false, mode: PriceScaleMode.Normal },
       rightPriceScale: { visible: false },
-      timeScale: { fixLeftEdge: true, borderVisible: false },
+      timeScale: { fixLeftEdge: false, borderVisible: false },
       layout: { fontSize: 10 },
       grid: { vertLines: { visible: false } },
       handleScroll: {
@@ -45,11 +45,10 @@ export const TradingView = ({ data = [] }: Props) => {
   useEffect(() => {
     if (!chartRef.current) return;
 
-    if (areaSeriesRef.current) {
-      chartRef.current.removeSeries(areaSeriesRef.current);
+    if (!areaSeriesRef.current) {
+      areaSeriesRef.current = chartRef.current.addAreaSeries();
     }
 
-    areaSeriesRef.current = chartRef.current.addAreaSeries({ lastValueVisible: true });
     areaSeriesRef.current.setData(data);
   }, [data]);
 

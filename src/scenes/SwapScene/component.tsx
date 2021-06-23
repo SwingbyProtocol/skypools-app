@@ -30,10 +30,13 @@ import {
 } from './styles';
 import { Widget } from './Widget';
 
-const FAKE_PRICE_HISTORY = new Array(25).fill(null).map((_, index) => ({
-  time: DateTime.utc().minus({ months: index }).toISO(),
-  value: 1 + (index % 3) * index,
-}));
+const FAKE_PRICE_HISTORY = new Array(25)
+  .fill(null)
+  .map((_, index) => ({
+    time: DateTime.utc().minus({ months: index }).toISO(),
+    value: 1 + (index % 3) * index,
+  }))
+  .reverse();
 
 const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
   path: [
