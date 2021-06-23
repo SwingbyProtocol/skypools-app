@@ -6,14 +6,15 @@ import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
 import { useGetChartData } from '../../modules/history';
-import { useOnboard } from '../../modules/onboard';
 import {
   getSwapQuote,
   isSupportedNetworkId,
-  ParaInchToken,
   SwapQuote,
+  SwapQuoteRoute,
 } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
+import { useOnboard } from '../../modules/onboard';
+import { logger } from '../../modules/logger';
 
 import { History } from './History';
 import {
@@ -24,8 +25,15 @@ import {
   swapPathContainer,
   swapScene,
   widgetCard,
+  swapPathLoading,
 } from './styles';
 import { Widget } from './Widget';
+
+const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
+  path: [
+    [{ exchange: '…', fraction: new Big(1), fromTokenAddress: '0xaa', toTokenAddress: '0xaa' }],
+  ],
+};
 
 export const SwapScene = () => {
   const { network: onboardNetwork } = useOnboard();
@@ -39,22 +47,39 @@ export const SwapScene = () => {
   }, [onboardNetwork, network, setNetwork]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fromTokenAddress = fromToken?.address;
     const toTokenAddress = toToken?.address;
     if (!fromTokenAddress || !toTokenAddress) {
       return;
     }
 
-    (async () => {
-      setSwapQuote(
-        await getSwapQuote({
+    const loadQuote = async () => {
+      try {
+        if (cancelled) return;
+
+        setSwapQuote(null);
+        const result = await getSwapQuote({
           fromTokenAddress,
           toTokenAddress,
           amount: new Big(1).times('1e18').toFixed(),
           network,
-        }),
-      );
-    })();
+        });
+
+        if (cancelled) return;
+        setSwapQuote(result);
+      } catch (err) {
+        logger.error({ err }, 'Failed to load swap quote');
+        setTimeout(loadQuote, 2500);
+      }
+    };
+
+    loadQuote();
+
+    return () => {
+      cancelled = true;
+    };
   }, [fromToken, toToken, network]);
 
   const { chartData, isLoading } = useGetChartData(
@@ -88,7 +113,12 @@ export const SwapScene = () => {
           )}
         </div>
 
-        {!!swapQuote?.routes && <SwapPath css={swapPathContainer} value={swapQuote.routes[0]} />}
+        <div css={swapPathContainer}>
+          <SwapPath
+            css={swapQuote === null && swapPathLoading}
+            value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE}
+          />
+        </div>
       </Card>
 
       <Card css={widgetCard}>

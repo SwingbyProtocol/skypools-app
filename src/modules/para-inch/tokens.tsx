@@ -37,7 +37,7 @@ export const getTokens = async ({
           network: it.network as NetworkId,
         }),
       )
-      .filter((it) => !!it.symbol);
+      .filter((it) => !!it.symbol && !!it.address);
   }
 
   const result = await fetcher<{

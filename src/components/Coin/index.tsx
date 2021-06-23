@@ -14,10 +14,11 @@ export const Coin = ({
   className?: string;
   loading?: React.ComponentPropsWithoutRef<typeof NextImage>['loading'];
 }) => {
-  const [src, setSrc] = useState<string>(srcParam ?? UNKNOWN);
+  const [src, setSrc] = useState<string>(srcParam || UNKNOWN);
 
   useEffect(() => {
     if (!srcParam) {
+      setSrc(UNKNOWN);
       return;
     }
 
