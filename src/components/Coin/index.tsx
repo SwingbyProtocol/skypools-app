@@ -18,6 +18,7 @@ export const Coin = ({
 
   useEffect(() => {
     if (!srcParam) {
+      setSrc(UNKNOWN);
       return;
     }
 
