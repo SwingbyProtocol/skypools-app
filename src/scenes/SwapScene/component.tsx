@@ -54,7 +54,7 @@ export const SwapScene = () => {
       return;
     }
 
-    (async () => {
+    const loadQuote = async () => {
       try {
         if (cancelled) return;
 
@@ -70,8 +70,11 @@ export const SwapScene = () => {
         setSwapQuote(result);
       } catch (err) {
         logger.error({ err }, 'Failed to load swap quote');
+        setTimeout(loadQuote, 2500);
       }
-    })();
+    };
+
+    loadQuote();
 
     return () => {
       cancelled = true;
