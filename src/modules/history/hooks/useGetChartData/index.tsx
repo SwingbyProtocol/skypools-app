@@ -6,7 +6,7 @@ import { getChartData } from '../../utils';
 
 export const useGetChartData = (fromToken: ParaInchToken, toToken: ParaInchToken) => {
   const [chartData, setChartData] = useState<IChartDate[] | null | false>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const isValidCondition = fromToken && toToken;
 
   useEffect(() => {
