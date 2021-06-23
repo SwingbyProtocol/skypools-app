@@ -1,12 +1,11 @@
-import { useContext } from 'react';
 import { ParaSwap } from 'paraswap';
 
-import { NetworkId } from '../onboard';
 import { fetcher } from '../fetch';
+import { NetworkId } from '../onboard';
 
 import { ENDPOINT_1INCH_API, SHOULD_USE_PARASWAP } from './constants';
-import { SupportedNetworkId } from './isSupportedNetwork';
 import { isParaSwapApiError } from './isParaSwapApiError';
+import { SupportedNetworkId } from './isSupportedNetwork';
 
 export type ParaInchToken = {
   symbol: string;
