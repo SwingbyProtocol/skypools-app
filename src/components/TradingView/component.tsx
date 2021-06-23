@@ -49,7 +49,7 @@ export const TradingView = ({ data = [] }: Props) => {
       chartRef.current.removeSeries(areaSeriesRef.current);
     }
 
-    areaSeriesRef.current = chartRef.current.addAreaSeries();
+    areaSeriesRef.current = chartRef.current.addAreaSeries({ lastValueVisible: true });
     areaSeriesRef.current.setData(data);
   }, [data]);
 

@@ -58,7 +58,7 @@ const pulse = keyframes`
   }
 `;
 
-export const swapPathLoading = css`
+export const loadingPulseAnimation = css`
   animation: ${pulse} 5s ease infinite;
 `;
 

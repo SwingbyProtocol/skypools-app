@@ -1,1 +1,0 @@
-export { useGetChartData } from './useGetChartData';

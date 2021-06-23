@@ -1,12 +1,13 @@
 import { Big } from 'big.js';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { DateTime } from 'luxon';
 
 import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { useGetChartData } from '../../modules/history';
 import {
+  getPriceHistory,
   getSwapQuote,
   isSupportedNetworkId,
   SwapQuote,
@@ -25,9 +26,14 @@ import {
   swapPathContainer,
   swapScene,
   widgetCard,
-  swapPathLoading,
+  loadingPulseAnimation,
 } from './styles';
 import { Widget } from './Widget';
+
+const FAKE_PRICE_HISTORY = new Array(25).fill(null).map((_, index) => ({
+  time: DateTime.utc().minus({ months: index }).toISO(),
+  value: 1 + (index % 3) * index,
+}));
 
 const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
   path: [
@@ -39,6 +45,9 @@ export const SwapScene = () => {
   const { network: onboardNetwork } = useOnboard();
   const { fromToken, toToken, network, setNetwork } = useParaInch();
   const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
+  const [priceHistory, setPriceHistory] = useState<
+    React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
+  >(null);
 
   useEffect(() => {
     if (!onboardNetwork || network === onboardNetwork || !isSupportedNetworkId(onboardNetwork))
@@ -82,40 +91,53 @@ export const SwapScene = () => {
     };
   }, [fromToken, toToken, network]);
 
-  const { chartData, isLoading } = useGetChartData(
-    fromToken as ParaInchToken,
-    toToken as ParaInchToken,
-  );
+  useEffect(() => {
+    let cancelled = false;
 
-  // const data = useMemo(() => {
-  //   const BASE_DATE = DateTime.fromISO('2021-05-27T13:44:12.621Z');
-  //   return new Array(500)
-  //     .fill(null)
-  //     .map((_, index) => ({
-  //       time: BASE_DATE.plus({ days: index }).toISO(),
-  //       value: Math.pow(index, 2),
-  //     }))
-  //     .sort((a, b) => a.time.localeCompare(b.time));
-  // }, []);
+    const fromTokenAddress = fromToken?.address;
+    const toTokenAddress = toToken?.address;
+    if (!fromTokenAddress || !toTokenAddress) {
+      return;
+    }
+
+    const loadPriceHistory = async () => {
+      try {
+        if (cancelled) return;
+
+        setPriceHistory(null);
+        const result = await getPriceHistory({
+          fromTokenAddress,
+          toTokenAddress,
+          network,
+        });
+
+        if (cancelled) return;
+        setPriceHistory(result.map((it) => ({ time: it.at.toISO(), value: it.value.toNumber() })));
+      } catch (err) {
+        logger.error({ err }, 'Failed to load price history');
+        setTimeout(loadPriceHistory, 2500);
+      }
+    };
+
+    loadPriceHistory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fromToken, toToken, network]);
 
   return (
     <div css={swapScene}>
       <Header css={headerContainer} />
 
       <Card css={priceAndPathCard}>
-        <div css={chartContainer}>
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : !chartData ? (
-            <div>Chart is not available for the selected pair</div>
-          ) : (
-            <TradingView data={chartData} />
-          )}
+        <div css={[chartContainer, priceHistory === null && loadingPulseAnimation]}>
+          <TradingView data={priceHistory ?? FAKE_PRICE_HISTORY} />
         </div>
 
         <div css={swapPathContainer}>
           <SwapPath
-            css={swapQuote === null && swapPathLoading}
+            css={swapQuote === null && loadingPulseAnimation}
             value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE}
           />
         </div>
