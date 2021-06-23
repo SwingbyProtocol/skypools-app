@@ -30,11 +30,11 @@ import {
 } from './styles';
 import { Widget } from './Widget';
 
-const FAKE_PRICE_HISTORY = new Array(25)
+const FAKE_PRICE_HISTORY = new Array(150)
   .fill(null)
   .map((_, index) => ({
     time: DateTime.utc().minus({ months: index }).toISO(),
-    value: 1 + (index % 3) * index,
+    value: 1,
   }))
   .reverse();
 
