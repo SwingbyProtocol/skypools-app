@@ -84,8 +84,8 @@ export const getSwapQuote = async ({
                   return new Big(0);
                 }
               })(),
-              fromTokenAddress: it.data?.tokenFrom,
-              toTokenAddress: it.data?.tokenTo,
+              fromTokenAddress: it.data?.tokenFrom ?? fromTokenAddress,
+              toTokenAddress: it.data?.tokenTo ?? toTokenAddress,
             },
           ]),
         },
