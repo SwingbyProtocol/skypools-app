@@ -24,6 +24,7 @@ import {
   widgetCard,
   headerContainer,
   historyCard,
+  swapPathLoading,
 } from './styles';
 import { Widget } from './Widget';
 import { History } from './History';
@@ -97,7 +98,12 @@ export const SwapScene = () => {
           <TradingView data={data} />
         </div>
 
-        <SwapPath css={swapPathContainer} value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE} />
+        <div css={swapPathContainer}>
+          <SwapPath
+            css={swapQuote === null && swapPathLoading}
+            value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE}
+          />
+        </div>
       </Card>
 
       <Card css={widgetCard}>

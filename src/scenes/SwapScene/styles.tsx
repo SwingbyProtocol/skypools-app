@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { rem } from 'polished';
 
 import { size } from '../../modules/styles';
@@ -38,6 +38,28 @@ export const chartContainer = css`
 export const swapPathContainer = css`
   background: hsl(var(--sp-color-bg-accent));
   padding: ${rem(size.street)} ${rem(size.town)};
+`;
+
+const pulse = keyframes`
+  from, 20%, 53%, 80%, to {
+    opacity: 0.75;
+  }
+
+  40%, 43% {
+    opacity: 0.1;
+  }
+
+  70% {
+    opacity: 0.3;
+  }
+
+  90% {
+    opacity: 0.5;
+  }
+`;
+
+export const swapPathLoading = css`
+  animation: ${pulse} 5s ease infinite;
 `;
 
 export const widgetCard = css`
