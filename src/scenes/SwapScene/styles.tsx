@@ -42,7 +42,7 @@ export const swapPathContainer = css`
 
 const pulse = keyframes`
   from, 20%, 53%, 80%, to {
-    opacity: 0.75;
+    opacity: 0.4;
   }
 
   40%, 43% {
@@ -59,6 +59,8 @@ const pulse = keyframes`
 `;
 
 export const loadingPulseAnimation = css`
+  opacity: 0.5;
+  filter: saturate(0%);
   animation: ${pulse} 5s ease infinite;
 `;
 
