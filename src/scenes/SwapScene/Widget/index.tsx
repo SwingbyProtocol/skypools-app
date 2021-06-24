@@ -46,6 +46,7 @@ export const Widget = () => {
         css={toInput}
         availableCoins={toCoins}
         value={to}
+        amountDisabled
         onChange={({ coin }) => {
           if (coin) {
             setToToken(coin.address);

@@ -31,6 +31,7 @@ type Props = {
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
+  amountDisabled?: boolean;
 };
 
 const theme = (theme: Theme): Theme => ({
@@ -104,7 +105,13 @@ const MenuList = ({
   );
 };
 
-export const CoinAmountInput = ({ availableCoins, className, value, onChange }: Props) => {
+export const CoinAmountInput = ({
+  availableCoins,
+  className,
+  value,
+  onChange,
+  amountDisabled = false,
+}: Props) => {
   const coins = useMemo(
     () =>
       availableCoins
@@ -179,6 +186,7 @@ export const CoinAmountInput = ({ availableCoins, className, value, onChange }: 
         size="country"
         value={value?.amount ?? ''}
         onChange={(evt) => onChange?.({ coin: value.coin, amount: evt.target.value ?? null })}
+        disabled={amountDisabled}
       />
     </div>
   );
