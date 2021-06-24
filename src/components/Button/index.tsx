@@ -46,7 +46,7 @@ export const Button = ({
   ...props
 }: Props) => {
   const Component = props.href ? 'a' : 'button';
-  const [{ shadow, opacity }, set] = useSpring(() => ({
+  const [{ shadow, opacity }, api] = useSpring(() => ({
     from: { shadow: 0, opacity: 0.3 },
     shadow: 0,
     opacity: 0,
@@ -55,10 +55,10 @@ export const Button = ({
 
   const click = useCallback<NonNullable<Props['onClick']>>(
     (evt) => {
-      set({ shadow: 1, opacity: 0, reset: true });
+      api.start({ shadow: 1, opacity: 0, reset: true });
       onClick?.(evt);
     },
-    [onClick, set],
+    [onClick, api],
   );
 
   return (
