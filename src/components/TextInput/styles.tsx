@@ -37,11 +37,23 @@ export const inputContainer = css`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background: hsl(var(--sp-color-bg-base));
-  border: 2px solid transparent;
+  background: hsl(var(--sp-color-input-bg));
+  border: 1px solid transparent;
   color: hsl(var(--sp-color-text-normal));
   overflow: hidden;
   font-size: ${rem(size.house)};
+
+  :hover {
+    border-color: hsl(var(--sp-color-border-hover));
+  }
+
+  :focus-within {
+    border-color: hsl(var(--sp-color-primary-normal));
+  }
+
+  :focus-within:hover {
+    border-color: hsl(var(--sp-color-primary-active));
+  }
 
   ${transitions(['color', 'background', 'border'], 'var(--sp-duration-normal) ease-in-out')};
 `;

@@ -24,7 +24,10 @@ export const lightTheme = `
   --sp-color-text-masked: ${hslParams('hsla(215, 8%, 61%)')};
   --sp-color-text-placeholder: ${hslParams('hsla(215, 8%, 61%)')};
 
+  --sp-color-input-bg: var(--sp-color-bg-accent);
+
   --sp-color-border-normal: ${hslParams('hsla(216, 8%, 88%)')};
+  --sp-color-border-hover: ${hslParams('hsla(216, 8%, 70%)')};
 
   --sp-color-primary-normal: ${hslParams('hsla(127, 51%, 47%)')};
   --sp-color-primary-active: ${hslParams('hsla(127, 51%, 40%)')};
@@ -51,11 +54,12 @@ export const darkTheme = `
 
   --sp-color-text-normal: ${hslParams('hsla(0, 0%, 100%)')};
   --sp-color-text-masked: ${hslParams('hsla(0, 0%, 98%)')};
+  --sp-color-text-placeholder: ${hslParams('hsla(215, 8%, 61%)')};
+
+  --sp-color-input-bg: var(--sp-color-bg-accent);
 
   --sp-color-border-normal: ${hslParams('hsla(216, 8%, 88%)')};
-
-  --sp-color-primary-normal: ${hslParams('hsla(127, 51%, 47%)')};
-  --sp-color-primary-active: ${hslParams('hsla(127, 51%, 40%)')};
+  --sp-color-border-hover: ${hslParams('hsla(216, 8%, 70%)')};
 
   --sp-tooltip-border: 1px solid hsl(var(--sp-color-border-normal));
   --sp-tooltip-shadow: none;
@@ -81,6 +85,7 @@ export const GlobalStyles = () => (
       html {
         background: hsl(var(--sp-color-bg-base));
         color: hsl(var(--sp-color-text-normal));
+        caret-color: hsla(var(--sp-color-text-normal), 75%);
         box-sizing: border-box;
         font-family: 'Inter', -apple-system, '.SFNSText-Regular', 'San Francisco',
           BlinkMacSystemFont, '.PingFang-SC-Regular', 'Microsoft YaHei', 'Segoe UI',

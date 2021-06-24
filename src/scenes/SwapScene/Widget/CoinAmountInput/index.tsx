@@ -44,17 +44,18 @@ const theme = (theme: Theme): Theme => ({
     primary25: 'hsla(var(--sp-color-primary-normal), 25%)',
     danger: 'hsl(var(--sp-color-danger-normal))',
     dangerLight: 'hsla(var(--sp-color-danger-normal), 50%)',
-    neutral0: 'hsl(var(--sp-color-bg-normal))',
-    neutral5: 'hsl(var(--sp-color-bg-base))',
-    neutral10: 'hsl(var--sp-color-bg-accent))',
-    neutral20: 'hsla(var(--sp-color-text-normal), 20%)',
-    neutral30: 'hsla(var(--sp-color-text-normal), 30%)',
-    neutral40: 'hsla(var(--sp-color-text-normal), 40%)',
-    neutral50: 'hsla(var(--sp-color-text-normal), 50%)',
-    neutral60: 'hsla(var(--sp-color-text-normal), 60%)',
-    neutral70: 'hsla(var(--sp-color-text-normal), 70%)',
-    neutral80: 'hsla(var(--sp-color-text-normal), 80%)',
-    neutral90: 'hsla(var(--sp-color-text-normal), 90%)',
+    // These are all `red` so that we can spot them easily and fix them with the `styles` object below.
+    neutral0: 'red',
+    neutral5: 'red',
+    neutral10: 'red',
+    neutral20: 'red',
+    neutral30: 'red',
+    neutral40: 'red',
+    neutral50: 'red',
+    neutral60: 'red',
+    neutral70: 'red',
+    neutral80: 'red',
+    neutral90: 'red',
   },
 });
 
@@ -68,16 +69,36 @@ const styles: StylesConfig<OptionType, false> = {
   dropdownIndicator: (styles) => ({
     ...styles,
     color: 'hsl(var(--sp-color-primary-normal))',
+    ':hover': {
+      color: 'hsl(var(--sp-color-primary-active))',
+    },
   }),
-  control: (styles) => ({
+  control: (styles, { isFocused }) => ({
     ...styles,
     borderRadius: rem(size.closet),
     height: rem(size.country),
-    border: '2px solid hsl(var(--sp-color-border-normal))',
+    borderColor: isFocused
+      ? 'hsl(var(--sp-color-primary-normal))'
+      : 'hsl(var(--sp-color-border-normal))',
+    boxShadow: 'none',
+    backgroundColor: 'hsl(var(--sp-color-input-bg))',
+    ':hover': {
+      borderColor: isFocused
+        ? 'hsl(var(--sp-color-primary-active))'
+        : 'hsl(var(--sp-color-border-hover))',
+    },
   }),
   valueContainer: (styles) => ({
     ...styles,
     height: '100%',
+  }),
+  input: (styles) => ({
+    ...styles,
+    caretColor: 'inherit',
+  }),
+  menu: (styles) => ({
+    ...styles,
+    backgroundColor: 'hsl(var(--sp-color-input-bg))',
   }),
 };
 
