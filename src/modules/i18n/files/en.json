@@ -15,5 +15,8 @@
   "generic.platform.sushiswap-v2": "SushiSwap V2",
   "generic.platform.skybridge": "Skybridge",
   "token.chain.native": "Native",
-  "token.chain.on-chain": "On {chain}"
+  "token.chain.on-chain": "On {chain}",
+  "widget.from": "From",
+  "widget.to": "To",
+  "widget.swap": "Swap"
 }

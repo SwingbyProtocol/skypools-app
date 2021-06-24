@@ -7,7 +7,7 @@ export const swapScene = css`
   display: grid;
   grid-gap: ${rem(size.town)};
   grid-template-columns: 1fr 1fr minmax(min-content, 1fr);
-  grid-template-rows: min-content min-content 1fr 1fr;
+  grid-template-rows: min-content min-content min-content 1fr;
   grid-template-areas:
     'header header header'
     'path path widget'
