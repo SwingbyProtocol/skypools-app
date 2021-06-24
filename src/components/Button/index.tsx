@@ -80,6 +80,7 @@ export const Button = ({
         size === 'street' && sizeStreet,
       ]}
       {...props}
+      className={className}
       onClick={click}
       style={{
         width: shape === 'square' || shape === 'circle' ? rem(styleSize[size]) : undefined,
