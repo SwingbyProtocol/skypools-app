@@ -74,6 +74,11 @@ export const widgetCard = css`
   border: none;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
   z-index: 2;
+
+  @media (prefers-color-scheme: dark) {
+    box-shadow: none;
+    border: 1px solid hsl(var(--sp-color-border-normal));
+  }
 `;
 
 export const historyCard = css`

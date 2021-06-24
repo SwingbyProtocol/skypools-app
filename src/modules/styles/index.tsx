@@ -15,8 +15,10 @@ export const size = {
 
 const hslParams = (value: string) => value.replace(/(hsla?\()|(\))/gi, '');
 
+const primaryText = hslParams('hsla(0, 0%, 100%)');
+
 export const lightTheme = `
-  --sp-color-bg-normal: ${hslParams('hsla(0, 0%, 100%)')};
+  --sp-color-bg-normal: ${primaryText};
   --sp-color-bg-base: ${hslParams('hsla(240, 20%, 99%)')};
   --sp-color-bg-accent: ${hslParams('hsla(0, 0%, 98%)')};
 
@@ -31,15 +33,15 @@ export const lightTheme = `
 
   --sp-color-primary-normal: ${hslParams('hsla(127, 51%, 47%)')};
   --sp-color-primary-active: ${hslParams('hsla(127, 51%, 40%)')};
-  --sp-color-primary-text: var(--sp-color-bg-normal);
+  --sp-color-primary-text: ${primaryText};
 
   --sp-color-danger-normal: ${hslParams('hsl(0, 50%, 50%)')};
   --sp-color-danger-active: ${hslParams('hsl(0, 50%, 40%)')};
-  --sp-color-danger-text: var(--sp-color-bg-normal);
+  --sp-color-danger-text: ${primaryText};
 
   --sp-color-success-normal: ${hslParams('hsl(100, 50%, 50%)')};
   --sp-color-success-active: ${hslParams('hsl(100, 50%, 40%)')};
-  --sp-color-success-text: var(--sp-color-bg-normal);
+  --sp-color-success-text: ${primaryText};
 
   --sp-tooltip-border: none;
   --sp-tooltip-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -58,8 +60,8 @@ export const darkTheme = `
 
   --sp-color-input-bg: var(--sp-color-bg-accent);
 
-  --sp-color-border-normal: ${hslParams('hsla(216, 8%, 88%)')};
-  --sp-color-border-hover: ${hslParams('hsla(216, 8%, 70%)')};
+  --sp-color-border-normal: ${hslParams('hsla(216, 8%, 35%)')};
+  --sp-color-border-hover: ${hslParams('hsla(216, 8%, 45%)')};
 
   --sp-tooltip-border: 1px solid hsl(var(--sp-color-border-normal));
   --sp-tooltip-shadow: none;
