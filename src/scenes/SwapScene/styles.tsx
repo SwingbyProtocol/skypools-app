@@ -6,17 +6,27 @@ import { size } from '../../modules/styles';
 export const swapScene = css`
   display: grid;
   grid-gap: ${rem(size.town)};
-  grid-template-columns: 1fr 1fr minmax(${rem(280)}, 1fr);
-  grid-template-rows: min-content min-content min-content minmax(${rem(200)}, 1fr);
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content min-content ${rem(300)} ${rem(200)};
   grid-template-areas:
-    'header header header'
-    'path path widget'
-    'path path widget'
-    'path path history';
+    'header'
+    'widget'
+    'path'
+    'history';
   padding: ${rem(size.town)};
   padding: ${rem(size.town)} var(--sp-app-inset-right) var(--sp-app-inset-bottom)
     var(--sp-app-inset-left);
   min-height: 100vh;
+
+  @media (min-width: ${rem(768)}) {
+    grid-template-columns: 1fr 1fr minmax(${rem(280)}, 1fr);
+    grid-template-rows: min-content min-content min-content minmax(${rem(200)}, 1fr);
+    grid-template-areas:
+      'header header header'
+      'path path widget'
+      'path path widget'
+      'path path history';
+  }
 `;
 
 export const headerContainer = css`
@@ -32,6 +42,7 @@ export const priceAndPathCard = css`
   flex-direction: column;
   max-width: 100%;
   overflow: hidden;
+  z-index: 2;
 `;
 
 export const chartContainer = css`
