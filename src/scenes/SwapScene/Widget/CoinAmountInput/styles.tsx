@@ -5,7 +5,7 @@ import { size } from '../../../../modules/styles';
 
 export const container = css`
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: minmax(${rem(125)}, 1fr) 1.5fr;
   grid-template-areas: 'coin amount';
   grid-gap: ${rem(size.closet)};
 `;
