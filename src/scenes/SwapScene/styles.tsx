@@ -14,17 +14,16 @@ export const swapScene = css`
     'path path widget'
     'path path history';
   padding: ${rem(size.town)};
-  padding: ${rem(size.town)} max(env(safe-area-inset-right), ${rem(size.town)})
-    max(env(safe-area-inset-bottom), ${rem(size.town)})
-    max(env(safe-area-inset-left), ${rem(size.town)});
+  padding: ${rem(size.town)} var(--sp-app-inset-right) var(--sp-app-inset-bottom)
+    var(--sp-app-inset-left);
   min-height: 100vh;
 `;
 
 export const headerContainer = css`
   grid-area: header;
   margin: ${rem(-size.town)} ${rem(-size.town)} 0 ${rem(-size.town)};
-  margin: ${rem(-size.town)} calc(-1 * max(${rem(size.town)}, env(safe-area-inset-right))) 0
-    calc(-1 * max(${rem(size.town)}, env(safe-area-inset-left)));
+  margin: ${rem(-size.town)} calc(-1 * var(--sp-app-inset-right)) 0
+    calc(-1 * var(--sp-app-inset-left));
 `;
 
 export const priceAndPathCard = css`
@@ -90,5 +89,5 @@ export const historyCard = css`
   grid-area: history;
   margin-top: ${rem(-size.town - size.room)};
   margin-bottom: ${rem(-size.town)};
-  margin-bottom: calc(-1 * max(${rem(size.town)}, env(safe-area-inset-bottom)));
+  margin-bottom: calc(-1 * var(--sp-app-inset-bottom));
 `;

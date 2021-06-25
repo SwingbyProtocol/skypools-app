@@ -14,8 +14,7 @@ export const header = css`
   background: hsl(var(--sp-color-bg-normal));
   border-bottom: 1px solid hsl(var(--sp-color-border-normal));
   padding: 0 ${rem(size.town)};
-  padding: 0 max(${rem(size.town)}, env(safe-area-inset-right)) 0
-    max(${rem(size.town)}, env(safe-area-inset-left));
+  padding: 0 var(--sp-app-inset-right) 0 var(--sp-app-inset-left);
 `;
 
 export const logo = css`
