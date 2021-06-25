@@ -1,4 +1,5 @@
 import { Global, css } from '@emotion/react';
+import { rem } from 'polished';
 
 export const size = {
   box: 4,
@@ -47,6 +48,11 @@ export const lightTheme = `
   --sp-tooltip-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 
   --sp-duration-normal: 150ms;
+
+  --sp-app-inset-top: max(${rem(size.town)}, env(safe-area-inset-top));
+  --sp-app-inset-right: max(${rem(size.town)}, env(safe-area-inset-right));
+  --sp-app-inset-bottom: max(${rem(size.town)}, env(safe-area-inset-bottom));
+  --sp-app-inset-left: max(${rem(size.town)}, env(safe-area-inset-left));
 `;
 
 export const darkTheme = `

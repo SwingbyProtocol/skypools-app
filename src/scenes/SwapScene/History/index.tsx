@@ -3,6 +3,8 @@ import { VariableSizeList as List, ListChildComponentProps } from 'react-window'
 import Image from 'next/image';
 import { FormattedDate, FormattedNumber, useIntl } from 'react-intl';
 import { DateTime } from 'luxon';
+import { useRef, useEffect, useCallback, useState } from 'react';
+import { stripUnit } from 'polished';
 
 import { size } from '../../../modules/styles';
 
@@ -17,6 +19,7 @@ import {
   type,
   firstRow,
   lastRow,
+  sizeCalc,
 } from './styles';
 
 type Props = { className?: string };
@@ -45,7 +48,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       style={style}
     >
       <div css={icon}>
-        <Image src="/swap/swap-icon.svg" layout="fill" />
+        <Image src="/swap/swap-icon.svg" layout="fill" alt="" />
       </div>
 
       <div css={type}>swap</div>
@@ -72,23 +75,50 @@ const Row = ({ style, index }: ListChildComponentProps) => {
 
 export const History = ({ className }: Props) => {
   const [ref, { width, height }] = useMeasure();
+  const stylesRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<List | null>(null);
+  const [itemHeightFirst, setItemHeightFirst] = useState<number>(size.city);
+  const [itemHeightLast, setItemHeightLast] = useState<number>(size.city);
+  const [itemHeightOther, setItemHeightOther] = useState<number>(size.city);
+
+  const itemSize = useCallback(
+    (index: number) => {
+      return index === 0
+        ? itemHeightFirst
+        : index === data.length - 1
+        ? itemHeightLast
+        : itemHeightOther;
+    },
+    [itemHeightFirst, itemHeightLast, itemHeightOther],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const styles = getComputedStyle(stylesRef.current!);
+
+    const test = () => {
+      if (cancelled) return;
+      setItemHeightFirst(+stripUnit(styles.marginTop));
+      setItemHeightLast(+stripUnit(styles.marginBottom));
+      setItemHeightOther(+stripUnit(styles.height));
+      setTimeout(test, 5000);
+    };
+
+    test();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    listRef.current?.resetAfterIndex(0, true);
+  }, [itemHeightFirst, itemHeightLast, itemHeightOther]);
 
   return (
     <div css={container} className={className} ref={ref as any}>
-      <List
-        width={width}
-        height={height}
-        itemSize={(index) =>
-          index === 0
-            ? // We are compensating the grid-gap and the rounded corner of the widget
-              size.city + size.town + size.room
-            : index === data.length - 1
-            ? // We are compensating the grid-gap
-              size.city + size.town
-            : size.city
-        }
-        itemCount={data.length}
-      >
+      <div css={sizeCalc} ref={stylesRef} />
+      <List width={width} height={height} itemSize={itemSize} itemCount={data.length} ref={listRef}>
         {Row}
       </List>
     </div>

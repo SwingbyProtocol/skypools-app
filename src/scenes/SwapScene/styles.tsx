@@ -6,20 +6,24 @@ import { size } from '../../modules/styles';
 export const swapScene = css`
   display: grid;
   grid-gap: ${rem(size.town)};
-  grid-template-columns: 1fr 1fr minmax(min-content, 1fr);
-  grid-template-rows: min-content min-content min-content 1fr;
+  grid-template-columns: 1fr 1fr minmax(${rem(280)}, 1fr);
+  grid-template-rows: min-content min-content min-content minmax(${rem(200)}, 1fr);
   grid-template-areas:
     'header header header'
     'path path widget'
     'path path widget'
     'path path history';
   padding: ${rem(size.town)};
+  padding: ${rem(size.town)} var(--sp-app-inset-right) var(--sp-app-inset-bottom)
+    var(--sp-app-inset-left);
   min-height: 100vh;
 `;
 
 export const headerContainer = css`
   grid-area: header;
   margin: ${rem(-size.town)} ${rem(-size.town)} 0 ${rem(-size.town)};
+  margin: ${rem(-size.town)} calc(-1 * var(--sp-app-inset-right)) 0
+    calc(-1 * var(--sp-app-inset-left));
 `;
 
 export const priceAndPathCard = css`
@@ -85,4 +89,5 @@ export const historyCard = css`
   grid-area: history;
   margin-top: ${rem(-size.town - size.room)};
   margin-bottom: ${rem(-size.town)};
+  margin-bottom: calc(-1 * var(--sp-app-inset-bottom));
 `;
