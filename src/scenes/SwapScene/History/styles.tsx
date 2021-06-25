@@ -26,6 +26,7 @@ export const firstRow = css`
 
 export const lastRow = css`
   padding-bottom: ${rem(size.town)};
+  padding-bottom: max(${rem(size.town)}, env(safe-area-inset-bottom));
   border-bottom: none;
 `;
 

@@ -45,7 +45,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       style={style}
     >
       <div css={icon}>
-        <Image src="/swap/swap-icon.svg" layout="fill" />
+        <Image src="/swap/swap-icon.svg" layout="fill" alt="" />
       </div>
 
       <div css={type}>swap</div>
