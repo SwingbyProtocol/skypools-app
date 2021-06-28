@@ -32,7 +32,10 @@ export const ParaInchTokenProvider = ({
   children,
 }: {
   children?: ReactNode;
-  value: Omit<ParaInchContextValue, 'amount' | 'setAmount'>;
+  value: Omit<
+    ParaInchContextValue,
+    'amount' | 'setAmount' | 'setFromToken' | 'setNetwork' | 'setToToken'
+  >;
 }) => {
   const { push } = useRouter();
 
