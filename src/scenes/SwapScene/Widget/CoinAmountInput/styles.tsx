@@ -14,8 +14,25 @@ export const selectInput = css`
   grid-area: coin;
 `;
 
-export const textInput = css`
+export const textInputContainer = css`
   grid-area: amount;
+  position: relative;
+`;
+
+export const textInput = css`
+  input {
+    text-align: right;
+  }
+`;
+
+export const info = css`
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  top: ${rem(size.box)};
+  right: ${rem(size.closet)};
+  font-size: ${rem(size.closet)};
+  color: hsl(var(--sp-color-text-masked));
 `;
 
 export const coinContainer = css`

@@ -19,6 +19,8 @@ import {
   coinChain as coinChainClass,
   coinName as coinNameClass,
   coinLogo,
+  textInputContainer,
+  info,
 } from './styles';
 
 type CoinInfo = { symbol: string; address: string; logoUri: string | null; network: NetworkId };
@@ -212,20 +214,23 @@ export const CoinAmountInput = ({
         })}
       />
 
-      <TextInput
-        css={textInput}
-        size="country"
-        value={value?.amount ?? ''}
-        onChange={(evt) =>
-          onChange?.({
-            coin: value.coin,
-            amount: evt.target.value ?? null,
-            amountInfo: value.amountInfo,
-          })
-        }
-        disabled={amountDisabled}
-        description={value.amountInfo}
-      />
+      <div css={textInputContainer}>
+        <TextInput
+          css={textInput}
+          size="country"
+          value={value?.amount ?? ''}
+          onChange={(evt) =>
+            onChange?.({
+              coin: value.coin,
+              amount: evt.target.value ?? null,
+              amountInfo: value.amountInfo,
+            })
+          }
+          disabled={amountDisabled}
+        />
+
+        {!!value.amountInfo && <span css={info}>{value.amountInfo}</span>}
+      </div>
     </div>
   );
 };

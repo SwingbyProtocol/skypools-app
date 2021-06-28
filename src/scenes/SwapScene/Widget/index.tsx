@@ -16,14 +16,15 @@ export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
     (): CoinAmountInputValue => ({
       coin: fromToken,
       amount,
-      amountInfo: !swapQuote?.fromTokenAmountUsd ? null : (
-        <FormattedNumber
-          value={swapQuote.fromTokenAmountUsd.toNumber()}
-          style="currency"
-          currency="USD"
-          currencyDisplay="narrowSymbol"
-        />
-      ),
+      amountInfo:
+        !amount || !swapQuote?.fromTokenAmountUsd ? null : (
+          <FormattedNumber
+            value={swapQuote.fromTokenAmountUsd.toNumber()}
+            style="currency"
+            currency="USD"
+            currencyDisplay="narrowSymbol"
+          />
+        ),
     }),
     [fromToken, amount, swapQuote?.fromTokenAmountUsd],
   );
@@ -31,17 +32,18 @@ export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
   const to = useMemo(
     (): CoinAmountInputValue => ({
       coin: toToken,
-      amount: swapQuote?.toTokenAmount.toFixed() ?? null,
-      amountInfo: !swapQuote?.toTokenAmountUsd ? null : (
-        <FormattedNumber
-          value={swapQuote.toTokenAmountUsd.toNumber()}
-          style="currency"
-          currency="USD"
-          currencyDisplay="narrowSymbol"
-        />
-      ),
+      amount: (!amount ? null : swapQuote?.toTokenAmount.toFixed()) ?? null,
+      amountInfo:
+        !amount || !swapQuote?.toTokenAmountUsd ? null : (
+          <FormattedNumber
+            value={swapQuote.toTokenAmountUsd.toNumber()}
+            style="currency"
+            currency="USD"
+            currencyDisplay="narrowSymbol"
+          />
+        ),
     }),
-    [toToken, swapQuote?.toTokenAmount, swapQuote?.toTokenAmountUsd],
+    [toToken, amount, swapQuote?.toTokenAmount, swapQuote?.toTokenAmountUsd],
   );
 
   const toCoins = useMemo(
