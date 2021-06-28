@@ -12,7 +12,8 @@ export const container = css`
     'from-input'
     'to-label'
     'to-input'
-    'swap';
+    'swap'
+    'info';
 `;
 
 export const label = css`
@@ -43,4 +44,27 @@ export const toInput = css`
 export const swap = css`
   grid-area: swap;
   margin-top: ${rem(size.street)};
+`;
+
+export const info = css`
+  grid-area: info;
+  margin-top: ${rem(size.street)};
+  border: 2px dashed hsl(var(--sp-color-border-normal));
+  border-radius: ${rem(size.closet)};
+  padding: ${rem(size.drawer)};
+  font-size: ${rem(size.closet)};
+  color: hsl(var(--sp-color-text-masked));
+`;
+
+export const infoLabel = css`
+  vertical-align: top;
+  text-align: left;
+`;
+
+export const infoValue = css`
+  text-align: right;
+`;
+
+export const infoValueHighlight = css`
+  color: hsl(var(--sp-color-text-normal));
 `;

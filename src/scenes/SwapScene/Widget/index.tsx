@@ -7,7 +7,19 @@ import { SwapQuote } from '../../../modules/para-inch';
 import { useParaInch } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
-import { label, fromInput, fromLabel, toInput, toLabel, container, swap } from './styles';
+import {
+  label,
+  fromInput,
+  fromLabel,
+  toInput,
+  toLabel,
+  container,
+  swap,
+  info,
+  infoLabel,
+  infoValue,
+  infoValueHighlight,
+} from './styles';
 
 export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
   const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount } = useParaInch();
@@ -85,18 +97,37 @@ export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
         <FormattedMessage id="widget.swap" />
       </Button>
       {swapQuote && (
-        <>
-          <div>
-            ratio: 1 {fromToken?.symbol} ={' '}
-            {swapQuote.fromTokenPriceUsd.times(swapQuote.toTokenPriceUsd).toFixed()}{' '}
-            {toToken?.symbol}
-          </div>
-          <div>
-            ratio: 1 {toToken?.symbol} ={' '}
-            {swapQuote.toTokenPriceUsd.div(swapQuote.fromTokenPriceUsd).toFixed()}{' '}
-            {fromToken?.symbol}
-          </div>
-        </>
+        <table css={info}>
+          <tr>
+            <td css={infoLabel} rowSpan={2}>
+              Rate
+            </td>
+            <td css={infoValue}>
+              1&nbsp;{fromToken?.symbol}&nbsp;=&nbsp;
+              <span css={infoValueHighlight}>
+                <FormattedNumber
+                  value={swapQuote.fromTokenPriceUsd.times(swapQuote.toTokenPriceUsd).toNumber()}
+                  maximumSignificantDigits={6}
+                />
+              </span>
+              &nbsp;
+              {toToken?.symbol}
+            </td>
+          </tr>
+          <tr>
+            <td css={infoValue}>
+              1&nbsp;{toToken?.symbol}&nbsp;=&nbsp;
+              <span css={infoValueHighlight}>
+                <FormattedNumber
+                  value={swapQuote.toTokenPriceUsd.div(swapQuote.fromTokenPriceUsd).toNumber()}
+                  maximumSignificantDigits={6}
+                />
+              </span>
+              &nbsp;
+              {fromToken?.symbol}
+            </td>
+          </tr>
+        </table>
       )}
     </div>
   );
