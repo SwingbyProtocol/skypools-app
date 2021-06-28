@@ -1,6 +1,6 @@
 import { Big } from 'big.js';
 import { useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { SwapQuote } from '../../../modules/para-inch';
@@ -13,16 +13,35 @@ export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
   const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount } = useParaInch();
 
   const from = useMemo(
-    (): CoinAmountInputValue => ({ coin: fromToken, amount }),
-    [fromToken, amount],
+    (): CoinAmountInputValue => ({
+      coin: fromToken,
+      amount,
+      amountInfo: !swapQuote?.fromTokenAmountUsd ? null : (
+        <FormattedNumber
+          value={swapQuote.fromTokenAmountUsd.toNumber()}
+          style="currency"
+          currency="USD"
+          currencyDisplay="narrowSymbol"
+        />
+      ),
+    }),
+    [fromToken, amount, swapQuote?.fromTokenAmountUsd],
   );
 
   const to = useMemo(
     (): CoinAmountInputValue => ({
       coin: toToken,
       amount: swapQuote?.toTokenAmount.toFixed() ?? null,
+      amountInfo: !swapQuote?.toTokenAmountUsd ? null : (
+        <FormattedNumber
+          value={swapQuote.toTokenAmountUsd.toNumber()}
+          style="currency"
+          currency="USD"
+          currencyDisplay="narrowSymbol"
+        />
+      ),
     }),
-    [toToken, swapQuote?.toTokenAmount],
+    [toToken, swapQuote?.toTokenAmount, swapQuote?.toTokenAmountUsd],
   );
 
   const toCoins = useMemo(
@@ -65,8 +84,6 @@ export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
       </Button>
       {swapQuote && (
         <>
-          <div>from: {swapQuote.fromTokenAmountUsd.toFixed()}</div>
-          <div>to: {swapQuote.toTokenAmountUsd.toFixed()}</div>
           <div>
             ratio: 1 {fromToken?.symbol} ={' '}
             {swapQuote.fromTokenPriceUsd.times(swapQuote.toTokenPriceUsd).toFixed()}{' '}
