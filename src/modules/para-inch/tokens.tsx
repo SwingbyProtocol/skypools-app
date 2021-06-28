@@ -1,9 +1,10 @@
 import { ParaSwap } from 'paraswap';
+import { shouldUseParaSwap } from '../env';
 
 import { fetcher } from '../fetch';
 import { NetworkId } from '../onboard';
 
-import { ENDPOINT_1INCH_API, SHOULD_USE_PARASWAP } from './constants';
+import { ENDPOINT_1INCH_API } from './constants';
 import { isParaSwapApiError } from './isParaSwapApiError';
 import { SupportedNetworkId } from './isSupportedNetwork';
 
@@ -20,7 +21,7 @@ export const getTokens = async ({
 }: {
   network: SupportedNetworkId;
 }): Promise<ParaInchToken[]> => {
-  if (SHOULD_USE_PARASWAP) {
+  if (shouldUseParaSwap) {
     const paraSwap = new ParaSwap(network);
     const tokens = await paraSwap.getTokens();
     if (isParaSwapApiError(tokens)) {

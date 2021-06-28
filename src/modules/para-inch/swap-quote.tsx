@@ -4,9 +4,10 @@ import { stringifyUrl } from 'query-string';
 
 import { fetcher } from '../fetch';
 
-import { ENDPOINT_1INCH_API, SHOULD_USE_PARASWAP } from './constants';
+import { ENDPOINT_1INCH_API } from './constants';
 import { SupportedNetworkId } from './isSupportedNetwork';
 import { isParaSwapApiError } from './isParaSwapApiError';
+import { shouldUseParaSwap } from '../env';
 
 type SwapQuoteRouteStep = {
   exchange: string;
@@ -43,7 +44,7 @@ export const getSwapQuote = async ({
     }
   })();
 
-  if (SHOULD_USE_PARASWAP) {
+  if (shouldUseParaSwap) {
     const paraSwap = new ParaSwap(network);
     const result = await paraSwap.getRate(fromTokenAddress, toTokenAddress, amount.toFixed());
     if (isParaSwapApiError(result)) {
