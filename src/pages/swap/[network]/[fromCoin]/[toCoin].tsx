@@ -6,9 +6,7 @@ import { ParaInchTokenProvider, ParaInchContextValue } from '../../../../modules
 import { logger } from '../../../../modules/logger';
 import { SwapScene } from '../../../../scenes/SwapScene';
 
-type Props = ParaInchContextValue & {
-  network: number;
-};
+type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
 export default function HomePage({ fromToken, toToken, tokens, network }: Props) {
   const value = useMemo(
