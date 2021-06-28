@@ -1,5 +1,6 @@
 import { Big } from 'big.js';
 import { DateTime, Duration } from 'luxon';
+import { stringifyUrl } from 'query-string';
 
 import { fetcher } from '../fetch';
 
@@ -39,6 +40,27 @@ const getContractAddress = ({
   }
 
   return address;
+};
+
+export const getPriceUsd = async ({
+  network,
+  tokenAddress,
+}: {
+  network: SupportedNetworkId;
+  tokenAddress: string;
+}): Promise<Big> => {
+  const address = getContractAddress({ address: tokenAddress, network });
+
+  const result = await fetcher<{
+    [k: string]: { usd: number };
+  }>(
+    stringifyUrl({
+      url: `https://api.coingecko.com/api/v3/simple/token_price/${getCoingeckoNetworkId(network)}`,
+      query: { vs_currencies: 'usd', contract_addresses: address },
+    }),
+  );
+
+  return new Big(result[address.toLowerCase()].usd);
 };
 
 export const getPriceHistory = async ({

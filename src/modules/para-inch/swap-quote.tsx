@@ -3,11 +3,14 @@ import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
 import { fetcher } from '../fetch';
+import { shouldUseParaSwap } from '../env';
 
 import { ENDPOINT_1INCH_API } from './constants';
 import { SupportedNetworkId } from './isSupportedNetwork';
 import { isParaSwapApiError } from './isParaSwapApiError';
-import { shouldUseParaSwap } from '../env';
+import { ParaInchToken } from './tokens';
+import { getPriceUsd } from './prices';
+import { NATIVE_TOKEN_ADDRESS } from './isNativeToken';
 
 type SwapQuoteRouteStep = {
   exchange: string;
@@ -21,37 +24,66 @@ export type SwapQuoteRoute = { path: Array<SwapQuoteRouteStep[]> };
 export type SwapQuote = {
   fromTokenAmount: Big;
   toTokenAmount: Big;
+  fromTokenPriceUsd: Big;
+  toTokenPriceUsd: Big;
+  fromTokenAmountUsd: Big;
+  toTokenAmountUsd: Big;
   estimatedGas: Big | null;
+  estimatedGasUsd: Big | null;
   routes: SwapQuoteRoute[];
 };
 
 export const getSwapQuote = async ({
   amount: amountParam,
   network,
-  fromTokenAddress,
-  toTokenAddress,
+  fromToken,
+  toToken,
 }: {
   network: SupportedNetworkId;
   amount: BigSource;
-  fromTokenAddress: string;
-  toTokenAddress: string;
+  fromToken: ParaInchToken;
+  toToken: ParaInchToken;
 }): Promise<SwapQuote> => {
   const amount = (() => {
     try {
-      return new Big(amountParam ?? 0);
+      return new Big(amountParam ?? 0).times(`1e${fromToken.decimals}`);
     } catch (e) {
       return new Big(0);
     }
   })();
 
+  const [nativeTokenPriceUsd, fromTokenPriceUsd, toTokenPriceUsd] = await Promise.all(
+    [NATIVE_TOKEN_ADDRESS, fromToken.address, toToken.address].map((tokenAddress) =>
+      getPriceUsd({ network, tokenAddress }),
+    ),
+  );
+
   if (shouldUseParaSwap) {
     const paraSwap = new ParaSwap(network);
-    const result = await paraSwap.getRate(fromTokenAddress, toTokenAddress, amount.toFixed());
+    const result = await paraSwap.getRate(fromToken.address, toToken.address, amount.toFixed());
     if (isParaSwapApiError(result)) {
       throw new Error(`${result.status}: ${result.message}`);
     }
 
+    const fromTokenAmount = (() => {
+      try {
+        return new Big(result.srcAmount).div(`1e${fromToken.decimals}`);
+      } catch (e) {
+        return Big(0);
+      }
+    })();
+
+    const toTokenAmount = (() => {
+      try {
+        return new Big(result.destAmount).div(`1e${toToken.decimals}`);
+      } catch (e) {
+        return Big(0);
+      }
+    })();
+
     return {
+      fromTokenPriceUsd,
+      toTokenPriceUsd,
       estimatedGas: (() => {
         try {
           return result.bestRouteGas ? new Big(result.bestRouteGas) : null;
@@ -59,16 +91,25 @@ export const getSwapQuote = async ({
           return null;
         }
       })(),
-      fromTokenAmount: (() => {
+      estimatedGasUsd: (() => {
         try {
-          return new Big(result.srcAmount);
+          return result.bestRouteGasCostUSD ? new Big(result.bestRouteGasCostUSD) : null;
+        } catch (e) {
+          return null;
+        }
+      })(),
+      fromTokenAmount,
+      fromTokenAmountUsd: (() => {
+        try {
+          return new Big(fromTokenAmount).times(fromTokenPriceUsd);
         } catch (e) {
           return Big(0);
         }
       })(),
-      toTokenAmount: (() => {
+      toTokenAmount,
+      toTokenAmountUsd: (() => {
         try {
-          return new Big(result.destAmount);
+          return new Big(toTokenAmount).times(toTokenPriceUsd);
         } catch (e) {
           return Big(0);
         }
@@ -85,8 +126,8 @@ export const getSwapQuote = async ({
                   return new Big(0);
                 }
               })(),
-              fromTokenAddress: it.data?.tokenFrom ?? fromTokenAddress,
-              toTokenAddress: it.data?.tokenTo ?? toTokenAddress,
+              fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
+              toTokenAddress: it.data?.tokenTo ?? toToken.address,
             },
           ]),
         },
@@ -128,31 +169,64 @@ export const getSwapQuote = async ({
     stringifyUrl({
       url: `${ENDPOINT_1INCH_API}/${network}/quote`,
       query: {
-        fromTokenAddress,
-        toTokenAddress,
+        fromTokenAddress: fromToken.address,
+        toTokenAddress: toToken.address,
         amount: amount.toFixed(),
       },
     }),
   );
 
+  const estimatedGas = (() => {
+    try {
+      return result.estimatedGas ? new Big(result.estimatedGas) : null;
+    } catch (e) {
+      return null;
+    }
+  })();
+
+  const fromTokenAmount = (() => {
+    try {
+      return new Big(result.fromTokenAmount).div(`1e${fromToken.decimals}`);
+    } catch (e) {
+      return Big(0);
+    }
+  })();
+
+  const toTokenAmount = (() => {
+    try {
+      return new Big(result.toTokenAmount).div(`1e${toToken.decimals}`);
+    } catch (e) {
+      return Big(0);
+    }
+  })();
+
   return {
-    estimatedGas: (() => {
-      try {
-        return result.estimatedGas ? new Big(result.estimatedGas) : null;
-      } catch (e) {
+    fromTokenPriceUsd,
+    toTokenPriceUsd,
+    estimatedGas,
+    estimatedGasUsd: (() => {
+      if (estimatedGas === null) {
         return null;
       }
-    })(),
-    fromTokenAmount: (() => {
+
       try {
-        return new Big(result.fromTokenAmount);
+        return new Big(estimatedGas).times(nativeTokenPriceUsd);
       } catch (e) {
         return Big(0);
       }
     })(),
-    toTokenAmount: (() => {
+    fromTokenAmount,
+    fromTokenAmountUsd: (() => {
       try {
-        return new Big(result.toTokenAmount);
+        return new Big(fromTokenAmount).times(fromTokenPriceUsd);
+      } catch (e) {
+        return Big(0);
+      }
+    })(),
+    toTokenAmount,
+    toTokenAmountUsd: (() => {
+      try {
+        return new Big(toTokenAmount).times(toTokenPriceUsd);
       } catch (e) {
         return Big(0);
       }

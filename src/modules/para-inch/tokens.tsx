@@ -1,6 +1,6 @@
 import { ParaSwap } from 'paraswap';
-import { shouldUseParaSwap } from '../env';
 
+import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
 import { NetworkId } from '../onboard';
 

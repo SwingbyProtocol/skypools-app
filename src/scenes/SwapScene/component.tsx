@@ -61,10 +61,7 @@ export const SwapScene = () => {
   useEffect(() => {
     let cancelled = false;
 
-    const fromTokenAddress = fromToken?.address;
-    const decimals = fromToken?.decimals;
-    const toTokenAddress = toToken?.address;
-    if (!fromTokenAddress || !toTokenAddress || typeof decimals !== 'number') {
+    if (!fromToken || !toToken) {
       return;
     }
 
@@ -73,18 +70,7 @@ export const SwapScene = () => {
         if (cancelled) return;
 
         setSwapQuote(null);
-        const result = await getSwapQuote({
-          fromTokenAddress,
-          toTokenAddress,
-          amount: (() => {
-            try {
-              return new Big(amount ?? 1).times(`1e${decimals}`);
-            } catch (e) {
-              return new Big(1).times(`1e${decimals}`);
-            }
-          })(),
-          network,
-        });
+        const result = await getSwapQuote({ fromToken, toToken, amount: amount ?? 1, network });
 
         if (cancelled) return;
         setSwapQuote(result);
@@ -154,7 +140,7 @@ export const SwapScene = () => {
       </Card>
 
       <Card css={widgetCard}>
-        <Widget />
+        <Widget swapQuote={swapQuote} />
       </Card>
 
       <History css={historyCard} />
