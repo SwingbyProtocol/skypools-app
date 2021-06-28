@@ -8,8 +8,7 @@ import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import { label, fromInput, fromLabel, toInput, toLabel, container, swap } from './styles';
 
 export const Widget = () => {
-  const { tokens, fromToken, toToken, setFromToken, setToToken } = useParaInch();
-  const [amount, setAmount] = useState<CoinAmountInputValue['amount']>(null);
+  const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount } = useParaInch();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({ coin: fromToken, amount }),

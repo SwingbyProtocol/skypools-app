@@ -46,7 +46,7 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 
 export const SwapScene = () => {
   const { network: onboardNetwork } = useOnboard();
-  const { fromToken, toToken, network, setNetwork } = useParaInch();
+  const { fromToken, toToken, network, setNetwork, amount } = useParaInch();
   const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
@@ -62,8 +62,9 @@ export const SwapScene = () => {
     let cancelled = false;
 
     const fromTokenAddress = fromToken?.address;
+    const decimals = fromToken?.decimals;
     const toTokenAddress = toToken?.address;
-    if (!fromTokenAddress || !toTokenAddress) {
+    if (!fromTokenAddress || !toTokenAddress || typeof decimals !== 'number') {
       return;
     }
 
@@ -75,7 +76,13 @@ export const SwapScene = () => {
         const result = await getSwapQuote({
           fromTokenAddress,
           toTokenAddress,
-          amount: new Big(1).times('1e18').toFixed(),
+          amount: (() => {
+            try {
+              return new Big(amount ?? 1).times(`1e${decimals}`);
+            } catch (e) {
+              return new Big(1).times(`1e${decimals}`);
+            }
+          })(),
           network,
         });
 
@@ -92,7 +99,7 @@ export const SwapScene = () => {
     return () => {
       cancelled = true;
     };
-  }, [fromToken, toToken, network]);
+  }, [fromToken, toToken, network, amount]);
 
   useEffect(() => {
     let cancelled = false;
