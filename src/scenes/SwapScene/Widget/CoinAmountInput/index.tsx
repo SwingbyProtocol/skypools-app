@@ -1,5 +1,5 @@
 import { rem } from 'polished';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import Select, { Theme, StylesConfig, createFilter, MenuListComponentProps } from 'react-select';
 import { FormattedMessage } from 'react-intl';
 import { FixedSizeList as List } from 'react-window';
@@ -19,10 +19,16 @@ import {
   coinChain as coinChainClass,
   coinName as coinNameClass,
   coinLogo,
+  textInputContainer,
+  info,
 } from './styles';
 
 type CoinInfo = { symbol: string; address: string; logoUri: string | null; network: NetworkId };
-export type CoinAmountInputValue = { coin: CoinInfo | null; amount: string | null };
+export type CoinAmountInputValue = {
+  coin: CoinInfo | null;
+  amount: string | null;
+  amountInfo?: ReactNode;
+};
 
 type OptionType = { value: CoinInfo; label: JSX.Element };
 
@@ -196,19 +202,35 @@ export const CoinAmountInput = ({
         styles={styles}
         value={selectValue}
         options={coins}
-        onChange={(coin) => onChange?.({ amount: value.amount, coin: coin?.value ?? null })}
+        onChange={(coin) =>
+          onChange?.({
+            amount: value.amount,
+            coin: coin?.value ?? null,
+            amountInfo: value.amountInfo,
+          })
+        }
         filterOption={createFilter({
           stringify: (option: OptionType) => `${option.value.symbol} ${option.value.address}`,
         })}
       />
 
-      <TextInput
-        css={textInput}
-        size="country"
-        value={value?.amount ?? ''}
-        onChange={(evt) => onChange?.({ coin: value.coin, amount: evt.target.value ?? null })}
-        disabled={amountDisabled}
-      />
+      <div css={textInputContainer}>
+        <TextInput
+          css={textInput}
+          size="country"
+          value={value?.amount ?? ''}
+          onChange={(evt) =>
+            onChange?.({
+              coin: value.coin,
+              amount: evt.target.value ?? null,
+              amountInfo: value.amountInfo,
+            })
+          }
+          disabled={amountDisabled}
+        />
+
+        {!!value.amountInfo && <span css={info}>{value.amountInfo}</span>}
+      </div>
     </div>
   );
 };
