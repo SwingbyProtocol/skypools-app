@@ -19,8 +19,9 @@ export const swapScene = css`
   min-height: 100vh;
 
   @media (min-width: ${rem(768)}) {
+    height: 100vh;
     grid-template-columns: 1fr 1fr minmax(${rem(280)}, 1fr);
-    grid-template-rows: min-content min-content min-content minmax(${rem(200)}, 1fr);
+    grid-template-rows: min-content min-content min-content minmax(${rem(75)}, auto);
     grid-template-areas:
       'header header header'
       'path path widget'
