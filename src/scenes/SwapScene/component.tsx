@@ -27,6 +27,7 @@ import {
   swapScene,
   widgetCard,
   loadingPulseAnimation,
+  historyContainer,
 } from './styles';
 import { Widget } from './Widget';
 
@@ -143,7 +144,9 @@ export const SwapScene = () => {
         <Widget swapQuote={swapQuote} />
       </Card>
 
-      <History css={historyCard} />
+      <div css={historyContainer}>
+        <History css={historyCard} />
+      </div>
     </div>
   );
 };

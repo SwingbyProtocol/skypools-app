@@ -19,7 +19,6 @@ export const swapScene = css`
   min-height: 100vh;
 
   @media (min-width: ${rem(768)}) {
-    height: 100vh;
     grid-template-columns: 1fr 1fr minmax(${rem(280)}, 1fr);
     grid-template-rows: min-content min-content min-content minmax(${rem(75)}, auto);
     grid-template-areas:
@@ -97,9 +96,18 @@ export const widgetCard = css`
   }
 `;
 
-export const historyCard = css`
+export const historyContainer = css`
   grid-area: history;
+  position: relative;
   margin-top: ${rem(-size.town - size.room)};
   margin-bottom: ${rem(-size.town)};
   margin-bottom: calc(-1 * var(--sp-app-inset-bottom));
+`;
+
+export const historyCard = css`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 `;
