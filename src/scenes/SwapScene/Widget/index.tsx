@@ -4,7 +4,7 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { SwapQuote } from '../../../modules/para-inch';
-import { useParaInch } from '../../../modules/para-inch-react';
+import { useParaInch, useSwapQuote } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -21,7 +21,11 @@ import {
   infoValueHighlight,
 } from './styles';
 
-export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
+export const Widget = ({
+  swapQuote,
+  approve,
+  isApprovalNeeded,
+}: Pick<ReturnType<typeof useSwapQuote>, 'approve' | 'isApprovalNeeded' | 'swapQuote'>) => {
   const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount } = useParaInch();
 
   const from = useMemo(
@@ -93,9 +97,16 @@ export const Widget = ({ swapQuote }: { swapQuote: SwapQuote | null }) => {
           }
         }}
       />
-      <Button variant="primary" size="state" css={swap}>
-        <FormattedMessage id="widget.swap" />
-      </Button>
+      {!isApprovalNeeded && (
+        <Button variant="primary" size="state" css={swap} disabled={isApprovalNeeded === null}>
+          <FormattedMessage id="widget.swap" />
+        </Button>
+      )}
+      {!!isApprovalNeeded && (
+        <Button variant="primary" size="state" css={swap} onClick={approve}>
+          <FormattedMessage id="widget.approve" />
+        </Button>
+      )}
       {swapQuote && (
         <table css={info}>
           <tr>

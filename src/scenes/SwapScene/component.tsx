@@ -41,8 +41,8 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 
 export const SwapScene = () => {
   const { network: onboardNetwork } = useOnboard();
-  const { fromToken, toToken, network, setNetwork, amount } = useParaInch();
-  const { swapQuote } = useSwapQuote({ fromToken, toToken, network, amount });
+  const { fromToken, toToken, network, setNetwork } = useParaInch();
+  const { swapQuote, isApprovalNeeded, approve } = useSwapQuote();
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
   >(null);
@@ -106,7 +106,7 @@ export const SwapScene = () => {
       </Card>
 
       <Card css={widgetCard}>
-        <Widget swapQuote={swapQuote} />
+        <Widget swapQuote={swapQuote} isApprovalNeeded={isApprovalNeeded} approve={approve} />
       </Card>
 
       <div css={historyContainer}>

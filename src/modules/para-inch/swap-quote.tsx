@@ -1,9 +1,11 @@
 import { ParaSwap } from 'paraswap';
 import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
+import Web3 from 'web3';
 
 import { fetcher } from '../fetch';
 import { shouldUseParaSwap } from '../env';
+import { logger } from '../logger';
 
 import { ENDPOINT_1INCH_API } from './constants';
 import { SupportedNetworkId } from './isSupportedNetwork';
@@ -30,6 +32,7 @@ export type SwapQuote = {
   toTokenAmountUsd: Big;
   estimatedGas: Big | null;
   estimatedGasUsd: Big | null;
+  contractAddress: string | null;
   routes: SwapQuoteRoute[];
 };
 
@@ -38,17 +41,31 @@ export const getSwapQuote = async ({
   network,
   fromToken,
   toToken,
+  slippageFraction,
+  sourceAddress,
+  walletProvider,
 }: {
   network: SupportedNetworkId;
   amount: BigSource;
   fromToken: ParaInchToken;
   toToken: ParaInchToken;
+  slippageFraction?: BigSource | null;
+  sourceAddress?: string | null;
+  walletProvider?: any | null;
 }): Promise<SwapQuote> => {
   const amount = (() => {
     try {
       return new Big(amountParam ?? 0).times(`1e${fromToken.decimals}`);
     } catch (e) {
       return new Big(0);
+    }
+  })();
+
+  const slippage = (() => {
+    try {
+      return new Big(slippageFraction ?? '0.05');
+    } catch (e) {
+      return new Big('0.05');
     }
   })();
 
@@ -81,7 +98,24 @@ export const getSwapQuote = async ({
       }
     })();
 
+    const contractAddress = await (async () => {
+      try {
+        if (!walletProvider) return null;
+
+        const result = await paraSwap.getSpender(new Web3(walletProvider));
+        if (typeof result === 'string') {
+          return result;
+        }
+
+        return null;
+      } catch (err) {
+        logger.warn({ err }, 'Failed to get ParaSwap spender address');
+        return null;
+      }
+    })();
+
     return {
+      contractAddress,
       fromTokenPriceUsd,
       toTokenPriceUsd,
       estimatedGas: (() => {
@@ -165,13 +199,23 @@ export const getSwapQuote = async ({
       >
     >;
     estimatedGas: number;
+    tx?: {
+      from: string;
+      to: string;
+      data: string;
+      value: string;
+      gasPrice: string;
+      gas: number;
+    };
   }>(
     stringifyUrl({
-      url: `${ENDPOINT_1INCH_API}/${network}/quote`,
+      url: `${ENDPOINT_1INCH_API}/${network}/${sourceAddress ? 'swap' : 'quote'}`,
       query: {
         fromTokenAddress: fromToken.address,
         toTokenAddress: toToken.address,
         amount: amount.toFixed(),
+        fromAddress: sourceAddress || undefined,
+        slippage: slippage.toNumber(),
       },
     }),
   );
@@ -201,6 +245,7 @@ export const getSwapQuote = async ({
   })();
 
   return {
+    contractAddress: result.tx?.to || null,
     fromTokenPriceUsd,
     toTokenPriceUsd,
     estimatedGas,

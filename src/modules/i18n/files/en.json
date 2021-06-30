@@ -18,5 +18,6 @@
   "token.chain.on-chain": "On {chain}",
   "widget.from": "From",
   "widget.to": "To",
-  "widget.swap": "Swap"
+  "widget.swap": "Swap",
+  "widget.approve": "Approve"
 }
