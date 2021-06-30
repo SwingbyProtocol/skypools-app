@@ -6,14 +6,8 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import {
-  getPriceHistory,
-  getSwapQuote,
-  isSupportedNetworkId,
-  SwapQuote,
-  SwapQuoteRoute,
-} from '../../modules/para-inch';
-import { useParaInch } from '../../modules/para-inch-react';
+import { getPriceHistory, isSupportedNetworkId, SwapQuoteRoute } from '../../modules/para-inch';
+import { useParaInch, useSwapQuote } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
 
@@ -48,7 +42,7 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 export const SwapScene = () => {
   const { network: onboardNetwork } = useOnboard();
   const { fromToken, toToken, network, setNetwork, amount } = useParaInch();
-  const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
+  const { swapQuote } = useSwapQuote({ fromToken, toToken, network, amount });
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
   >(null);
@@ -58,35 +52,6 @@ export const SwapScene = () => {
       return;
     setNetwork(onboardNetwork);
   }, [onboardNetwork, network, setNetwork]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (!fromToken || !toToken) {
-      return;
-    }
-
-    const loadQuote = async () => {
-      try {
-        if (cancelled) return;
-
-        setSwapQuote(null);
-        const result = await getSwapQuote({ fromToken, toToken, amount: amount ?? 1, network });
-
-        if (cancelled) return;
-        setSwapQuote(result);
-      } catch (err) {
-        logger.error({ err }, 'Failed to load swap quote');
-        setTimeout(loadQuote, 2500);
-      }
-    };
-
-    loadQuote();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [fromToken, toToken, network, amount]);
 
   useEffect(() => {
     let cancelled = false;
