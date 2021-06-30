@@ -8,6 +8,14 @@ import { Favicon } from '../components/Favicon';
 import { GlobalStyles } from '../modules/styles';
 import { OnboardProvider } from '../modules/onboard';
 
+const intlOnError: React.ComponentPropsWithoutRef<typeof IntlProvider>['onError'] = (err) => {
+  if (err.code === 'MISSING_TRANSLATION') {
+    return;
+  }
+
+  throw err;
+};
+
 function MyApp({ Component, pageProps, router }: AppProps) {
   const locale = (() => {
     const result = router.locale ?? router.defaultLocale ?? 'en';
@@ -21,7 +29,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
   const messages = useMemo(() => ({ ...languages.en, ...languages[locale] }), [locale]);
 
   return (
-    <IntlProvider messages={messages} locale={locale} defaultLocale="en">
+    <IntlProvider messages={messages} locale={locale} defaultLocale="en" onError={intlOnError}>
       <OnboardProvider>
         <>
           <GlobalStyles />
