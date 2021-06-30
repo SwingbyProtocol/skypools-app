@@ -6,7 +6,7 @@
     "dev": "next dev | pino-pretty",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "echo 'No tests here so far'",
     "cypress": "TZ=Etc/UTC cypress",
     "format": "prettier --write '**/*.{js,jsx,ts,tsx,css,json,md,mdx,html,yml}'",

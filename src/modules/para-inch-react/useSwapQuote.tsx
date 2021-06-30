@@ -6,7 +6,7 @@ import { Big } from 'big.js';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getSwapQuote, SwapQuote } from '../para-inch';
+import { getSwapQuote, SwapQuote, isNativeToken } from '../para-inch';
 
 import { useParaInch } from './useParaInch';
 
@@ -62,6 +62,11 @@ export const useSwapQuote = () => {
       const contractAddress = swapQuote?.contractAddress;
       if (!fromToken || !contractAddress || !address || !wallet || !wallet.provider) {
         setApprovalNeeded(null);
+        return;
+      }
+
+      if (isNativeToken(fromToken.address)) {
+        setApprovalNeeded(false);
         return;
       }
 
