@@ -2,6 +2,7 @@ import { ParaSwap } from 'paraswap';
 import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
 import Web3 from 'web3';
+import type { TransactionConfig } from 'web3-eth';
 
 import { fetcher } from '../fetch';
 import { shouldUseParaSwap } from '../env';
@@ -34,6 +35,39 @@ export type SwapQuote = {
   estimatedGasUsd: Big | null;
   contractAddress: string | null;
   routes: SwapQuoteRoute[];
+  transaction: {
+    from: NonNullable<TransactionConfig['from']>;
+    to: NonNullable<TransactionConfig['to']>;
+    data: NonNullable<TransactionConfig['data']>;
+    value: NonNullable<TransactionConfig['value']>;
+    gas: NonNullable<TransactionConfig['gas']>;
+    gasPrice: NonNullable<TransactionConfig['gasPrice']>;
+    chainId: NonNullable<TransactionConfig['chainId']>;
+  } | null;
+};
+
+type OneInchApiResult = {
+  toTokenAmount: string;
+  fromTokenAmount: string;
+  protocols: Array<
+    Array<
+      Array<{
+        name: string;
+        part: number;
+        fromTokenAddress: string;
+        toTokenAddress: string;
+      }>
+    >
+  >;
+  estimatedGas: number;
+  tx?: {
+    from: string;
+    to: string;
+    data: string;
+    value: string;
+    gasPrice: string;
+    gas: number;
+  };
 };
 
 export const getSwapQuote = async ({
@@ -79,7 +113,7 @@ export const getSwapQuote = async ({
     const paraSwap = new ParaSwap(network);
     const result = await paraSwap.getRate(fromToken.address, toToken.address, amount.toFixed());
     if (isParaSwapApiError(result)) {
-      throw new Error(`${result.status}: ${result.message}`);
+      throw result;
     }
 
     const fromTokenAmount = (() => {
@@ -114,7 +148,39 @@ export const getSwapQuote = async ({
       }
     })();
 
+    const transaction = await (async (): Promise<SwapQuote['transaction']> => {
+      try {
+        if (!sourceAddress || !walletProvider) return null;
+
+        const tx = await paraSwap.buildTx(
+          fromToken.address,
+          toToken.address,
+          result.srcAmount,
+          result.destAmount,
+          result,
+          sourceAddress,
+          'skypools',
+          undefined,
+        );
+
+        if (isParaSwapApiError(tx)) {
+          throw tx;
+        }
+
+        const web3 = new Web3(walletProvider);
+        const gasPrice = await web3.eth.getGasPrice();
+
+        const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
+
+        return { ...tx, gasPrice, gas };
+      } catch (err) {
+        logger.error({ err }, 'Could not build swap transaction');
+        return null;
+      }
+    })();
+
     return {
+      transaction,
       contractAddress,
       fromTokenPriceUsd,
       toTokenPriceUsd,
@@ -244,7 +310,13 @@ export const getSwapQuote = async ({
     }
   })();
 
+  const transaction = await (async (): Promise<SwapQuote['transaction']> => {
+    if (!result.tx) return null;
+    return { ...result.tx, chainId: network };
+  })();
+
   return {
+    transaction,
     contractAddress: result.tx?.to || null,
     fromTokenPriceUsd,
     toTokenPriceUsd,

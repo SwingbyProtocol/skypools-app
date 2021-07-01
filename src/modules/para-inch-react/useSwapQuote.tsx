@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 import ABI from 'human-standard-token-abi';
@@ -120,5 +120,26 @@ export const useSwapQuote = () => {
     return await web3.eth.sendTransaction({ ...rawTx, gas: estimatedGas });
   }, [address, fromToken, isApprovalNeeded, swapQuote?.contractAddress, wallet]);
 
-  return { swapQuote, isApprovalNeeded, approve };
+  const swap = useMemo(() => {
+    if (!address || !wallet || !wallet.provider) {
+      return null;
+    }
+
+    if (isApprovalNeeded) {
+      return null;
+    }
+
+    const provider = wallet.provider;
+    const transaction = swapQuote?.transaction;
+    if (!transaction) {
+      return null;
+    }
+
+    return async () => {
+      const web3 = new Web3(provider);
+      return await web3.eth.sendTransaction(transaction);
+    };
+  }, [isApprovalNeeded, swapQuote?.transaction, address, wallet]);
+
+  return { swapQuote, isApprovalNeeded, approve, swap };
 };

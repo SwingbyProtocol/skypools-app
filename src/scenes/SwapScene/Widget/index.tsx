@@ -14,7 +14,7 @@ import {
   toInput,
   toLabel,
   container,
-  swap,
+  swap as swapButton,
   info,
   infoLabel,
   infoValue,
@@ -25,7 +25,11 @@ export const Widget = ({
   swapQuote,
   approve,
   isApprovalNeeded,
-}: Pick<ReturnType<typeof useSwapQuote>, 'approve' | 'isApprovalNeeded' | 'swapQuote'>) => {
+  swap,
+}: Pick<
+  ReturnType<typeof useSwapQuote>,
+  'approve' | 'isApprovalNeeded' | 'swapQuote' | 'swap'
+>) => {
   const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount } = useParaInch();
 
   const from = useMemo(
@@ -98,12 +102,18 @@ export const Widget = ({
         }}
       />
       {!isApprovalNeeded && (
-        <Button variant="primary" size="state" css={swap} disabled={isApprovalNeeded === null}>
+        <Button
+          variant="primary"
+          size="state"
+          css={swapButton}
+          disabled={isApprovalNeeded === null}
+          onClick={swap ?? undefined}
+        >
           <FormattedMessage id="widget.swap" />
         </Button>
       )}
       {!!isApprovalNeeded && (
-        <Button variant="primary" size="state" css={swap} onClick={approve}>
+        <Button variant="primary" size="state" css={swapButton} onClick={approve}>
           <FormattedMessage id="widget.approve" />
         </Button>
       )}
