@@ -34,6 +34,39 @@ export type SwapQuote = {
   estimatedGasUsd: Big | null;
   contractAddress: string | null;
   routes: SwapQuoteRoute[];
+  transaction: {
+    from: string;
+    to: string;
+    data: string;
+    value: string;
+    gas: string | number;
+    gasPrice: string;
+    chainId: number;
+  } | null;
+};
+
+type OneInchApiResult = {
+  toTokenAmount: string;
+  fromTokenAmount: string;
+  protocols: Array<
+    Array<
+      Array<{
+        name: string;
+        part: number;
+        fromTokenAddress: string;
+        toTokenAddress: string;
+      }>
+    >
+  >;
+  estimatedGas: number;
+  tx?: {
+    from: string;
+    to: string;
+    data: string;
+    value: string;
+    gasPrice: string;
+    gas: number;
+  };
 };
 
 export const getSwapQuote = async ({
@@ -114,7 +147,34 @@ export const getSwapQuote = async ({
       }
     })();
 
+    const transaction = await (async (): Promise<SwapQuote['transaction']> => {
+      if (!sourceAddress || !walletProvider) return null;
+
+      const tx = await paraSwap.buildTx(
+        fromToken.address,
+        toToken.address,
+        result.srcAmount,
+        result.destAmount,
+        result,
+        sourceAddress,
+        'skypools',
+        undefined,
+      );
+
+      if (isParaSwapApiError(tx)) {
+        throw tx;
+      }
+
+      const web3 = new Web3(walletProvider);
+      const gasPrice = await web3.eth.getGasPrice();
+
+      const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
+
+      return { ...tx, gasPrice, gas };
+    })();
+
     return {
+      transaction,
       contractAddress,
       fromTokenPriceUsd,
       toTokenPriceUsd,
@@ -244,7 +304,13 @@ export const getSwapQuote = async ({
     }
   })();
 
+  const transaction = await (async (): Promise<SwapQuote['transaction']> => {
+    if (!result.tx) return null;
+    return { ...result.tx, chainId: network };
+  })();
+
   return {
+    transaction,
     contractAddress: result.tx?.to || null,
     fromTokenPriceUsd,
     toTokenPriceUsd,
