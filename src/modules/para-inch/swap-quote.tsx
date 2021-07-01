@@ -113,7 +113,7 @@ export const getSwapQuote = async ({
     const paraSwap = new ParaSwap(network);
     const result = await paraSwap.getRate(fromToken.address, toToken.address, amount.toFixed());
     if (isParaSwapApiError(result)) {
-      throw new Error(`${result.status}: ${result.message}`);
+      throw result;
     }
 
     const fromTokenAmount = (() => {
@@ -149,29 +149,34 @@ export const getSwapQuote = async ({
     })();
 
     const transaction = await (async (): Promise<SwapQuote['transaction']> => {
-      if (!sourceAddress || !walletProvider) return null;
+      try {
+        if (!sourceAddress || !walletProvider) return null;
 
-      const tx = await paraSwap.buildTx(
-        fromToken.address,
-        toToken.address,
-        result.srcAmount,
-        result.destAmount,
-        result,
-        sourceAddress,
-        'skypools',
-        undefined,
-      );
+        const tx = await paraSwap.buildTx(
+          fromToken.address,
+          toToken.address,
+          result.srcAmount,
+          result.destAmount,
+          result,
+          sourceAddress,
+          'skypools',
+          undefined,
+        );
 
-      if (isParaSwapApiError(tx)) {
-        throw tx;
+        if (isParaSwapApiError(tx)) {
+          throw tx;
+        }
+
+        const web3 = new Web3(walletProvider);
+        const gasPrice = await web3.eth.getGasPrice();
+
+        const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
+
+        return { ...tx, gasPrice, gas };
+      } catch (err) {
+        logger.error({ err }, 'Could not build swap transaction');
+        return null;
       }
-
-      const web3 = new Web3(walletProvider);
-      const gasPrice = await web3.eth.getGasPrice();
-
-      const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
-
-      return { ...tx, gasPrice, gas };
     })();
 
     return {
