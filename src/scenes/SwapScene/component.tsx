@@ -1,12 +1,19 @@
 import { Big } from 'big.js';
 import React, { useEffect, useState } from 'react';
 import { DateTime } from 'luxon';
+import Web3 from 'web3';
+import ABI from 'human-standard-token-abi';
 
 import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { getPriceHistory, isSupportedNetworkId, SwapQuoteRoute } from '../../modules/para-inch';
+import {
+  getPriceHistory,
+  isNativeToken,
+  isSupportedNetworkId,
+  SwapQuoteRoute,
+} from '../../modules/para-inch';
 import { useParaInch, useSwapQuote } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
@@ -40,8 +47,8 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 };
 
 export const SwapScene = () => {
-  const { network: onboardNetwork } = useOnboard();
-  const { fromToken, toToken, network, setNetwork } = useParaInch();
+  const { network: onboardNetwork, wallet, address } = useOnboard();
+  const { fromToken, toToken, network, setNetwork, setAmount } = useParaInch();
   const { swapQuote, isApprovalNeeded, approve, swap } = useSwapQuote();
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
@@ -87,6 +94,37 @@ export const SwapScene = () => {
       cancelled = true;
     };
   }, [fromToken, toToken, network]);
+
+  useEffect(() => {
+    const walletProvider = wallet?.provider;
+
+    if (!walletProvider || !fromToken || !address) {
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      const web3 = new Web3(walletProvider);
+      const balance = await (async () => {
+        if (isNativeToken(fromToken.address)) {
+          return web3.utils.fromWei(await web3.eth.getBalance(address), 'ether');
+        }
+
+        const contract = new web3.eth.Contract(ABI, fromToken.address);
+        return new Big(await contract.methods.balanceOf(address).call())
+          .div(`1e${fromToken.decimals}`)
+          .toFixed();
+      })();
+
+      if (cancelled) return;
+      setAmount(balance);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [wallet, setAmount, address, fromToken]);
 
   return (
     <div css={swapScene}>

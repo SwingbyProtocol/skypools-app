@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { createContext, ReactNode, useState, useMemo, useCallback } from 'react';
+import { Big } from 'big.js';
 
 import type { ParaInchToken, SupportedNetworkId } from '../para-inch';
 
@@ -13,6 +14,7 @@ export type ParaInchContextValue = {
   setToToken: (amount: string) => void;
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
+  isAmountValid: boolean;
 };
 
 export const ParaInchContext = createContext<ParaInchContextValue>({
@@ -25,6 +27,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
   setToToken: () => {},
   tokens: [],
   toToken: null,
+  isAmountValid: false,
 });
 
 export const ParaInchTokenProvider = ({
@@ -34,7 +37,7 @@ export const ParaInchTokenProvider = ({
   children?: ReactNode;
   value: Omit<
     ParaInchContextValue,
-    'amount' | 'setAmount' | 'setFromToken' | 'setNetwork' | 'setToToken'
+    'amount' | 'setAmount' | 'setFromToken' | 'setNetwork' | 'setToToken' | 'isAmountValid'
   >;
 }) => {
   const { push } = useRouter();
@@ -95,6 +98,13 @@ export const ParaInchTokenProvider = ({
       setFromToken,
       setToToken,
       setNetwork,
+      isAmountValid: ((): boolean => {
+        try {
+          return !!amount && new Big(amount).gt(0);
+        } catch (e) {
+          return false;
+        }
+      })(),
     }),
     [
       valueParam.network,

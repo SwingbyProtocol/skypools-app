@@ -1,9 +1,8 @@
 import { Big } from 'big.js';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
-import { SwapQuote } from '../../../modules/para-inch';
 import { useParaInch, useSwapQuote } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
@@ -30,14 +29,15 @@ export const Widget = ({
   ReturnType<typeof useSwapQuote>,
   'approve' | 'isApprovalNeeded' | 'swapQuote' | 'swap'
 >) => {
-  const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount } = useParaInch();
+  const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount, isAmountValid } =
+    useParaInch();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
       coin: fromToken,
       amount,
       amountInfo:
-        !amount || !swapQuote?.fromTokenAmountUsd ? null : (
+        !isAmountValid || !swapQuote?.fromTokenAmountUsd ? null : (
           <FormattedNumber
             value={swapQuote.fromTokenAmountUsd.toNumber()}
             style="currency"
@@ -46,15 +46,15 @@ export const Widget = ({
           />
         ),
     }),
-    [fromToken, amount, swapQuote?.fromTokenAmountUsd],
+    [fromToken, amount, swapQuote?.fromTokenAmountUsd, isAmountValid],
   );
 
   const to = useMemo(
     (): CoinAmountInputValue => ({
       coin: toToken,
-      amount: (!amount ? null : swapQuote?.toTokenAmount.toFixed()) ?? null,
+      amount: (!isAmountValid ? null : swapQuote?.toTokenAmount.toFixed()) ?? null,
       amountInfo:
-        !amount || !swapQuote?.toTokenAmountUsd ? null : (
+        !isAmountValid || !swapQuote?.toTokenAmountUsd ? null : (
           <FormattedNumber
             value={swapQuote.toTokenAmountUsd.toNumber()}
             style="currency"
@@ -63,7 +63,7 @@ export const Widget = ({
           />
         ),
     }),
-    [toToken, amount, swapQuote?.toTokenAmount, swapQuote?.toTokenAmountUsd],
+    [toToken, swapQuote?.toTokenAmount, swapQuote?.toTokenAmountUsd, isAmountValid],
   );
 
   const toCoins = useMemo(
@@ -117,7 +117,7 @@ export const Widget = ({
           <FormattedMessage id="widget.approve" />
         </Button>
       )}
-      {swapQuote && (
+      {isAmountValid && swapQuote && (
         <table css={info}>
           <tr>
             <td css={infoLabel} rowSpan={2}>

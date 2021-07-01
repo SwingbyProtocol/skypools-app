@@ -87,13 +87,25 @@ export const getSwapQuote = async ({
   sourceAddress?: string | null;
   walletProvider?: any | null;
 }): Promise<SwapQuote> => {
-  const amount = (() => {
+  const isAmountValid = ((): boolean => {
     try {
-      return new Big(amountParam ?? 0).times(`1e${fromToken.decimals}`);
+      return new Big(amountParam).gt(0);
     } catch (e) {
-      return new Big(0);
+      return false;
     }
   })();
+
+  const amount = (() => {
+    try {
+      if (!isAmountValid) {
+        throw new Error();
+      }
+
+      return new Big(amountParam ?? 1);
+    } catch (e) {
+      return new Big(1);
+    }
+  })().times(`1e${fromToken.decimals}`);
 
   const slippage = (() => {
     try {
@@ -118,6 +130,7 @@ export const getSwapQuote = async ({
 
     const fromTokenAmount = (() => {
       try {
+        if (!isAmountValid) return new Big(0);
         return new Big(result.srcAmount).div(`1e${fromToken.decimals}`);
       } catch (e) {
         return Big(0);
@@ -126,6 +139,7 @@ export const getSwapQuote = async ({
 
     const toTokenAmount = (() => {
       try {
+        if (!isAmountValid) return new Big(0);
         return new Big(result.destAmount).div(`1e${toToken.decimals}`);
       } catch (e) {
         return Big(0);
@@ -150,7 +164,7 @@ export const getSwapQuote = async ({
 
     const transaction = await (async (): Promise<SwapQuote['transaction']> => {
       try {
-        if (!sourceAddress || !walletProvider) return null;
+        if (!sourceAddress || !walletProvider || !isAmountValid) return null;
 
         const tx = await paraSwap.buildTx(
           fromToken.address,
@@ -296,6 +310,7 @@ export const getSwapQuote = async ({
 
   const fromTokenAmount = (() => {
     try {
+      if (!isAmountValid) return new Big(0);
       return new Big(result.fromTokenAmount).div(`1e${fromToken.decimals}`);
     } catch (e) {
       return Big(0);
@@ -304,6 +319,7 @@ export const getSwapQuote = async ({
 
   const toTokenAmount = (() => {
     try {
+      if (!isAmountValid) return new Big(0);
       return new Big(result.toTokenAmount).div(`1e${toToken.decimals}`);
     } catch (e) {
       return Big(0);
@@ -311,7 +327,7 @@ export const getSwapQuote = async ({
   })();
 
   const transaction = await (async (): Promise<SwapQuote['transaction']> => {
-    if (!result.tx) return null;
+    if (!result.tx || !isAmountValid) return null;
     return { ...result.tx, chainId: network };
   })();
 
