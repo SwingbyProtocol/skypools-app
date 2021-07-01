@@ -2,6 +2,7 @@ import { ParaSwap } from 'paraswap';
 import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
 import Web3 from 'web3';
+import type { TransactionConfig } from 'web3-eth';
 
 import { fetcher } from '../fetch';
 import { shouldUseParaSwap } from '../env';
@@ -35,13 +36,13 @@ export type SwapQuote = {
   contractAddress: string | null;
   routes: SwapQuoteRoute[];
   transaction: {
-    from: string;
-    to: string;
-    data: string;
-    value: string;
-    gas: string | number;
-    gasPrice: string;
-    chainId: number;
+    from: NonNullable<TransactionConfig['from']>;
+    to: NonNullable<TransactionConfig['to']>;
+    data: NonNullable<TransactionConfig['data']>;
+    value: NonNullable<TransactionConfig['value']>;
+    gas: NonNullable<TransactionConfig['gas']>;
+    gasPrice: NonNullable<TransactionConfig['gasPrice']>;
+    chainId: NonNullable<TransactionConfig['chainId']>;
   } | null;
 };
 
