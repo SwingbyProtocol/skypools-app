@@ -132,7 +132,7 @@ export const useSwapQuote = () => {
     const provider = wallet.provider;
     const transaction = swapQuote?.transaction;
     if (!transaction) {
-      throw new Error('No valid transaction inside the swap quote');
+      return null;
     }
 
     return async () => {
