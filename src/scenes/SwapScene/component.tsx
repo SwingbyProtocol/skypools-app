@@ -14,7 +14,7 @@ import {
   isSupportedNetworkId,
   SwapQuoteRoute,
 } from '../../modules/para-inch';
-import { useParaInch, useSwapQuote } from '../../modules/para-inch-react';
+import { useParaInch, useParaInchSwap } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
 
@@ -48,8 +48,8 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 
 export const SwapScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
-  const { fromToken, toToken, network, setNetwork, setAmount } = useParaInch();
-  const { swapQuote, isApprovalNeeded, approve, swap } = useSwapQuote();
+  const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInch();
+  const { isApprovalNeeded, approve, swap } = useParaInchSwap();
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
   >(null);
@@ -144,12 +144,7 @@ export const SwapScene = () => {
       </Card>
 
       <Card css={widgetCard}>
-        <Widget
-          swapQuote={swapQuote}
-          isApprovalNeeded={isApprovalNeeded}
-          approve={approve}
-          swap={swap}
-        />
+        <Widget />
       </Card>
 
       <div css={historyContainer}>

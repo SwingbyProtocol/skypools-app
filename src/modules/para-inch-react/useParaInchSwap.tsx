@@ -4,56 +4,17 @@ import { TransactionConfig } from 'web3-eth';
 import ABI from 'human-standard-token-abi';
 import { Big } from 'big.js';
 
-import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getSwapQuote, SwapQuote, isNativeToken } from '../para-inch';
+import { isNativeToken } from '../para-inch';
 
 import { useParaInch } from './useParaInch';
 
 const MAX_ALLOWANCE = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
-export const useSwapQuote = () => {
-  const { address, wallet } = useOnboard();
-  const { fromToken, toToken, network, amount } = useParaInch();
-  const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
+export const useParaInchSwap = () => {
+  const { address, wallet, network: onboardNetwork } = useOnboard();
+  const { fromToken, swapQuote, network } = useParaInch();
   const [isApprovalNeeded, setApprovalNeeded] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    if (!fromToken || !toToken) {
-      return;
-    }
-
-    const loadQuote = async () => {
-      try {
-        if (cancelled) return;
-
-        setSwapQuote(null);
-        const result = await getSwapQuote({
-          fromToken,
-          toToken,
-          amount: amount ?? 1,
-          network,
-          sourceAddress: address,
-          walletProvider: wallet?.provider,
-        });
-
-        if (cancelled) return;
-        logger.debug({ swapQuote: result }, 'Got a swap quote');
-        setSwapQuote(result);
-      } catch (err) {
-        logger.error({ err }, 'Failed to load swap quote');
-        setTimeout(loadQuote, 2500);
-      }
-    };
-
-    loadQuote();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [fromToken, toToken, network, amount, address, wallet?.provider]);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,6 +86,10 @@ export const useSwapQuote = () => {
       return null;
     }
 
+    if (onboardNetwork !== network) {
+      return null;
+    }
+
     if (isApprovalNeeded) {
       return null;
     }
@@ -139,7 +104,7 @@ export const useSwapQuote = () => {
       const web3 = new Web3(provider);
       return await web3.eth.sendTransaction(transaction);
     };
-  }, [isApprovalNeeded, swapQuote?.transaction, address, wallet]);
+  }, [isApprovalNeeded, swapQuote?.transaction, address, wallet, onboardNetwork, network]);
 
-  return { swapQuote, isApprovalNeeded, approve, swap };
+  return { isApprovalNeeded, approve, swap };
 };

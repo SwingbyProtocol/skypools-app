@@ -1,5 +1,5 @@
 export { ParaInchTokenProvider } from './context';
-export { useSwapQuote } from './useSwapQuote';
+export { useParaInchSwap } from './useParaInchSwap';
 export { useParaInch } from './useParaInch';
 
 export type { ParaInchContextValue } from './context';

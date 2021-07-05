@@ -1,9 +1,8 @@
-import { Big } from 'big.js';
 import { useMemo } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
-import { useParaInch, useSwapQuote } from '../../../modules/para-inch-react';
+import { useParaInch, useParaInchSwap } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -20,17 +19,19 @@ import {
   infoValueHighlight,
 } from './styles';
 
-export const Widget = ({
-  swapQuote,
-  approve,
-  isApprovalNeeded,
-  swap,
-}: Pick<
-  ReturnType<typeof useSwapQuote>,
-  'approve' | 'isApprovalNeeded' | 'swapQuote' | 'swap'
->) => {
-  const { tokens, fromToken, toToken, setFromToken, setToToken, amount, setAmount, isAmountValid } =
-    useParaInch();
+export const Widget = () => {
+  const {
+    tokens,
+    fromToken,
+    toToken,
+    setFromToken,
+    setToToken,
+    amount,
+    setAmount,
+    isAmountValid,
+    swapQuote,
+  } = useParaInch();
+  const { isApprovalNeeded, approve, swap } = useParaInchSwap();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({

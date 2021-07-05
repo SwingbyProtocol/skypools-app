@@ -1,8 +1,11 @@
 import { useRouter } from 'next/router';
-import { createContext, ReactNode, useState, useMemo, useCallback } from 'react';
+import { createContext, ReactNode, useState, useMemo, useCallback, useEffect } from 'react';
 import { Big } from 'big.js';
 
-import type { ParaInchToken, SupportedNetworkId } from '../para-inch';
+import type { ParaInchToken, SupportedNetworkId, SwapQuote } from '../para-inch';
+import { getSwapQuote } from '../para-inch';
+import { useOnboard } from '../onboard';
+import { logger } from '../logger';
 
 export type ParaInchContextValue = {
   amount: string | null;
@@ -15,6 +18,7 @@ export type ParaInchContextValue = {
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
   isAmountValid: boolean;
+  swapQuote: SwapQuote | null;
 };
 
 export const ParaInchContext = createContext<ParaInchContextValue>({
@@ -28,6 +32,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
   tokens: [],
   toToken: null,
   isAmountValid: false,
+  swapQuote: null,
 });
 
 export const ParaInchTokenProvider = ({
@@ -35,16 +40,15 @@ export const ParaInchTokenProvider = ({
   children,
 }: {
   children?: ReactNode;
-  value: Omit<
-    ParaInchContextValue,
-    'amount' | 'setAmount' | 'setFromToken' | 'setNetwork' | 'setToToken' | 'isAmountValid'
-  >;
+  value: Pick<ParaInchContextValue, 'fromToken' | 'network' | 'toToken' | 'tokens'>;
 }) => {
   const { push } = useRouter();
+  const { wallet, address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueParam.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueParam.toToken);
+  const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
 
   const setFromToken = useCallback(
     (value: string) => {
@@ -87,6 +91,43 @@ export const ParaInchTokenProvider = ({
     [push, fromToken, toToken],
   );
 
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!fromToken || !toToken) {
+      return;
+    }
+
+    const loadQuote = async () => {
+      try {
+        if (cancelled) return;
+
+        setSwapQuote(null);
+        const result = await getSwapQuote({
+          fromToken,
+          toToken,
+          amount: amount ?? 1,
+          network: valueParam.network,
+          sourceAddress: address,
+          walletProvider: wallet?.provider,
+        });
+
+        if (cancelled) return;
+        logger.debug({ swapQuote: result }, 'Got a swap quote');
+        setSwapQuote(result);
+      } catch (err) {
+        logger.error({ err }, 'Failed to load swap quote');
+        setTimeout(loadQuote, 2500);
+      }
+    };
+
+    loadQuote();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [fromToken, toToken, valueParam?.network, amount, address, wallet?.provider]);
+
   const value = useMemo(
     () => ({
       network: valueParam.network,
@@ -105,6 +146,7 @@ export const ParaInchTokenProvider = ({
           return false;
         }
       })(),
+      swapQuote,
     }),
     [
       valueParam.network,
@@ -115,6 +157,7 @@ export const ParaInchTokenProvider = ({
       setFromToken,
       setToToken,
       setNetwork,
+      swapQuote,
     ],
   );
 
