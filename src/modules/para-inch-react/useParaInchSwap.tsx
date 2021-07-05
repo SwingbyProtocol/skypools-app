@@ -100,9 +100,9 @@ export const useParaInchSwap = () => {
       return null;
     }
 
-    return async () => {
+    return () => {
       const web3 = new Web3(provider);
-      return await web3.eth.sendTransaction(transaction);
+      return web3.eth.sendTransaction(transaction);
     };
   }, [isApprovalNeeded, swapQuote?.transaction, address, wallet, onboardNetwork, network]);
 
