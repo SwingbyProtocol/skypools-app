@@ -63,7 +63,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       <div css={type}>swap</div>
       <div css={time}>
         <FormattedDate
-          value={DateTime.fromISO('2021-06-11T14:26:53.180Z').toJSDate()}
+          value={item.at.toJSDate()}
           dateStyle="short"
           timeStyle="short"
           hour12={false}

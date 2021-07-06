@@ -58,8 +58,7 @@ export const useParaInchHistory = () => {
   }, [wallet?.provider]);
 
   useEffect(() => {
-    const walletProvider = wallet?.provider;
-    if (!walletProvider || !address) return;
+    if (!address) return;
 
     let cancelled = false;
 
@@ -67,7 +66,7 @@ export const useParaInchHistory = () => {
       try {
         if (cancelled) return;
 
-        const transactions = await getLatestTransactions({ address, network, walletProvider });
+        const transactions = await getLatestTransactions({ address, network });
         if (cancelled) return;
 
         setLatestTransactions((old) => {
@@ -84,7 +83,7 @@ export const useParaInchHistory = () => {
 
         setTimeout(check, 60000);
       } catch (err) {
-        logger.warn({ err }, 'Failed to get pending transactions');
+        logger.warn({ err }, 'Failed to get latest transactions');
         setTimeout(check, 15000);
       }
     };
@@ -94,7 +93,7 @@ export const useParaInchHistory = () => {
     return () => {
       cancelled = true;
     };
-  }, [address, network, wallet?.provider]);
+  }, [address, network]);
 
   return { pendingTransactions, latestTransactions };
 };

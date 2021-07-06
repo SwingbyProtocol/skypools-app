@@ -20,12 +20,6 @@ type ApiResult = {
     to: string;
     from: string;
     value: string;
-    tokenDecimal: string;
-    contractAddress: string;
-    gas: string;
-    gasPrice: string;
-    transactionIndex: string;
-    confirmations: string;
   }> | null;
 };
 
@@ -48,20 +42,14 @@ const getScanApiUrl = ({ network }: { network: NetworkId }) => {
   }
 };
 
-const getSpender = async ({
-  network,
-  walletProvider,
-}: {
-  network: SupportedNetworkId;
-  walletProvider: Web3Provider;
-}): Promise<string> => {
+const getSpender = async ({ network }: { network: SupportedNetworkId }): Promise<string> => {
   if (shouldUseParaSwap) {
-    const result = await new ParaSwap(network).getSpender(new Web3(walletProvider));
-    if (isParaSwapApiError(result)) {
+    const result = await new ParaSwap(network).getAdapters();
+    if (isParaSwapApiError(result) || !result?.augustus.exchange) {
       throw result;
     }
 
-    return result;
+    return result?.augustus.exchange;
   }
 
   return (
@@ -72,14 +60,12 @@ const getSpender = async ({
 export const getLatestTransactions = async ({
   address: addressParam,
   network,
-  walletProvider,
 }: {
   address: string;
   network: SupportedNetworkId;
-  walletProvider: Web3Provider;
 }) => {
   const address = addressParam.toLowerCase();
-  const spender = (await getSpender({ network, walletProvider })).toLowerCase();
+  const spender = (await getSpender({ network })).toLowerCase();
   return (
     (
       await fetcher<ApiResult>(
@@ -87,10 +73,8 @@ export const getLatestTransactions = async ({
           url: getScanApiUrl({ network }),
           query: {
             module: 'account',
-            action: 'tokentx',
+            action: 'txlist',
             address,
-            startblock: 1,
-            endblock: 99999999,
             sort: 'desc',
           },
         }),
@@ -99,12 +83,11 @@ export const getLatestTransactions = async ({
   )
     .map((it) => ({
       blockNumber: `${it.blockNumber}`,
-      at: DateTime.fromMillis(+it.timeStamp + 1000, { zone: 'utc' }),
+      at: DateTime.fromMillis(+it.timeStamp * 1000, { zone: 'utc' }),
       hash: `${it.hash}`,
       from: `${it.from}`,
       to: `${it.to}`,
-      contractAddress: `${it.contractAddress}`,
-      value: new Big(it.value).div(`1e${it.tokenDecimal}`),
+      value: new Big(it.value).div('1e18'),
     }))
     .filter((it) => it.to.toLowerCase() === spender && it.from.toLowerCase() === address);
 };
