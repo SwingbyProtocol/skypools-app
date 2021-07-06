@@ -3,10 +3,11 @@ import { VariableSizeList as List, ListChildComponentProps } from 'react-window'
 import Image from 'next/image';
 import { FormattedDate, FormattedNumber, useIntl } from 'react-intl';
 import { DateTime } from 'luxon';
-import { useRef, useEffect, useCallback, useState } from 'react';
+import { useRef, useEffect, useCallback, useState, createContext, useContext } from 'react';
 import { stripUnit } from 'polished';
 
 import { size } from '../../../modules/styles';
+import { ParaInchHistoryItem, useParaInchHistory } from '../../../modules/para-inch-react';
 
 import {
   amountIn,
@@ -38,10 +39,18 @@ const NUMBER_FORMAT_FULL: Partial<React.ComponentPropsWithoutRef<typeof Formatte
 
 const AMOUNT_IN = 1e-8;
 const AMOUNT_OUT = Number.MAX_SAFE_INTEGER;
-const data = new Array(50).fill(null);
+
+const Context = createContext<ParaInchHistoryItem[]>([]);
 
 const Row = ({ style, index }: ListChildComponentProps) => {
   const { formatNumber } = useIntl();
+  const data = useContext(Context);
+
+  const item = data[index];
+  if (!item) {
+    return <></>;
+  }
+
   return (
     <div
       css={[rowContainer, index === 0 && firstRow, index === data.length - 1 && lastRow]}
@@ -68,7 +77,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         {formatNumber(AMOUNT_OUT, NUMBER_FORMAT_SHORT)}
       </div>
 
-      <div css={hash}>0x000…</div>
+      <div css={hash}>{item.hash}</div>
     </div>
   );
 };
@@ -81,15 +90,17 @@ export const History = ({ className }: Props) => {
   const [itemHeightLast, setItemHeightLast] = useState<number>(size.city);
   const [itemHeightOther, setItemHeightOther] = useState<number>(size.city);
 
+  const { latestTransactions } = useParaInchHistory();
+
   const itemSize = useCallback(
     (index: number) => {
       return index === 0
         ? itemHeightFirst
-        : index === data.length - 1
+        : index === latestTransactions.length - 1
         ? itemHeightLast
         : itemHeightOther;
     },
-    [itemHeightFirst, itemHeightLast, itemHeightOther],
+    [itemHeightFirst, itemHeightLast, itemHeightOther, latestTransactions.length],
   );
 
   useEffect(() => {
@@ -118,9 +129,17 @@ export const History = ({ className }: Props) => {
   return (
     <div css={container} className={className} ref={ref as any}>
       <div css={sizeCalc} ref={stylesRef} />
-      <List width={width} height={height} itemSize={itemSize} itemCount={data.length} ref={listRef}>
-        {Row}
-      </List>
+      <Context.Provider value={latestTransactions}>
+        <List
+          width={width}
+          height={height}
+          itemSize={itemSize}
+          itemCount={latestTransactions.length}
+          ref={listRef}
+        >
+          {Row}
+        </List>
+      </Context.Provider>
     </div>
   );
 };
