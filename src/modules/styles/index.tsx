@@ -1,4 +1,4 @@
-import { Global, css } from '@emotion/react';
+import { Global, css, keyframes } from '@emotion/react';
 import { rem } from 'polished';
 
 export const size = {
@@ -43,6 +43,10 @@ export const lightTheme = `
   --sp-color-success-normal: ${hslParams('hsl(100, 50%, 50%)')};
   --sp-color-success-active: ${hslParams('hsl(100, 50%, 40%)')};
   --sp-color-success-text: ${primaryText};
+
+  --sp-color-warning-normal: ${hslParams('hsl(46, 85%, 50%)')};
+  --sp-color-warning-active: ${hslParams('hsl(46, 85%, 40%)')};
+  --sp-color-warning-text: ${primaryText};
 
   --sp-tooltip-border: none;
   --sp-tooltip-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
@@ -131,3 +135,26 @@ export const GlobalStyles = () => (
     `}
   />
 );
+
+const pulse = keyframes`
+  from, 20%, 53%, 80%, to {
+    opacity: 0.4;
+  }
+
+  40%, 43% {
+    opacity: 0.1;
+  }
+
+  70% {
+    opacity: 0.3;
+  }
+
+  90% {
+    opacity: 0.5;
+  }
+`;
+
+export const pulseAnimation = css`
+  opacity: 0.5;
+  animation: ${pulse} 5s ease infinite;
+`;

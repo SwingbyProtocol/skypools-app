@@ -1,7 +1,7 @@
-import { css, keyframes } from '@emotion/react';
+import { css } from '@emotion/react';
 import { rem } from 'polished';
 
-import { size } from '../../modules/styles';
+import { pulseAnimation, size } from '../../modules/styles';
 
 export const swapScene = css`
   display: grid;
@@ -55,28 +55,9 @@ export const swapPathContainer = css`
   padding: ${rem(size.street)} ${rem(size.town)};
 `;
 
-const pulse = keyframes`
-  from, 20%, 53%, 80%, to {
-    opacity: 0.4;
-  }
-
-  40%, 43% {
-    opacity: 0.1;
-  }
-
-  70% {
-    opacity: 0.3;
-  }
-
-  90% {
-    opacity: 0.5;
-  }
-`;
-
 export const loadingPulseAnimation = css`
-  opacity: 0.5;
+  ${pulseAnimation};
   filter: saturate(0%);
-  animation: ${pulse} 5s ease infinite;
 `;
 
 export const widgetCard = css`

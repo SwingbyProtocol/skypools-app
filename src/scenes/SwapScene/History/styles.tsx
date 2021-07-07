@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { rem } from 'polished';
 
-import { size } from '../../../modules/styles';
+import { pulseAnimation, size } from '../../../modules/styles';
 
 export const container = css``;
 
@@ -47,6 +47,29 @@ export const icon = css`
   position: relative;
   width: ${rem(size.town)};
   height: ${rem(size.town)};
+  border-radius: ${rem(size.drawer)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${rem(size.house)};
+  background: #f00;
+  color: #0f0;
+`;
+
+export const iconConfirmed = css`
+  background: hsl(var(--sp-color-success-normal));
+  color: hsl(var(--sp-color-success-text));
+`;
+
+export const iconSent = css`
+  ${iconConfirmed};
+  ${pulseAnimation};
+`;
+
+export const iconPending = css`
+  background: hsla(var(--sp-color-warning-normal));
+  color: hsla(var(--sp-color-warning-text));
+  ${pulseAnimation};
 `;
 
 export const type = css`

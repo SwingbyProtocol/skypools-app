@@ -1,13 +1,17 @@
 import { useMeasure } from 'react-use';
 import { VariableSizeList as List, ListChildComponentProps } from 'react-window';
-import Image from 'next/image';
 import { FormattedDate, FormattedNumber, useIntl } from 'react-intl';
-import { DateTime } from 'luxon';
 import { useRef, useEffect, useCallback, useState, createContext, useContext } from 'react';
 import { stripUnit } from 'polished';
 
 import { size } from '../../../modules/styles';
-import { ParaInchHistoryItem, useParaInchHistory } from '../../../modules/para-inch-react';
+import {
+  ParaInchHistoryItem,
+  useParaInch,
+  useParaInchHistory,
+} from '../../../modules/para-inch-react';
+import { shortenAddress } from '../../../modules/short-address';
+import { buildLinkToTransaction } from '../../../modules/web3';
 
 import {
   amountIn,
@@ -21,7 +25,11 @@ import {
   firstRow,
   lastRow,
   sizeCalc,
+  iconConfirmed,
+  iconPending,
+  iconSent,
 } from './styles';
+import { ReactComponent as SwapIcon } from './swap.svg';
 
 type Props = { className?: string };
 
@@ -43,6 +51,7 @@ const AMOUNT_OUT = Number.MAX_SAFE_INTEGER;
 const Context = createContext<ParaInchHistoryItem[]>([]);
 
 const Row = ({ style, index }: ListChildComponentProps) => {
+  const { network } = useParaInch();
   const { formatNumber } = useIntl();
   const data = useContext(Context);
 
@@ -56,8 +65,15 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       css={[rowContainer, index === 0 && firstRow, index === data.length - 1 && lastRow]}
       style={style}
     >
-      <div css={icon}>
-        <Image src="/swap/swap-icon.svg" layout="fill" alt="" />
+      <div
+        css={[
+          icon,
+          item.status === 'confirmed' && iconConfirmed,
+          item.status === 'pending' && iconPending,
+          item.status === 'sent' && iconSent,
+        ]}
+      >
+        <SwapIcon />
       </div>
 
       <div css={type}>swap</div>
@@ -70,14 +86,26 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         />
       </div>
 
-      <div css={amountIn} title={formatNumber(AMOUNT_IN, NUMBER_FORMAT_FULL)}>
-        {formatNumber(AMOUNT_IN, NUMBER_FORMAT_SHORT)}
-      </div>
-      <div css={amountOut} title={formatNumber(AMOUNT_OUT, NUMBER_FORMAT_FULL)}>
-        {formatNumber(AMOUNT_OUT, NUMBER_FORMAT_SHORT)}
-      </div>
+      {false && (
+        <>
+          <div css={amountIn} title={formatNumber(AMOUNT_IN, NUMBER_FORMAT_FULL)}>
+            {formatNumber(AMOUNT_IN, NUMBER_FORMAT_SHORT)}
+          </div>
+          <div css={amountOut} title={formatNumber(AMOUNT_OUT, NUMBER_FORMAT_FULL)}>
+            {formatNumber(AMOUNT_OUT, NUMBER_FORMAT_SHORT)}
+          </div>
+        </>
+      )}
 
-      <div css={hash}>{item.hash}</div>
+      <div css={hash}>
+        <a
+          href={buildLinkToTransaction({ network, transactionHash: item.hash })}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {shortenAddress({ value: item.hash })}
+        </a>
+      </div>
     </div>
   );
 };
