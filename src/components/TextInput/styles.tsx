@@ -114,7 +114,7 @@ export const left = css`
   flex-direction: row;
   align-items: stretch;
   justify-content: stretch;
-  margin-left: ${rem(size.room)};
+  margin-inline-start: ${rem(size.room)};
 `;
 
 export const right = css`
@@ -122,5 +122,5 @@ export const right = css`
   flex-direction: row;
   align-items: stretch;
   justify-content: stretch;
-  margin-right: ${rem(size.room)};
+  margin-inline-end: ${rem(size.room)};
 `;

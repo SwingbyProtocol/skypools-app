@@ -65,5 +65,5 @@ export const coinName = css`
 
 export const coinLogo = css`
   font-size: ${rem(size.street)};
-  margin-right: ${rem(size.box)};
+  margin-inline-end: ${rem(size.box)};
 `;

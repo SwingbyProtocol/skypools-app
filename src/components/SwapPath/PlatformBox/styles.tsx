@@ -43,7 +43,7 @@ export const itemLogo = css`
 
 export const itemName = css`
   white-space: nowrap;
-  margin-left: var(--platform-name-gap);
+  margin-inline-start: var(--platform-name-gap);
   flex-grow: 0;
   flex-shrink: 1;
   font-size: var(--platform-font-size);
@@ -53,7 +53,7 @@ export const itemName = css`
 
 export const itemFraction = css`
   white-space: nowrap;
-  margin-left: var(--platform-fraction-gap);
+  margin-inline-start: var(--platform-fraction-gap);
   flex-grow: 1;
   flex-shrink: 0;
   text-align: right;

@@ -26,5 +26,5 @@ export const walletWrapper = css`
 `;
 
 export const networkTag = css`
-  margin-right: ${rem(size.drawer)};
+  margin-inline-end: ${rem(size.drawer)};
 `;
