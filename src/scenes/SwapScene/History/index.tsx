@@ -80,12 +80,14 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         <FormattedMessage id={`history.status.${item.status}`} />
       </div>
       <div css={time}>
-        <FormattedDate
-          value={item.at.toJSDate()}
-          dateStyle="short"
-          timeStyle="short"
-          hour12={false}
-        />
+        {!!item.at && (
+          <FormattedDate
+            value={item.at.toJSDate()}
+            dateStyle="short"
+            timeStyle="short"
+            hour12={false}
+          />
+        )}
       </div>
 
       {false && (
@@ -120,17 +122,17 @@ export const History = ({ className }: Props) => {
   const [itemHeightLast, setItemHeightLast] = useState<number>(size.city);
   const [itemHeightOther, setItemHeightOther] = useState<number>(size.city);
 
-  const { latestTransactions } = useParaInchHistory();
+  const { allTransactions } = useParaInchHistory();
 
   const itemSize = useCallback(
     (index: number) => {
       return index === 0
         ? itemHeightFirst
-        : index === latestTransactions.length - 1
+        : index === allTransactions.length - 1
         ? itemHeightLast
         : itemHeightOther;
     },
-    [itemHeightFirst, itemHeightLast, itemHeightOther, latestTransactions.length],
+    [itemHeightFirst, itemHeightLast, itemHeightOther, allTransactions.length],
   );
 
   useEffect(() => {
@@ -159,12 +161,12 @@ export const History = ({ className }: Props) => {
   return (
     <div css={container} className={className} ref={ref as any}>
       <div css={sizeCalc} ref={stylesRef} />
-      <Context.Provider value={latestTransactions}>
+      <Context.Provider value={allTransactions}>
         <List
           width={width}
           height={height}
           itemSize={itemSize}
-          itemCount={latestTransactions.length}
+          itemCount={allTransactions.length}
           ref={listRef}
         >
           {Row}

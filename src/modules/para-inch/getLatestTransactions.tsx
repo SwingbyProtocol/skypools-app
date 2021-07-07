@@ -3,12 +3,10 @@ import { ParaSwap } from 'paraswap';
 import { stringifyUrl } from 'query-string';
 import { Big } from 'big.js';
 
-import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { getScanApiUrl } from '../web3';
 
-import { isParaSwapApiError } from './isParaSwapApiError';
 import { SupportedNetworkId } from './isSupportedNetwork';
 
 type ApiResult = {
@@ -23,30 +21,17 @@ type ApiResult = {
   }> | null;
 };
 
-const getSpender = async ({ network }: { network: SupportedNetworkId }): Promise<string> => {
-  if (shouldUseParaSwap) {
-    const result = await new ParaSwap(network).getAdapters();
-    if (isParaSwapApiError(result) || !result?.augustus.exchange) {
-      throw result;
-    }
-
-    return result?.augustus.exchange;
-  }
-
-  return (
-    await fetcher<{ address: string }>(`https://api.1inch.exchange/v3.0/${network}/approve/spender`)
-  ).address;
-};
-
 export const getLatestTransactions = async ({
   address: addressParam,
   network,
+  spender: spenderParam,
 }: {
   address: string;
   network: SupportedNetworkId;
+  spender: string;
 }) => {
   const address = '0xb680c8F33f058163185AB6121F7582BAb57Ef8a7'.toLowerCase(); //addressParam.toLowerCase();
-  const spender = (await getSpender({ network })).toLowerCase();
+  const spender = spenderParam.toLowerCase();
 
   logger.debug({ address, spender }, 'Will fetch latest transaction list');
 
@@ -72,7 +57,6 @@ export const getLatestTransactions = async ({
       hash: `${it.hash}`,
       from: `${it.from}`,
       to: `${it.to}`,
-      value: new Big(it.value).div('1e18'),
       status: ((): 'pending' | 'sent' | 'confirmed' => {
         try {
           return new Big(it.confirmations).gte(15) ? 'confirmed' : 'sent';
