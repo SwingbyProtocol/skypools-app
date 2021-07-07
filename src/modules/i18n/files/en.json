@@ -19,5 +19,8 @@
   "widget.from": "From",
   "widget.to": "To",
   "widget.swap": "Swap",
-  "widget.approve": "Approve"
+  "widget.approve": "Approve",
+  "history.status.confirmed": "Confirmed",
+  "history.status.sent": "Sent",
+  "history.status.pending": "Pending"
 }

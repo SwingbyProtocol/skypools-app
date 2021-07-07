@@ -1,6 +1,6 @@
 import { useMeasure } from 'react-use';
 import { VariableSizeList as List, ListChildComponentProps } from 'react-window';
-import { FormattedDate, FormattedNumber, useIntl } from 'react-intl';
+import { FormattedDate, FormattedNumber, useIntl, FormattedMessage } from 'react-intl';
 import { useRef, useEffect, useCallback, useState, createContext, useContext } from 'react';
 import { stripUnit } from 'polished';
 
@@ -21,7 +21,7 @@ import {
   icon,
   rowContainer,
   time,
-  type,
+  status,
   firstRow,
   lastRow,
   sizeCalc,
@@ -76,7 +76,9 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         <SwapIcon />
       </div>
 
-      <div css={type}>swap</div>
+      <div css={status}>
+        <FormattedMessage id={`history.status.${item.status}`} />
+      </div>
       <div css={time}>
         <FormattedDate
           value={item.at.toJSDate()}

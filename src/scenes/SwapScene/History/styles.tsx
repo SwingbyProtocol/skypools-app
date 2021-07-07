@@ -24,8 +24,8 @@ export const rowContainer = css`
   grid-template-columns: min-content 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
-    'icon type amount-in hash'
-    'icon time amount-out hash';
+    'icon time amount-in hash'
+    'icon status amount-out hash';
   overflow: hidden;
   white-space: nowrap;
   font-size: ${rem(size.closet)};
@@ -72,14 +72,15 @@ export const iconPending = css`
   ${pulseAnimation};
 `;
 
-export const type = css`
-  grid-area: type;
-  align-self: flex-end;
+export const status = css`
+  grid-area: status;
+  align-self: flex-start;
+  color: hsl(var(--sp-color-text-masked));
 `;
 
 export const time = css`
   grid-area: time;
-  align-self: flex-start;
+  align-self: flex-end;
 `;
 
 export const amountIn = css`
