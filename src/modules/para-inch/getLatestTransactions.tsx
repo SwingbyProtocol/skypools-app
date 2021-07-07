@@ -30,7 +30,7 @@ export const getLatestTransactions = async ({
   network: SupportedNetworkId;
   spender: string;
 }) => {
-  const address = '0xb680c8F33f058163185AB6121F7582BAb57Ef8a7'.toLowerCase(); //addressParam.toLowerCase();
+  const address = addressParam.toLowerCase();
   const spender = spenderParam.toLowerCase();
 
   logger.debug({ address, spender }, 'Will fetch latest transaction list');
