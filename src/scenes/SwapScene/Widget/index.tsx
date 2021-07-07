@@ -120,35 +120,37 @@ export const Widget = () => {
       )}
       {isAmountValid && swapQuote && (
         <table css={info}>
-          <tr>
-            <td css={infoLabel} rowSpan={2}>
-              Rate
-            </td>
-            <td css={infoValue}>
-              1&nbsp;{fromToken?.symbol}&nbsp;=&nbsp;
-              <span css={infoValueHighlight}>
-                <FormattedNumber
-                  value={swapQuote.fromTokenPriceUsd.times(swapQuote.toTokenPriceUsd).toNumber()}
-                  maximumSignificantDigits={6}
-                />
-              </span>
-              &nbsp;
-              {toToken?.symbol}
-            </td>
-          </tr>
-          <tr>
-            <td css={infoValue}>
-              1&nbsp;{toToken?.symbol}&nbsp;=&nbsp;
-              <span css={infoValueHighlight}>
-                <FormattedNumber
-                  value={swapQuote.toTokenPriceUsd.div(swapQuote.fromTokenPriceUsd).toNumber()}
-                  maximumSignificantDigits={6}
-                />
-              </span>
-              &nbsp;
-              {fromToken?.symbol}
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td css={infoLabel} rowSpan={2}>
+                Rate
+              </td>
+              <td css={infoValue}>
+                1&nbsp;{fromToken?.symbol}&nbsp;=&nbsp;
+                <span css={infoValueHighlight}>
+                  <FormattedNumber
+                    value={swapQuote.fromTokenPriceUsd.times(swapQuote.toTokenPriceUsd).toNumber()}
+                    maximumSignificantDigits={6}
+                  />
+                </span>
+                &nbsp;
+                {toToken?.symbol}
+              </td>
+            </tr>
+            <tr>
+              <td css={infoValue}>
+                1&nbsp;{toToken?.symbol}&nbsp;=&nbsp;
+                <span css={infoValueHighlight}>
+                  <FormattedNumber
+                    value={swapQuote.toTokenPriceUsd.div(swapQuote.fromTokenPriceUsd).toNumber()}
+                    maximumSignificantDigits={6}
+                  />
+                </span>
+                &nbsp;
+                {fromToken?.symbol}
+              </td>
+            </tr>
+          </tbody>
         </table>
       )}
     </div>
