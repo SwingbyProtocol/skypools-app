@@ -121,6 +121,7 @@ export const History = ({ className }: Props) => {
   const [itemHeightFirst, setItemHeightFirst] = useState<number>(size.city);
   const [itemHeightLast, setItemHeightLast] = useState<number>(size.city);
   const [itemHeightOther, setItemHeightOther] = useState<number>(size.city);
+  const [direction, setDirection] = useState<'rtl' | 'ltr'>('ltr');
 
   const { allTransactions } = useParaInchHistory();
 
@@ -144,6 +145,7 @@ export const History = ({ className }: Props) => {
       setItemHeightFirst(+stripUnit(styles.marginTop));
       setItemHeightLast(+stripUnit(styles.marginBottom));
       setItemHeightOther(+stripUnit(styles.height));
+      setDirection(styles.direction === 'rtl' ? 'rtl' : 'ltr');
       setTimeout(test, 5000);
     };
 
@@ -168,6 +170,7 @@ export const History = ({ className }: Props) => {
           itemSize={itemSize}
           itemCount={allTransactions.length}
           ref={listRef}
+          direction={direction}
         >
           {Row}
         </List>

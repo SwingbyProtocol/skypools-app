@@ -12,9 +12,9 @@ export const sizeCalc = css`
   left: 9999;
   height: ${rem(size.city)};
   // Calculating size for the first item. We are compensating the grid-gap and the rounded corner of the widget.
-  margin-top: ${rem(size.city + size.town + size.room)};
+  margin-block-start: ${rem(size.city + size.town + size.room)};
   // Calculating size for the last item. We are compensating the grid-gap.
-  margin-bottom: max(${rem(size.city + size.town)}, var(--sp-app-inset-bottom));
+  margin-block-end: max(${rem(size.city + size.town)}, var(--sp-app-inset-bottom));
 `;
 
 export const rowContainer = css`

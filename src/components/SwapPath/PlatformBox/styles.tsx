@@ -27,7 +27,7 @@ export const item = css`
   justify-content: flex-start;
 
   :not(:last-child) {
-    margin-bottom: var(--platform-item-gap);
+    margin-block-end: var(--platform-item-gap);
   }
 `;
 
@@ -56,7 +56,7 @@ export const itemFraction = css`
   margin-inline-start: var(--platform-fraction-gap);
   flex-grow: 1;
   flex-shrink: 0;
-  text-align: right;
+  text-align: end;
   font-size: var(--platform-font-size);
   font-weight: 500;
 `;

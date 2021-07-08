@@ -48,7 +48,8 @@ export const divider = css`
   color: var(--border-color);
   font-size: var(--divider-size);
   min-width: var(--divider-min-size);
-  margin: 0 var(--divider-gap);
+  margin-block: 0;
+  margin-inline: var(--divider-gap);
   flex-grow: 1;
   flex-shrink: 1;
   display: flex;

@@ -21,7 +21,7 @@ export const textInputContainer = css`
 
 export const textInput = css`
   input {
-    text-align: right;
+    text-align: end;
   }
 `;
 
@@ -29,8 +29,8 @@ export const info = css`
   pointer-events: none;
   user-select: none;
   position: absolute;
-  top: ${rem(size.box)};
-  right: ${rem(size.closet)};
+  inset-block-start: ${rem(size.box)};
+  inset-inline-end: ${rem(size.closet)};
   font-size: ${rem(size.closet)};
   color: hsl(var(--sp-color-text-masked));
 `;
@@ -54,7 +54,7 @@ export const coinChain = css`
   color: var(--coin-chain-color, hsl(var(--sp-color-text-masked)));
   font-size: ${rem(size.closet)};
   font-weight: 500;
-  margin-bottom: ${rem(size.box)};
+  margin-block-end: ${rem(size.box)};
 `;
 
 export const coinName = css`

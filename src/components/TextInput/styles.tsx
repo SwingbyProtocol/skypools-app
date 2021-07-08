@@ -22,14 +22,14 @@ export const label = css`
   overflow: hidden;
   white-space: nowrap;
   font-weight: 500;
-  margin-bottom: ${rem(size.drawer)};
+  margin-block-end: ${rem(size.drawer)};
 `;
 
 export const description = css`
   display: block;
   color: hsl(var(--sp-color-text-normal));
   font-size: ${rem(size.closet)};
-  margin-top: ${rem(size.box)};
+  margin-block-start: ${rem(size.box)};
 `;
 
 export const inputContainer = css`
@@ -71,7 +71,7 @@ export const input = css`
   height: 100%;
   width: 100%;
   text-indent: ${rem(size.closet)};
-  padding-right: ${rem(size.closet)};
+  padding-inline-end: ${rem(size.closet)};
   font-size: ${rem(size.room)};
   font-weight: 700;
   min-width: 0;

@@ -80,15 +80,15 @@ export const widgetCard = css`
 export const historyContainer = css`
   grid-area: history;
   position: relative;
-  margin-top: ${rem(-size.town - size.room)};
-  margin-bottom: ${rem(-size.town)};
-  margin-bottom: calc(-1 * var(--sp-app-inset-bottom));
+  margin-block-start: ${rem(-size.town - size.room)};
+  margin-block-end: ${rem(-size.town)};
+  margin-block-end: calc(-1 * var(--sp-app-inset-bottom));
 `;
 
 export const historyCard = css`
   position: absolute;
   width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
+  inset-block-start: 0;
+  inset-inline-start: 0;
 `;

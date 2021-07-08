@@ -9,8 +9,8 @@ export const container = css`
 
 export const wrapper = css`
   position: absolute;
-  top: 0;
-  left: 0;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   height: 100%;
   width: 100%;
 `;
