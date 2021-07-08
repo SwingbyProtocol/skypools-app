@@ -39,9 +39,15 @@ export const coin = css`
   font-size: var(--coin-size);
   min-inline-size: var(--coin-min-size);
   flex-grow: 0;
-  flex-shrink: 1;
+
   aspect-ratio: 1;
-  block-size: auto;
+  flex-shrink: 1;
+
+  @supports not (aspect-ratio: 1) {
+    inline-size: var(--coin-min-size);
+    block-size: var(--coin-min-size);
+    flex-shrink: 0;
+  }
 `;
 
 export const divider = css`
