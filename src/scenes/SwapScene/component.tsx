@@ -44,6 +44,10 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
   path: [
     [{ exchange: '…', fraction: new Big(1), fromTokenAddress: '0xaa', toTokenAddress: '0xaa' }],
   ],
+  estimatedGas: new Big(0),
+  estimatedGasUsd: new Big(0),
+  toTokenAmount: new Big(0),
+  toTokenAmountUsd: new Big(0),
 };
 
 export const SwapScene = () => {

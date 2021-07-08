@@ -20,7 +20,7 @@ export const useParaInchSwap = () => {
     let cancelled = false;
 
     (async () => {
-      const contractAddress = swapQuote?.contractAddress;
+      const contractAddress = swapQuote?.spender;
       if (!fromToken || !contractAddress || !address || !wallet || !wallet.provider) {
         setApprovalNeeded(null);
         return;
@@ -44,7 +44,7 @@ export const useParaInchSwap = () => {
     return () => {
       cancelled = true;
     };
-  }, [address, wallet, swapQuote?.contractAddress, fromToken]);
+  }, [address, wallet, swapQuote?.spender, fromToken]);
 
   const approve = useCallback(async () => {
     if (!isApprovalNeeded) {
@@ -55,7 +55,7 @@ export const useParaInchSwap = () => {
       throw new Error('No wallet connected');
     }
 
-    const contractAddress = swapQuote?.contractAddress;
+    const contractAddress = swapQuote?.spender;
     if (!contractAddress) {
       throw new Error('No contract address to approve');
     }
@@ -79,7 +79,7 @@ export const useParaInchSwap = () => {
 
     const estimatedGas = await web3.eth.estimateGas(rawTx);
     return await web3.eth.sendTransaction({ ...rawTx, gas: estimatedGas });
-  }, [address, fromToken, isApprovalNeeded, swapQuote?.contractAddress, wallet]);
+  }, [address, fromToken, isApprovalNeeded, swapQuote?.spender, wallet]);
 
   const swap = useMemo(() => {
     if (!address || !wallet || !wallet.provider) {
