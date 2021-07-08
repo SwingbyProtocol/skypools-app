@@ -14,9 +14,14 @@ export const swapScene = css`
     'path'
     'history';
   padding: ${rem(size.town)};
-  padding: ${rem(size.town)} var(--sp-app-inset-right) var(--sp-app-inset-bottom)
-    var(--sp-app-inset-left);
+  padding-block: ${rem(size.town)};
+  padding-inline: ${rem(size.town)};
+  padding-block-start: var(--sp-app-inset-top);
+  padding-block-end: var(--sp-app-inset-bottom);
+  padding-inline-start: var(--sp-app-inset-left);
+  padding-inline-end: var(--sp-app-inset-right);
   min-height: 100vh;
+  min-width: 100vw;
 
   @media (min-width: ${rem(768)}) {
     grid-template-columns: 1fr 1fr minmax(${rem(280)}, 1fr);
@@ -31,28 +36,32 @@ export const swapScene = css`
 
 export const headerContainer = css`
   grid-area: header;
-  margin: ${rem(-size.town)} ${rem(-size.town)} 0 ${rem(-size.town)};
-  margin: ${rem(-size.town)} calc(-1 * var(--sp-app-inset-right)) 0
-    calc(-1 * var(--sp-app-inset-left));
+  margin-block: ${rem(-size.town)} 0;
+  margin-inline: ${rem(-size.town)};
+  margin-inline-start: calc(-1 * var(--sp-app-inset-left));
+  margin-inline-end: calc(-1 * var(--sp-app-inset-right));
 `;
 
 export const priceAndPathCard = css`
   grid-area: path;
   display: flex;
   flex-direction: column;
-  max-width: 100%;
+  max-inline-size: 100%;
   overflow: hidden;
   z-index: 2;
 `;
 
 export const chartContainer = css`
   flex: 1;
-  padding: ${rem(size.street)} ${rem(size.town)};
+  padding-block: ${rem(size.street)};
+  padding-inline: ${rem(size.town)};
+  writing-mode: horizontal-tb;
 `;
 
 export const swapPathContainer = css`
   background: hsl(var(--sp-color-bg-accent));
-  padding: ${rem(size.street)} ${rem(size.town)};
+  padding-block: ${rem(size.street)};
+  padding-inline: ${rem(size.town)};
 `;
 
 export const loadingPulseAnimation = css`
@@ -64,7 +73,8 @@ export const widgetCard = css`
   grid-area: widget;
   display: flex;
   flex-direction: column;
-  padding: ${rem(size.street)} ${rem(size.town)};
+  padding-block: ${rem(size.street)};
+  padding-inline: ${rem(size.town)};
   align-self: stretch;
   justify-self: stretch;
   border: none;
@@ -87,8 +97,8 @@ export const historyContainer = css`
 
 export const historyCard = css`
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inline-size: 100%;
+  block-size: 100%;
   inset-block-start: 0;
   inset-inline-start: 0;
 `;

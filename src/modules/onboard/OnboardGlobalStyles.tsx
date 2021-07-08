@@ -10,18 +10,18 @@ export const OnboardGlobalStyles = () => (
         z-index: 100;
 
         .bn-onboard-modal-content {
-          max-width: none;
-          max-height: none;
-          width: calc(100vw - ${rem(size.room)});
-          height: calc(100vh - ${rem(size.room)});
+          max-inline-size: none;
+          max-block-size: none;
+          inline-size: calc(100vw - ${rem(size.room)});
+          block-size: calc(100vh - ${rem(size.room)});
           padding: ${rem(size.room)};
           border-radius: 0;
 
           @media (min-height: ${rem(600)}) {
-            max-width: 37em;
-            max-height: none;
-            width: auto;
-            height: auto;
+            max-inline-size: 37em;
+            max-block-size: none;
+            inline-size: auto;
+            block-size: auto;
             padding: ${rem(size.room)};
             border-radius: ${rem(size.closet)};
           }

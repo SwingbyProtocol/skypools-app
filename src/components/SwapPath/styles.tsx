@@ -32,22 +32,22 @@ export const wrapper = css`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  max-width: 100%;
+  max-inline-size: 100%;
 `;
 
 export const coin = css`
   font-size: var(--coin-size);
-  min-width: var(--coin-min-size);
+  min-inline-size: var(--coin-min-size);
   flex-grow: 0;
   flex-shrink: 1;
   aspect-ratio: 1;
-  height: auto;
+  block-size: auto;
 `;
 
 export const divider = css`
   color: var(--border-color);
   font-size: var(--divider-size);
-  min-width: var(--divider-min-size);
+  min-inline-size: var(--divider-min-size);
   margin-block: 0;
   margin-inline: var(--divider-gap);
   flex-grow: 1;

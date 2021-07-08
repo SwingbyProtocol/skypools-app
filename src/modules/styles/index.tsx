@@ -115,7 +115,7 @@ export const GlobalStyles = () => (
       body {
         margin: 0;
         padding: 0;
-        min-height: 100vh;
+        min-block-size: 100vh;
       }
 
       *,
@@ -128,8 +128,8 @@ export const GlobalStyles = () => (
 
       .sp-svg {
         display: inline-flex;
-        height: 1em;
-        width: auto;
+        block-size: 1em;
+        inline-size: auto;
         fill: currentColor;
       }
     `}

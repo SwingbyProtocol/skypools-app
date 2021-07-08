@@ -47,44 +47,49 @@ export const shapeCircle = css`
 `;
 
 export const shapeFill = css`
-  width: 100%;
+  inline-size: 100%;
 `;
 
 export const shapeFit = css`
-  width: fit-content;
+  inline-size: fit-content;
 `;
 
 export const sizeCountry = css`
   border-radius: ${rem(size.closet)};
-  height: ${rem(size.country)};
-  padding: 0 ${rem(size.house)};
+  block-size: ${rem(size.country)};
+  padding-block: 0;
+  padding-inline: ${rem(size.house)};
 `;
 
 export const sizeState = css`
   border-radius: ${rem(size.closet)};
-  height: ${rem(size.state)};
-  padding: 0 ${rem(size.house)};
+  block-size: ${rem(size.state)};
+  padding-block: 0;
+  padding-inline: ${rem(size.house)};
 `;
 
 export const sizeCity = css`
   border-radius: ${rem(size.closet)};
   font-size: ${rem(size.room)};
-  height: ${rem(size.city)};
-  padding: 0 ${rem(size.house)};
+  block-size: ${rem(size.city)};
+  padding-block: 0;
+  padding-inline: ${rem(size.house)};
 `;
 
 export const sizeTown = css`
   border-radius: ${rem(size.closet)};
   font-size: ${rem(size.room)};
-  height: ${rem(size.town)};
-  padding: 0 ${rem(size.house)};
+  block-size: ${rem(size.town)};
+  padding-block: 0;
+  padding-inline: ${rem(size.house)};
 `;
 
 export const sizeStreet = css`
   border-radius: ${rem(size.closet)};
   font-size: ${rem(size.closet)};
-  height: ${rem(size.street)};
-  padding: 0 ${rem(size.house)};
+  block-size: ${rem(size.street)};
+  padding-block: 0;
+  padding-inline: ${rem(size.house)};
 `;
 
 export const variantPrimary = css`
@@ -128,8 +133,8 @@ export const shadowBase = css`
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
-  width: 100%;
-  height: 100%;
+  inline-size: 100%;
+  block-size: 100%;
   border-radius: ${em(size.closet)};
   pointer-events: none;
   user-select: none;

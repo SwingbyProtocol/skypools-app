@@ -82,7 +82,7 @@ const styles: StylesConfig<OptionType, false> = {
   control: (styles, { isFocused }) => ({
     ...styles,
     borderRadius: rem(size.closet),
-    height: rem(size.country),
+    blockSize: rem(size.country),
     borderColor: isFocused
       ? 'hsl(var(--sp-color-primary-normal))'
       : 'hsl(var(--sp-color-border-normal))',
@@ -96,7 +96,7 @@ const styles: StylesConfig<OptionType, false> = {
   }),
   valueContainer: (styles) => ({
     ...styles,
-    height: '100%',
+    blockSize: '100%',
   }),
   input: (styles) => ({
     ...styles,

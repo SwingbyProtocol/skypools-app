@@ -83,7 +83,7 @@ export const Button = ({
       className={className}
       onClick={click}
       style={{
-        width: shape === 'square' || shape === 'circle' ? rem(styleSize[size]) : undefined,
+        inlineSize: shape === 'square' || shape === 'circle' ? rem(styleSize[size]) : undefined,
         ...style,
       }}
     >

@@ -12,7 +12,7 @@ export type State = typeof STATES[number];
 export const container = css`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  inline-size: 100%;
 `;
 
 export const label = css`
@@ -68,13 +68,13 @@ export const input = css`
   text-decoration: none;
   background: transparent;
   color: inherit;
-  height: 100%;
-  width: 100%;
+  block-size: 100%;
+  inline-size: 100%;
   text-indent: ${rem(size.closet)};
   padding-inline-end: ${rem(size.closet)};
   font-size: ${rem(size.room)};
   font-weight: 700;
-  min-width: 0;
+  min-inline-size: 0;
   ${transitions(['color'], 'var(--sp-duration-normal) ease-in-out')};
 
   ::placeholder {
@@ -84,17 +84,17 @@ export const input = css`
 
 export const sizeCountry = css`
   border-radius: ${rem(size.room)};
-  height: ${rem(size.country)};
+  block-size: ${rem(size.country)};
 `;
 
 export const sizeState = css`
   border-radius: ${rem(size.room)};
-  height: ${rem(size.state)};
+  block-size: ${rem(size.state)};
 `;
 
 export const sizeCity = css`
   border-radius: ${rem(size.room)};
-  height: ${rem(size.city)};
+  block-size: ${rem(size.city)};
 `;
 
 export const stateNormal = css`

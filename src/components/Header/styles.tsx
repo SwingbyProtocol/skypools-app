@@ -10,17 +10,19 @@ export const header = css`
   grid-template-areas: 'logo connect';
   align-items: center;
   justify-items: start;
-  min-height: ${rem(80)};
+  min-block-size: ${rem(80)};
   background: hsl(var(--sp-color-bg-normal));
-  border-bottom: 1px solid hsl(var(--sp-color-border-normal));
-  padding: 0 ${rem(size.town)};
-  padding: 0 var(--sp-app-inset-right) 0 var(--sp-app-inset-left);
+  border-block-end: 1px solid hsl(var(--sp-color-border-normal));
+  padding-block: 0;
+  padding-inline: ${rem(size.town)};
+  padding-inline-start: var(--sp-app-inset-right);
+  padding-inline-end: var(--sp-app-inset-right);
 `;
 
 export const logo = css`
   grid-area: logo;
-  height: ${rem(size.state)};
-  width: ${rem(size.state * (146 / 44))};
+  block-size: ${rem(size.state)};
+  inline-size: ${rem(size.state * (146 / 44))};
   position: relative;
 `;
 

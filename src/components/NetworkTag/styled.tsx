@@ -52,9 +52,10 @@ export const container = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: ${em(size.street, size.closet)};
+  block-size: ${em(size.street, size.closet)};
   border-radius: ${em(size.street / 2, size.closet)};
-  padding: 0 ${em(size.closet, size.closet)};
+  padding-block: 0;
+  padding-inline: ${em(size.closet, size.closet)};
   background: hsl(var(--sp-color-danger-normal));
   color: hsl(var(--sp-color-danger-text));
   font-size: ${em(size.closet)};

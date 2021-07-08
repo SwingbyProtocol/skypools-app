@@ -10,7 +10,7 @@ export const sizeCalc = css`
   user-select: none;
   position: absolute;
   left: 9999;
-  height: ${rem(size.city)};
+  block-size: ${rem(size.city)};
   // Calculating size for the first item. We are compensating the grid-gap and the rounded corner of the widget.
   margin-block-start: ${rem(size.city + size.town + size.room)};
   // Calculating size for the last item. We are compensating the grid-gap.
@@ -33,20 +33,20 @@ export const rowContainer = css`
 `;
 
 export const firstRow = css`
-  padding-top: ${rem(size.town + size.room)};
+  padding-block-start: ${rem(size.town + size.room)};
 `;
 
 export const lastRow = css`
-  padding-bottom: ${rem(size.town)};
-  padding-bottom: var(--sp-app-inset-bottom);
+  padding-block-end: ${rem(size.town)};
+  padding-block-end: var(--sp-app-inset-bottom);
   border-bottom: none;
 `;
 
 export const icon = css`
   grid-area: icon;
   position: relative;
-  width: ${rem(size.town)};
-  height: ${rem(size.town)};
+  inline-size: ${rem(size.town)};
+  block-size: ${rem(size.town)};
   border-radius: ${rem(size.drawer)};
   display: flex;
   align-items: center;
