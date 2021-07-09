@@ -22,25 +22,18 @@ type SwapQuoteRouteStep = {
   toTokenAddress: string;
 };
 
-export type SwapQuoteRoute = {
+type OtherSwapQuoteRoute = {
   path: Array<SwapQuoteRouteStep[]>;
   toTokenAmount: Big;
   toTokenAmountUsd: Big;
   estimatedGas: Big | null;
   estimatedGasUsd: Big | null;
+  spender: null;
+  transaction: null;
 };
 
-export type SwapQuote = {
-  fromTokenAmount: Big;
-  fromTokenPriceUsd: Big;
-  fromTokenAmountUsd: Big;
-  toTokenAmount: Big;
-  toTokenPriceUsd: Big;
-  toTokenAmountUsd: Big;
-  estimatedGas: Big | null;
-  estimatedGasUsd: Big | null;
+type BestSwapQuoteRoute = Omit<OtherSwapQuoteRoute, 'spender' | 'transaction'> & {
   spender: string | null;
-  routes: SwapQuoteRoute[];
   transaction: {
     from: NonNullable<TransactionConfig['from']>;
     to: NonNullable<TransactionConfig['to']>;
@@ -52,28 +45,17 @@ export type SwapQuote = {
   } | null;
 };
 
-type OneInchApiResult = {
-  toTokenAmount: string;
-  fromTokenAmount: string;
-  protocols: Array<
-    Array<
-      Array<{
-        name: string;
-        part: number;
-        fromTokenAddress: string;
-        toTokenAddress: string;
-      }>
-    >
-  >;
-  estimatedGas: number;
-  tx?: {
-    from: string;
-    to: string;
-    data: string;
-    value: string;
-    gasPrice: string;
-    gas: number;
-  };
+export type SwapQuoteRoute = OtherSwapQuoteRoute | BestSwapQuoteRoute;
+
+export type SwapQuote = {
+  fromTokenPriceUsd: Big;
+  toTokenPriceUsd: Big;
+
+  fromTokenAmount: Big;
+  fromTokenAmountUsd: Big;
+
+  bestRoute: BestSwapQuoteRoute;
+  otherRoutes: OtherSwapQuoteRoute[];
 };
 
 export const getSwapQuote = async ({
@@ -143,7 +125,23 @@ export const getSwapQuote = async ({
       }
     })();
 
-    const transaction = await (async (): Promise<SwapQuote['transaction']> => {
+    const spender = await (async () => {
+      try {
+        if (!walletProvider) return null;
+
+        const result = await paraSwap.getSpender(new Web3(walletProvider));
+        if (typeof result === 'string') {
+          return result;
+        }
+
+        return null;
+      } catch (err) {
+        logger.warn({ err }, 'Failed to get ParaSwap spender address');
+        return null;
+      }
+    })();
+
+    const transaction = await (async (): Promise<SwapQuote['bestRoute']['transaction']> => {
       try {
         if (!sourceAddress || !walletProvider || !isAmountValid) return null;
 
@@ -174,8 +172,21 @@ export const getSwapQuote = async ({
       }
     })();
 
-    const routes = [
-      {
+    return {
+      fromTokenPriceUsd,
+      toTokenPriceUsd,
+      fromTokenAmount,
+      fromTokenAmountUsd: (() => {
+        try {
+          return new Big(fromTokenAmount).times(fromTokenPriceUsd);
+        } catch (e) {
+          return Big(0);
+        }
+      })(),
+
+      bestRoute: {
+        transaction,
+        spender,
         path: result.bestRoute.map((it): SwapQuoteRouteStep[] => [
           {
             exchange: it.exchange,
@@ -226,8 +237,11 @@ export const getSwapQuote = async ({
           };
         })(),
       },
-      ...result.others.map(
-        (it): SwapQuoteRoute => ({
+
+      otherRoutes: result.others.map(
+        (it): OtherSwapQuoteRoute => ({
+          spender: null,
+          transaction: null,
           path: [
             [
               ((): SwapQuoteRouteStep => ({
@@ -281,26 +295,6 @@ export const getSwapQuote = async ({
           })(),
         }),
       ),
-    ];
-
-    return {
-      transaction,
-      fromTokenPriceUsd,
-      toTokenPriceUsd,
-      fromTokenAmount,
-      fromTokenAmountUsd: (() => {
-        try {
-          return new Big(fromTokenAmount).times(fromTokenPriceUsd);
-        } catch (e) {
-          return Big(0);
-        }
-      })(),
-      routes,
-      estimatedGas: routes[0].estimatedGas,
-      estimatedGasUsd: routes[0].estimatedGasUsd,
-      toTokenAmount: routes[0].toTokenAmount,
-      toTokenAmountUsd: routes[0].toTokenAmountUsd,
-      spender: transaction?.to ?? null,
     };
   }
 
@@ -393,28 +387,25 @@ export const getSwapQuote = async ({
     }
   })();
 
-  const transaction = await (async (): Promise<SwapQuote['transaction']> => {
+  const transaction = await (async (): Promise<SwapQuote['bestRoute']['transaction']> => {
     if (!result.tx || !isAmountValid) return null;
     return { ...result.tx, chainId: network };
   })();
 
   return {
-    transaction,
-    spender: result.tx?.to || null,
     fromTokenPriceUsd,
     toTokenPriceUsd,
-    estimatedGas,
-    estimatedGasUsd,
     fromTokenAmount,
     fromTokenAmountUsd,
-    toTokenAmount,
-    toTokenAmountUsd,
-    routes: result.protocols.map((it) => ({
+    otherRoutes: [],
+    bestRoute: {
+      spender: result.tx?.to || null,
+      transaction,
       estimatedGas,
       toTokenAmountUsd,
       estimatedGasUsd,
       toTokenAmount,
-      path: it.map((it) =>
+      path: result.protocols[0].map((it) =>
         it.map(
           (it): SwapQuoteRouteStep => ({
             exchange: it.name,
@@ -430,6 +421,6 @@ export const getSwapQuote = async ({
           }),
         ),
       ),
-    })),
+    },
   };
 };

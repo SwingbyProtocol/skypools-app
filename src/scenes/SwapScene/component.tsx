@@ -48,6 +48,8 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
   estimatedGasUsd: new Big(0),
   toTokenAmount: new Big(0),
   toTokenAmountUsd: new Big(0),
+  transaction: null,
+  spender: null,
 };
 
 export const SwapScene = () => {
@@ -142,9 +144,11 @@ export const SwapScene = () => {
         <div css={swapPathContainer}>
           <SwapPath
             css={swapQuote === null && loadingPulseAnimation}
-            value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE}
+            value={swapQuote?.bestRoute ?? FAKE_QUOTE_ROUTE}
           />
         </div>
+
+        {!!swapQuote && swapQuote.otherRoutes.length > 1 && <></>}
       </Card>
 
       <Card css={widgetCard}>

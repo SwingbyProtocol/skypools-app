@@ -20,7 +20,7 @@ export const useParaInchSwap = () => {
     let cancelled = false;
 
     (async () => {
-      const contractAddress = swapQuote?.spender;
+      const contractAddress = swapQuote?.bestRoute.spender;
       if (!fromToken || !contractAddress || !address || !wallet || !wallet.provider) {
         setApprovalNeeded(null);
         return;
@@ -44,7 +44,7 @@ export const useParaInchSwap = () => {
     return () => {
       cancelled = true;
     };
-  }, [address, wallet, swapQuote?.spender, fromToken]);
+  }, [address, wallet, swapQuote?.bestRoute.spender, fromToken]);
 
   const approve = useCallback(async () => {
     if (!isApprovalNeeded) {
@@ -55,7 +55,7 @@ export const useParaInchSwap = () => {
       throw new Error('No wallet connected');
     }
 
-    const contractAddress = swapQuote?.spender;
+    const contractAddress = swapQuote?.bestRoute.spender;
     if (!contractAddress) {
       throw new Error('No contract address to approve');
     }
@@ -79,7 +79,7 @@ export const useParaInchSwap = () => {
 
     const estimatedGas = await web3.eth.estimateGas(rawTx);
     return await web3.eth.sendTransaction({ ...rawTx, gas: estimatedGas });
-  }, [address, fromToken, isApprovalNeeded, swapQuote?.spender, wallet]);
+  }, [address, fromToken, isApprovalNeeded, swapQuote?.bestRoute.spender, wallet]);
 
   const swap = useMemo(() => {
     if (!address || !wallet || !wallet.provider) {
@@ -95,7 +95,7 @@ export const useParaInchSwap = () => {
     }
 
     const provider = wallet.provider;
-    const transaction = swapQuote?.transaction;
+    const transaction = swapQuote?.bestRoute.transaction;
     if (!transaction) {
       return null;
     }
@@ -104,7 +104,14 @@ export const useParaInchSwap = () => {
       const web3 = new Web3(provider);
       return web3.eth.sendTransaction(transaction);
     };
-  }, [isApprovalNeeded, swapQuote?.transaction, address, wallet, onboardNetwork, network]);
+  }, [
+    isApprovalNeeded,
+    swapQuote?.bestRoute.transaction,
+    address,
+    wallet,
+    onboardNetwork,
+    network,
+  ]);
 
   return { isApprovalNeeded, approve, swap };
 };

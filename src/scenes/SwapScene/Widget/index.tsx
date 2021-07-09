@@ -53,18 +53,23 @@ export const Widget = () => {
   const to = useMemo(
     (): CoinAmountInputValue => ({
       coin: toToken,
-      amount: (!isAmountValid ? null : swapQuote?.toTokenAmount.toFixed()) ?? null,
+      amount: (!isAmountValid ? null : swapQuote?.bestRoute.toTokenAmount.toFixed()) ?? null,
       amountInfo:
-        !isAmountValid || !swapQuote?.toTokenAmountUsd ? null : (
+        !isAmountValid || !swapQuote?.bestRoute.toTokenAmountUsd ? null : (
           <FormattedNumber
-            value={swapQuote.toTokenAmountUsd.toNumber()}
+            value={swapQuote.bestRoute.toTokenAmountUsd.toNumber()}
             style="currency"
             currency="USD"
             currencyDisplay="narrowSymbol"
           />
         ),
     }),
-    [toToken, swapQuote?.toTokenAmount, swapQuote?.toTokenAmountUsd, isAmountValid],
+    [
+      toToken,
+      swapQuote?.bestRoute.toTokenAmount,
+      swapQuote?.bestRoute.toTokenAmountUsd,
+      isAmountValid,
+    ],
   );
 
   const toCoins = useMemo(
