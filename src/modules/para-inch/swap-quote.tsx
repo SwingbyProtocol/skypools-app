@@ -238,63 +238,74 @@ export const getSwapQuote = async ({
         })(),
       },
 
-      otherRoutes: result.others.map(
-        (it): OtherSwapQuoteRoute => ({
-          spender: null,
-          transaction: null,
-          path: [
-            [
-              ((): SwapQuoteRouteStep => ({
-                exchange: it.exchange,
-                fraction: new Big(100),
-                fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
-                toTokenAddress: it.data?.tokenTo ?? fromToken.address,
-              }))(),
+      otherRoutes: result.others
+        .map(
+          (it): OtherSwapQuoteRoute => ({
+            spender: null,
+            transaction: null,
+            path: [
+              [
+                ((): SwapQuoteRouteStep => ({
+                  exchange: it.exchange,
+                  fraction: new Big(100),
+                  fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
+                  toTokenAddress: it.data?.tokenTo ?? fromToken.address,
+                }))(),
+              ],
             ],
-          ],
-          ...(() => {
-            const estimatedGasUsd = (() => {
-              try {
-                return it.data?.gasUSD ? new Big(it.data?.gasUSD) : null;
-              } catch (e) {
-                return null;
-              }
-            })();
-
-            return {
-              estimatedGas: (() => {
+            ...(() => {
+              const estimatedGasUsd = (() => {
                 try {
-                  return estimatedGasUsd?.times(nativeTokenPriceUsd) ?? null;
+                  return it.data?.gasUSD ? new Big(it.data?.gasUSD) : null;
                 } catch (e) {
                   return null;
                 }
-              })(),
-              estimatedGasUsd,
-            };
-          })(),
-          ...(() => {
-            const toTokenAmount = (() => {
-              try {
-                if (!isAmountValid) return new Big(0);
-                return new Big(it.rate).div(`1e${toToken.decimals}`);
-              } catch (e) {
-                return Big(0);
-              }
-            })();
+              })();
 
-            return {
-              toTokenAmount,
-              toTokenAmountUsd: (() => {
+              return {
+                estimatedGas: (() => {
+                  try {
+                    return estimatedGasUsd?.times(nativeTokenPriceUsd) ?? null;
+                  } catch (e) {
+                    return null;
+                  }
+                })(),
+                estimatedGasUsd,
+              };
+            })(),
+            ...(() => {
+              const toTokenAmount = (() => {
                 try {
-                  return new Big(toTokenAmount).times(toTokenPriceUsd);
+                  if (!isAmountValid) return new Big(0);
+                  return new Big(it.rate).div(`1e${toToken.decimals}`);
                 } catch (e) {
                   return Big(0);
                 }
-              })(),
-            };
-          })(),
+              })();
+
+              return {
+                toTokenAmount,
+                toTokenAmountUsd: (() => {
+                  try {
+                    return new Big(toTokenAmount).times(toTokenPriceUsd);
+                  } catch (e) {
+                    return Big(0);
+                  }
+                })(),
+              };
+            })(),
+          }),
+        )
+        .sort((a, b) => {
+          try {
+            return (
+              b.toTokenAmount.cmp(a.toTokenAmount) ||
+              a.path[0][0].exchange.localeCompare(b.path[0][0].exchange)
+            );
+          } catch (e) {
+            return 0;
+          }
         }),
-      ),
     };
   }
 
