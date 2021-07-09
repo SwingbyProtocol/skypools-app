@@ -14,7 +14,7 @@ import {
   isSupportedNetworkId,
   SwapQuoteRoute,
 } from '../../modules/para-inch';
-import { useParaInch, useParaInchSwap } from '../../modules/para-inch-react';
+import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
 
@@ -44,12 +44,17 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
   path: [
     [{ exchange: '…', fraction: new Big(1), fromTokenAddress: '0xaa', toTokenAddress: '0xaa' }],
   ],
+  estimatedGas: new Big(0),
+  estimatedGasUsd: new Big(0),
+  toTokenAmount: new Big(0),
+  toTokenAmountUsd: new Big(0),
+  transaction: null,
+  spender: null,
 };
 
 export const SwapScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInch();
-  const { isApprovalNeeded, approve, swap } = useParaInchSwap();
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
   >(null);
@@ -138,9 +143,11 @@ export const SwapScene = () => {
         <div css={swapPathContainer}>
           <SwapPath
             css={swapQuote === null && loadingPulseAnimation}
-            value={swapQuote?.routes[0] ?? FAKE_QUOTE_ROUTE}
+            value={swapQuote?.bestRoute ?? FAKE_QUOTE_ROUTE}
           />
         </div>
+
+        {!!swapQuote && swapQuote.otherRoutes.length > 1 && <></>}
       </Card>
 
       <Card css={widgetCard}>

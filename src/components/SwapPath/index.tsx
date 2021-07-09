@@ -14,7 +14,7 @@ type Props = {
   value: SwapQuoteRoute;
 };
 
-export const SwapPath = ({ value: valueParam = { path: [] }, className }: Props) => {
+export const SwapPath = ({ value: valueParam, className }: Props) => {
   const { tokens } = useParaInch();
 
   const query = useMemo(
