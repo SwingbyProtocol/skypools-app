@@ -147,7 +147,22 @@ export const SwapScene = () => {
           />
         </div>
 
-        {!!swapQuote && swapQuote.otherRoutes.length > 1 && <></>}
+        {!!swapQuote && swapQuote.otherRoutes.length > 1 && (
+          <>
+            {swapQuote.otherRoutes.map((it, index) => (
+              <div key={index}>
+                <div>{it.path?.[0]?.[0]?.exchange}</div>
+                <div>{it.toTokenAmountUsd.toNumber()}</div>
+                <div>
+                  {new Big(100)
+                    .sub(it.toTokenAmountUsd.times(100).div(swapQuote.bestRoute.toTokenAmountUsd))
+                    .times(-1)
+                    .toNumber()}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </Card>
 
       <Card css={widgetCard}>
