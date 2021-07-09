@@ -1,4 +1,4 @@
-import { rem, transitions } from 'polished';
+import { rem } from 'polished';
 import { css } from '@emotion/react';
 
 import { size } from '../../modules/styles';

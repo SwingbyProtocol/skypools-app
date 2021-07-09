@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { shortenAddress } from '../../modules/short-address';
 import { logger } from '../../modules/logger';

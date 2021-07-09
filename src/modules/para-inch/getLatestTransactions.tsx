@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-import { ParaSwap } from 'paraswap';
 import { stringifyUrl } from 'query-string';
 import { Big } from 'big.js';
 

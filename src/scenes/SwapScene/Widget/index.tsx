@@ -41,7 +41,7 @@ export const Widget = () => {
         !isAmountValid || !swapQuote?.fromTokenAmountUsd ? null : (
           <FormattedNumber
             value={swapQuote.fromTokenAmountUsd.toNumber()}
-            style="currency"
+            style="currency" // eslint-disable-line react/style-prop-object
             currency="USD"
             currencyDisplay="narrowSymbol"
           />
@@ -58,7 +58,7 @@ export const Widget = () => {
         !isAmountValid || !swapQuote?.bestRoute.toTokenAmountUsd ? null : (
           <FormattedNumber
             value={swapQuote.bestRoute.toTokenAmountUsd.toNumber()}
-            style="currency"
+            style="currency" // eslint-disable-line react/style-prop-object
             currency="USD"
             currencyDisplay="narrowSymbol"
           />
