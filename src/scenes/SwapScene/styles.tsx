@@ -56,7 +56,7 @@ export const chartContainer = css`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
-  min-block-size: ${rem(200)};
+  min-block-size: ${rem(250)};
   padding-block: ${rem(size.street)};
   padding-inline: ${rem(size.town)};
   writing-mode: horizontal-tb;
