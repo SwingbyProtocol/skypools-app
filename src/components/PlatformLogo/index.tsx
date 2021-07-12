@@ -19,6 +19,7 @@ const ICONS = [
   'oneinch',
   'pancakeswap',
   'paraswap',
+  'shibaswap',
   'skybridge',
   'sushiswap',
   'synthetix',
