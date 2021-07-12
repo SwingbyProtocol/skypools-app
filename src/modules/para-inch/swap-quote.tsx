@@ -299,10 +299,19 @@ export const getSwapQuote = async ({
         })
         .sort((a, b) => {
           try {
-            return (
-              b.fractionOfBest.cmp(a.fractionOfBest) ||
-              a.path[0][0].exchange.localeCompare(b.path[0][0].exchange)
-            );
+            const aValue = !a.fractionOfBest.eq(1)
+              ? a.fractionOfBest
+              : a.path[0]?.[0]?.exchange === bestRoute.path[0]?.[0]?.exchange
+              ? new Big(Number.MAX_SAFE_INTEGER)
+              : new Big(Number.MAX_SAFE_INTEGER).sub(1);
+
+            const bValue = !b.fractionOfBest.eq(1)
+              ? b.fractionOfBest
+              : b.path[0]?.[0]?.exchange === bestRoute.path[0]?.[0]?.exchange
+              ? new Big(Number.MAX_SAFE_INTEGER)
+              : new Big(Number.MAX_SAFE_INTEGER).sub(1);
+
+            return bValue.cmp(aValue) || a.path[0][0].exchange.localeCompare(b.path[0][0].exchange);
           } catch (e) {
             return 0;
           }
