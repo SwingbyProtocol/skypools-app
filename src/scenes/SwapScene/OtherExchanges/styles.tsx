@@ -21,7 +21,7 @@ export const exchange = css`
   justify-self: start;
 `;
 
-export const exchangeCoin = css`
+export const exchangeLogo = css`
   margin-inline-end: ${rem(size.box)};
   font-size: ${rem(size.town)};
 `;

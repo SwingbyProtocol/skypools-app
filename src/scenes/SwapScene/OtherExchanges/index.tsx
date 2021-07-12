@@ -3,7 +3,7 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Big } from 'big.js';
 
 import { useParaInch } from '../../../modules/para-inch-react';
-import { Coin } from '../../../components/Coin';
+import { PlatformLogo } from '../../../components/PlatformLogo';
 
 import {
   comparison,
@@ -12,7 +12,7 @@ import {
   comparisonWorse,
   container,
   exchange,
-  exchangeCoin,
+  exchangeLogo,
 } from './styles';
 
 export const OtherExchanges = ({ className }: { className?: string }) => {
@@ -31,7 +31,7 @@ export const OtherExchanges = ({ className }: { className?: string }) => {
         return (
           <Fragment key={index}>
             <div css={exchange}>
-              <Coin css={exchangeCoin} src={`/swap/platforms/${it.path?.[0]?.[0]?.exchange}.svg`} />
+              <PlatformLogo css={exchangeLogo} name={it.path?.[0]?.[0]?.exchange} />
               {it.path?.[0]?.[0]?.exchange}
             </div>
 
