@@ -22,5 +22,6 @@
   "widget.approve": "Approve",
   "history.status.confirmed": "Confirmed",
   "history.status.sent": "Sent",
-  "history.status.pending": "Pending"
+  "history.status.pending": "Pending",
+  "comparison.match": "MATCH"
 }
