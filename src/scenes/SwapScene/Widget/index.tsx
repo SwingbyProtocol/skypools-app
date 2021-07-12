@@ -128,7 +128,7 @@ export const Widget = () => {
           <tbody>
             <tr>
               <td css={infoLabel} rowSpan={2}>
-                Rate
+                <FormattedMessage id="widget.details.rate" />
               </td>
               <td css={infoValue}>
                 1&nbsp;{fromToken?.symbol}&nbsp;=&nbsp;
@@ -155,6 +155,20 @@ export const Widget = () => {
                 {fromToken?.symbol}
               </td>
             </tr>
+            {!!swapQuote.bestRoute.estimatedGasUsd && (
+              <tr>
+                <td css={infoLabel}>
+                  <FormattedMessage id="widget.details.gas" />
+                </td>
+                <td css={infoValue}>
+                  <FormattedNumber
+                    value={swapQuote.bestRoute.estimatedGasUsd.toNumber()}
+                    style="currency" // eslint-disable-line react/style-prop-object
+                    currency="USD"
+                  />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       )}

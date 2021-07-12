@@ -26,6 +26,11 @@ export const exchangeLogo = css`
   font-size: ${rem(size.town)};
 `;
 
+export const amount = css`
+  font-feature-settings: 'tnum' 1;
+  justify-self: end;
+`;
+
 export const comparison = css`
   display: flex;
   align-items: center;

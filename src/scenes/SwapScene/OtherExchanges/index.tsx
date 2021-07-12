@@ -6,6 +6,7 @@ import { useParaInch } from '../../../modules/para-inch-react';
 import { PlatformLogo } from '../../../components/PlatformLogo';
 
 import {
+  amount,
   comparison,
   comparisonBetter,
   comparisonMatch,
@@ -35,8 +36,12 @@ export const OtherExchanges = ({ className }: { className?: string }) => {
               {it.path?.[0]?.[0]?.exchange}
             </div>
 
-            <div>
-              <FormattedNumber value={it.toTokenAmount.toNumber()} maximumSignificantDigits={6} />
+            <div css={amount}>
+              <FormattedNumber
+                value={it.toTokenAmountUsd.toNumber()}
+                style="currency" // eslint-disable-line react/style-prop-object
+                currency="USD"
+              />
             </div>
 
             <div
@@ -54,6 +59,7 @@ export const OtherExchanges = ({ className }: { className?: string }) => {
                   value={new Big(-1).add(it.fractionOfBest).toNumber()}
                   style="percent" // eslint-disable-line react/style-prop-object
                   maximumFractionDigits={2}
+                  signDisplay="always"
                 />
               )}
             </div>

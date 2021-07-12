@@ -20,6 +20,8 @@
   "widget.to": "To",
   "widget.swap": "Swap",
   "widget.approve": "Approve",
+  "widget.details.rate": "Rate",
+  "widget.details.gas": "Estimated cost",
   "history.status.confirmed": "Confirmed",
   "history.status.sent": "Sent",
   "history.status.pending": "Pending",
