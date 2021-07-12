@@ -53,6 +53,10 @@ export const priceAndPathCard = css`
 
 export const chartContainer = css`
   flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  min-block-size: ${rem(200)};
   padding-block: ${rem(size.street)};
   padding-inline: ${rem(size.town)};
   writing-mode: horizontal-tb;
@@ -101,4 +105,8 @@ export const historyCard = css`
   block-size: 100%;
   inset-block-start: 0;
   inset-inline-start: 0;
+`;
+
+export const otherExchanges = css`
+  padding: ${rem(size.town)};
 `;

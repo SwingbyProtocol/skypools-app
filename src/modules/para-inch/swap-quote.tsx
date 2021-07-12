@@ -30,6 +30,7 @@ type OtherSwapQuoteRoute = {
   estimatedGasUsd: Big | null;
   spender: null;
   transaction: null;
+  fractionOfBest: Big;
 };
 
 type BestSwapQuoteRoute = Omit<OtherSwapQuoteRoute, 'spender' | 'transaction'> & {
@@ -172,6 +173,61 @@ export const getSwapQuote = async ({
       }
     })();
 
+    const bestRoute = {
+      fractionOfBest: new Big(1),
+      transaction,
+      spender,
+      path: result.bestRoute.map((it): SwapQuoteRouteStep[] => [
+        {
+          exchange: it.exchange,
+          fraction: (() => {
+            try {
+              return new Big(it.percent).div(100);
+            } catch (e) {
+              return new Big(0);
+            }
+          })(),
+          fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
+          toTokenAddress: it.data?.tokenTo ?? toToken.address,
+        },
+      ]),
+      estimatedGas: (() => {
+        try {
+          return result.bestRouteGas ? new Big(result.bestRouteGas) : null;
+        } catch (e) {
+          return null;
+        }
+      })(),
+      estimatedGasUsd: (() => {
+        try {
+          return result.bestRouteGasCostUSD ? new Big(result.bestRouteGasCostUSD) : null;
+        } catch (e) {
+          return null;
+        }
+      })(),
+      ...(() => {
+        const toTokenAmount = (() => {
+          try {
+            if (!isAmountValid) return new Big(0);
+            return new Big(result.destAmount).div(`1e${toToken.decimals}`);
+          } catch (e) {
+            return Big(0);
+          }
+        })();
+
+        return {
+          toTokenAmount,
+          toTokenAmountUsd: (() => {
+            try {
+              return new Big(toTokenAmount).times(toTokenPriceUsd);
+            } catch (e) {
+              return Big(0);
+            }
+          })(),
+        };
+      })(),
+    };
+
     return {
       fromTokenPriceUsd,
       toTokenPriceUsd,
@@ -184,63 +240,44 @@ export const getSwapQuote = async ({
         }
       })(),
 
-      bestRoute: {
-        transaction,
-        spender,
-        path: result.bestRoute.map((it): SwapQuoteRouteStep[] => [
-          {
-            exchange: it.exchange,
-            fraction: (() => {
-              try {
-                return new Big(it.percent).div(100);
-              } catch (e) {
-                return new Big(0);
-              }
-            })(),
-            fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
-            toTokenAddress: it.data?.tokenTo ?? toToken.address,
-          },
-        ]),
-        estimatedGas: (() => {
-          try {
-            return result.bestRouteGas ? new Big(result.bestRouteGas) : null;
-          } catch (e) {
-            return null;
-          }
-        })(),
-        estimatedGasUsd: (() => {
-          try {
-            return result.bestRouteGasCostUSD ? new Big(result.bestRouteGasCostUSD) : null;
-          } catch (e) {
-            return null;
-          }
-        })(),
-        ...(() => {
+      bestRoute,
+
+      otherRoutes: result.others
+        .map((it): OtherSwapQuoteRoute => {
+          const estimatedGasUsd = (() => {
+            try {
+              return it.data?.gasUSD ? new Big(it.data?.gasUSD) : null;
+            } catch (e) {
+              return null;
+            }
+          })();
+
+          const estimatedGas = (() => {
+            try {
+              return estimatedGasUsd?.times(nativeTokenPriceUsd) ?? null;
+            } catch (e) {
+              return null;
+            }
+          })();
+
           const toTokenAmount = (() => {
             try {
               if (!isAmountValid) return new Big(0);
-              return new Big(result.destAmount).div(`1e${toToken.decimals}`);
+              return new Big(it.rate).div(`1e${toToken.decimals}`);
+            } catch (e) {
+              return Big(0);
+            }
+          })();
+
+          const toTokenAmountUsd = (() => {
+            try {
+              return new Big(toTokenAmount).times(toTokenPriceUsd);
             } catch (e) {
               return Big(0);
             }
           })();
 
           return {
-            toTokenAmount,
-            toTokenAmountUsd: (() => {
-              try {
-                return new Big(toTokenAmount).times(toTokenPriceUsd);
-              } catch (e) {
-                return Big(0);
-              }
-            })(),
-          };
-        })(),
-      },
-
-      otherRoutes: result.others
-        .map(
-          (it): OtherSwapQuoteRoute => ({
             spender: null,
             transaction: null,
             path: [
@@ -253,53 +290,17 @@ export const getSwapQuote = async ({
                 }))(),
               ],
             ],
-            ...(() => {
-              const estimatedGasUsd = (() => {
-                try {
-                  return it.data?.gasUSD ? new Big(it.data?.gasUSD) : null;
-                } catch (e) {
-                  return null;
-                }
-              })();
-
-              return {
-                estimatedGas: (() => {
-                  try {
-                    return estimatedGasUsd?.times(nativeTokenPriceUsd) ?? null;
-                  } catch (e) {
-                    return null;
-                  }
-                })(),
-                estimatedGasUsd,
-              };
-            })(),
-            ...(() => {
-              const toTokenAmount = (() => {
-                try {
-                  if (!isAmountValid) return new Big(0);
-                  return new Big(it.rate).div(`1e${toToken.decimals}`);
-                } catch (e) {
-                  return Big(0);
-                }
-              })();
-
-              return {
-                toTokenAmount,
-                toTokenAmountUsd: (() => {
-                  try {
-                    return new Big(toTokenAmount).times(toTokenPriceUsd);
-                  } catch (e) {
-                    return Big(0);
-                  }
-                })(),
-              };
-            })(),
-          }),
-        )
+            estimatedGas,
+            estimatedGasUsd,
+            toTokenAmountUsd,
+            toTokenAmount,
+            fractionOfBest: toTokenAmountUsd.div(bestRoute.toTokenAmountUsd),
+          };
+        })
         .sort((a, b) => {
           try {
             return (
-              b.toTokenAmount.cmp(a.toTokenAmount) ||
+              b.fractionOfBest.cmp(a.fractionOfBest) ||
               a.path[0][0].exchange.localeCompare(b.path[0][0].exchange)
             );
           } catch (e) {
@@ -410,6 +411,7 @@ export const getSwapQuote = async ({
     fromTokenAmountUsd,
     otherRoutes: [],
     bestRoute: {
+      fractionOfBest: new Big(1),
       spender: result.tx?.to || null,
       transaction,
       estimatedGas,

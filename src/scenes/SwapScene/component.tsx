@@ -29,8 +29,10 @@ import {
   widgetCard,
   loadingPulseAnimation,
   historyContainer,
+  otherExchanges,
 } from './styles';
 import { Widget } from './Widget';
+import { OtherExchanges } from './OtherExchanges';
 
 const FAKE_PRICE_HISTORY = new Array(150)
   .fill(null)
@@ -50,6 +52,7 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
   toTokenAmountUsd: new Big(0),
   transaction: null,
   spender: null,
+  fractionOfBest: new Big(1),
 };
 
 export const SwapScene = () => {
@@ -147,22 +150,7 @@ export const SwapScene = () => {
           />
         </div>
 
-        {!!swapQuote && swapQuote.otherRoutes.length > 1 && (
-          <>
-            {swapQuote.otherRoutes.map((it, index) => (
-              <div key={index}>
-                <div>{it.path?.[0]?.[0]?.exchange}</div>
-                <div>{it.toTokenAmountUsd.toNumber()}</div>
-                <div>
-                  {new Big(100)
-                    .sub(it.toTokenAmountUsd.times(100).div(swapQuote.bestRoute.toTokenAmountUsd))
-                    .times(-1)
-                    .toNumber()}
-                </div>
-              </div>
-            ))}
-          </>
-        )}
+        <OtherExchanges css={otherExchanges} />
       </Card>
 
       <Card css={widgetCard}>
