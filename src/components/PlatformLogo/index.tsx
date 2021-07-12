@@ -1,7 +1,26 @@
 import { Coin } from '../Coin';
 
 // These should be exactly the same as the icon file names in `/public`.
-const ICONS = ['pancakeswap', 'skybridge', 'sushiswap', 'uniswap'];
+const ICONS = [
+  'aave',
+  'balancer',
+  'bancor',
+  'chai',
+  'compound',
+  'creamswap',
+  'curve',
+  'dodo',
+  'kyber',
+  'mooniswap',
+  'oasis',
+  'pancakeswap',
+  'skybridge',
+  'sushiswap',
+  'uniswap',
+  'valueliquid',
+  'paraswap',
+  'weth',
+];
 
 export const PlatformLogo = ({ className, name }: { className?: string; name: string }) => {
   const logo = (() => {
