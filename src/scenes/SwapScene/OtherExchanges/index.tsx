@@ -17,7 +17,7 @@ import {
 } from './styles';
 
 export const OtherExchanges = ({ className }: { className?: string }) => {
-  const { swapQuote } = useParaInch();
+  const { swapQuote, isAmountValid } = useParaInch();
 
   if (!swapQuote || swapQuote.otherRoutes.length < 1) {
     return <></>;
@@ -37,11 +37,13 @@ export const OtherExchanges = ({ className }: { className?: string }) => {
             </div>
 
             <div css={amount}>
-              <FormattedNumber
-                value={it.toTokenAmountUsd.toNumber()}
-                style="currency" // eslint-disable-line react/style-prop-object
-                currency="USD"
-              />
+              {isAmountValid && (
+                <FormattedNumber
+                  value={it.toTokenAmountUsd.toNumber()}
+                  style="currency" // eslint-disable-line react/style-prop-object
+                  currency="USD"
+                />
+              )}
             </div>
 
             <div
