@@ -40,6 +40,7 @@ export const coin = css`
   min-inline-size: var(--coin-min-size);
   flex-grow: 0;
 
+  block-size: auto;
   aspect-ratio: 1;
   flex-shrink: 1;
 
