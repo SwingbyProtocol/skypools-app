@@ -5,7 +5,7 @@ import { size } from '../../../modules/styles';
 
 export const container = css`
   display: grid;
-  grid-template-columns: minmax(min-content, auto) min-content min-content;
+  grid-template-columns: minmax(${rem(size.room)}, auto) min-content min-content;
   align-items: center;
   justify-items: center;
   grid-column-gap: ${rem(size.closet)};
@@ -25,11 +25,25 @@ export const exchange = css`
   align-items: center;
   justify-content: flex-start;
   justify-self: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 `;
 
 export const exchangeLogo = css`
+  flex-shrink: 0;
   margin-inline-end: ${rem(size.box)};
-  font-size: ${rem(size.town)};
+  font-size: ${rem(size.room)};
+
+  @media (min-width: ${rem(768)}) {
+    font-size: ${rem(size.town)};
+  }
+`;
+
+export const exchangeName = css`
+  flex-shrink: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const amount = css`
@@ -41,11 +55,20 @@ export const comparison = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: ${rem(size.street / 2)};
-  block-size: ${rem(size.street)};
+  border-radius: ${rem(size.house / 2)};
+  block-size: ${rem(size.house)};
   inline-size: 100%;
-  padding-inline-start: ${rem(size.closet)};
-  padding-inline-end: ${rem(size.closet)};
+  padding-inline-start: ${rem(size.drawer)};
+  padding-inline-end: ${rem(size.drawer)};
+  font-size: ${rem(size.drawer)};
+
+  @media (min-width: ${rem(768)}) {
+    border-radius: ${rem(size.street / 2)};
+    block-size: ${rem(size.street)};
+    font-size: ${rem(size.closet)};
+    padding-inline-start: ${rem(size.closet)};
+    padding-inline-end: ${rem(size.closet)};
+  }
 `;
 
 export const comparisonMatch = css`

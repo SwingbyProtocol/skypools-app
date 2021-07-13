@@ -14,6 +14,7 @@ import {
   container,
   exchange,
   exchangeLogo,
+  exchangeName,
 } from './styles';
 
 export const OtherExchanges = ({ className }: { className?: string }) => {
@@ -33,7 +34,7 @@ export const OtherExchanges = ({ className }: { className?: string }) => {
           <Fragment key={index}>
             <div css={exchange}>
               <PlatformLogo css={exchangeLogo} name={it.path?.[0]?.[0]?.exchange} />
-              {it.path?.[0]?.[0]?.exchange}
+              <span css={exchangeName}>{it.path?.[0]?.[0]?.exchange}</span>
             </div>
 
             <div css={amount}>
