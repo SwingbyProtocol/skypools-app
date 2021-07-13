@@ -5,12 +5,18 @@ import { size } from '../../../modules/styles';
 
 export const container = css`
   display: grid;
-  grid-template-columns: 1fr minmax(min-content, 1fr) min-content;
+  grid-template-columns: minmax(min-content, auto) min-content min-content;
   align-items: center;
   justify-items: center;
-  grid-column-gap: ${rem(size.town)};
+  grid-column-gap: ${rem(size.closet)};
   grid-row-gap: ${rem(size.closet)};
-  font-size: ${rem(size.room)};
+  font-size: ${rem(size.closet)};
+
+  @media (min-width: ${rem(768)}) {
+    grid-template-columns: 1fr minmax(min-content, 1fr) min-content;
+    grid-column-gap: ${rem(size.town)};
+    font-size: ${rem(size.room)};
+  }
 `;
 
 export const exchange = css`
