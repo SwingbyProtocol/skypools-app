@@ -72,16 +72,4 @@ export const infoValueHighlight = css`
 
 export const skybridge = css`
   grid-area: skybridge;
-  background: hsla(var(--sp-color-warning-normal), 75%);
-  padding-inline-start: ${rem(size.drawer)};
-  padding-inline-end: ${rem(size.drawer)};
-  padding-block-start: ${rem(size.box)};
-  padding-block-end: ${rem(size.box)};
-  border-radius: ${rem(size.drawer)};
-  font-size: ${rem(size.closet)};
-  margin-block-end: ${rem(size.street)};
-`;
-
-export const skybridgeCompleted = css`
-  background: hsla(var(--sp-color-success-normal), 75%);
 `;

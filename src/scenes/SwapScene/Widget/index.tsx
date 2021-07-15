@@ -1,11 +1,8 @@
-import { useRouter } from 'next/router';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
-import { TransactionStatus, useSkybridgeSwapInfoLazyQuery } from '../../../generated/graphql';
 import { useParaInch, useParaInchSwap } from '../../../modules/para-inch-react';
-import { shortenAddress } from '../../../modules/short-address';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -21,8 +18,8 @@ import {
   infoValue,
   infoValueHighlight,
   skybridge,
-  skybridgeCompleted,
 } from './styles';
+import { SkybridgeSwapBanner } from './useSkybridgeSwap';
 
 export const Widget = () => {
   const {
@@ -36,34 +33,7 @@ export const Widget = () => {
     isAmountValid,
     swapQuote,
   } = useParaInch();
-  const { query } = useRouter();
-  const skybridgeSwap = (() => {
-    const value = query.skybridgeSwap;
-    if (typeof value !== 'string' || !value) {
-      return null;
-    }
-
-    return value;
-  })();
-
   const { isApprovalNeeded, approve, swap } = useParaInchSwap();
-  const [getSwapInfo, { data, loading, stopPolling, startPolling }] =
-    useSkybridgeSwapInfoLazyQuery();
-
-  useEffect(() => {
-    if (!skybridgeSwap) return;
-    getSwapInfo({ variables: { id: skybridgeSwap } });
-  }, [getSwapInfo, skybridgeSwap]);
-
-  useEffect(() => {
-    if (data?.transaction.status !== TransactionStatus.Completed) {
-      startPolling?.(15000);
-    }
-
-    return () => {
-      stopPolling?.();
-    };
-  }, [data, stopPolling, startPolling]);
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -111,54 +81,7 @@ export const Widget = () => {
 
   return (
     <div css={container}>
-      {!!skybridgeSwap && (
-        <div
-          css={[
-            skybridge,
-            data?.transaction.status === TransactionStatus.Completed && skybridgeCompleted,
-          ]}
-        >
-          {loading && <div>loading</div>}
-          {!!data && (
-            <div>
-              {data.transaction.status !== TransactionStatus.Completed ? (
-                <FormattedMessage
-                  id="widget.skybridge.waiting"
-                  values={{
-                    status: data.transaction.status,
-                    swap: (
-                      <a
-                        href={`https://widget.skybridge.exchange/production/swap/${data.transaction.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={data.transaction.id}
-                      >
-                        {shortenAddress({ value: data.transaction.id })}
-                      </a>
-                    ),
-                  }}
-                />
-              ) : (
-                <FormattedMessage
-                  id="widget.skybridge.completed"
-                  values={{
-                    swap: (
-                      <a
-                        href={`https://widget.skybridge.exchange/production/swap/${data.transaction.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title={data.transaction.id}
-                      >
-                        {shortenAddress({ value: data.transaction.id })}
-                      </a>
-                    ),
-                  }}
-                />
-              )}
-            </div>
-          )}
-        </div>
-      )}
+      <SkybridgeSwapBanner css={skybridge} />
 
       <div css={[label, fromLabel]}>
         <FormattedMessage id="widget.from" />
