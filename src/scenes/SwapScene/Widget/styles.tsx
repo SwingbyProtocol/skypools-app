@@ -6,8 +6,9 @@ import { size } from '../../../modules/styles';
 export const container = css`
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(5, min-content);
+  grid-template-rows: repeat(7, min-content);
   grid-template-areas:
+    'skybridge'
     'from-label'
     'from-input'
     'to-label'
@@ -67,4 +68,20 @@ export const infoValue = css`
 
 export const infoValueHighlight = css`
   color: hsl(var(--sp-color-text-normal));
+`;
+
+export const skybridge = css`
+  grid-area: skybridge;
+  background: hsla(var(--sp-color-warning-normal), 75%);
+  padding-inline-start: ${rem(size.drawer)};
+  padding-inline-end: ${rem(size.drawer)};
+  padding-block-start: ${rem(size.box)};
+  padding-block-end: ${rem(size.box)};
+  border-radius: ${rem(size.drawer)};
+  font-size: ${rem(size.closet)};
+  margin-block-end: ${rem(size.street)};
+`;
+
+export const skybridgeCompleted = css`
+  background: hsla(var(--sp-color-success-normal), 75%);
 `;
