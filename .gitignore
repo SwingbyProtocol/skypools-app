@@ -18,6 +18,7 @@
 /build
 /graphql.schema.json
 /.linaria-cache
+/src/generated
 
 # misc
 .DS_Store

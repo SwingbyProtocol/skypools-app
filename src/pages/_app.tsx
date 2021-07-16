@@ -2,11 +2,26 @@ import { AppProps } from 'next/app';
 import { useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import Head from 'next/head';
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { relayStylePagination } from '@apollo/client/utilities'; // eslint-disable-line import/no-internal-modules
 
 import { languages } from '../modules/i18n';
 import { Favicon } from '../components/Favicon';
 import { GlobalStyles } from '../modules/styles';
 import { OnboardProvider } from '../modules/onboard';
+
+const apolloClient = new ApolloClient({
+  uri: 'https://network.skybridge.exchange/api/v3/graphql',
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          transactions: relayStylePagination(['where']),
+        },
+      },
+    },
+  }),
+});
 
 const intlOnError: React.ComponentPropsWithoutRef<typeof IntlProvider>['onError'] = (err) => {
   if (err.code === 'MISSING_TRANSLATION') {
@@ -29,24 +44,26 @@ function MyApp({ Component, pageProps, router }: AppProps) {
   const messages = useMemo(() => ({ ...languages.en, ...languages[locale] }), [locale]);
 
   return (
-    <IntlProvider messages={messages} locale={locale} defaultLocale="en" onError={intlOnError}>
-      <OnboardProvider>
-        <>
-          <GlobalStyles />
+    <ApolloProvider client={apolloClient}>
+      <IntlProvider messages={messages} locale={locale} defaultLocale="en" onError={intlOnError}>
+        <OnboardProvider>
+          <>
+            <GlobalStyles />
 
-          <Head>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-            />
-          </Head>
+            <Head>
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+              />
+            </Head>
 
-          <Favicon />
+            <Favicon />
 
-          <Component {...pageProps} />
-        </>
-      </OnboardProvider>
-    </IntlProvider>
+            <Component {...pageProps} />
+          </>
+        </OnboardProvider>
+      </IntlProvider>
+    </ApolloProvider>
   );
 }
 

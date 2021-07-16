@@ -17,7 +17,9 @@ import {
   infoLabel,
   infoValue,
   infoValueHighlight,
+  skybridge,
 } from './styles';
+import { SkybridgeSwapBanner } from './useSkybridgeSwap';
 
 export const Widget = () => {
   const {
@@ -79,6 +81,8 @@ export const Widget = () => {
 
   return (
     <div css={container}>
+      <SkybridgeSwapBanner css={skybridge} />
+
       <div css={[label, fromLabel]}>
         <FormattedMessage id="widget.from" />
       </div>

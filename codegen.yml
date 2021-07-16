@@ -1,0 +1,16 @@
+overwrite: true
+schema: https://network.skybridge.exchange/api/v3/graphql
+documents: 'src/**/*.graphql'
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      scalars:
+        DateTime: 'string'
+        Decimal: 'string'
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'
