@@ -17,6 +17,9 @@ jobs:
           node-version: 12.x
       - uses: bahmutov/npm-install@v1
 
+      - name: Build
+        run: yarn build
+
       - name: Lint
         run: yarn lint
 
