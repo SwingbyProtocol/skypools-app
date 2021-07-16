@@ -111,6 +111,8 @@ export const getLatestTransactions = async ({
           ...it,
           amountOut: '0',
           amountIn: '0',
+          tokenLogoIn: '',
+          tokenLogoOut: '',
         };
       }
     }),

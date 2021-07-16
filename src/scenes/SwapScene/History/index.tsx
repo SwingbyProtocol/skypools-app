@@ -94,14 +94,12 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       {Number(item.amountOut) > 0 && (
         <>
           <div css={amountRow}>
-            {/* Fixme: editor shows type error */}
             <img src={item.tokenLogoIn} alt="token-out" css={tokenSmall} />
             <div css={amountIn} title={formatNumber(Number(item.amountIn), NUMBER_FORMAT_FULL)}>
               {formatNumber(Number(item.amountIn), NUMBER_FORMAT_SHORT)}
             </div>
           </div>
           <div css={amountRow}>
-            {/* Fixme: editor shows type error */}
             <img src={item.tokenLogoOut} alt="token-in" css={tokenSmall} />
             <div css={amountOut} title={formatNumber(Number(item.amountOut), NUMBER_FORMAT_FULL)}>
               {formatNumber(Number(item.amountOut), NUMBER_FORMAT_SHORT)}
