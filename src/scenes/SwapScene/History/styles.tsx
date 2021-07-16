@@ -99,3 +99,13 @@ export const hash = css`
   grid-area: hash;
   justify-self: flex-end;
 `;
+
+export const amountRow = css`
+  display: flex;
+  justify-items: center;
+`;
+
+export const tokenSmall = css`
+  height: ${rem(size.room)};
+  margin-inline-end: ${rem(size.drawer)};
+`;

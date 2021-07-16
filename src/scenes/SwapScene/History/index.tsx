@@ -24,10 +24,12 @@ import {
   status,
   firstRow,
   lastRow,
+  amountRow,
   sizeCalc,
   iconConfirmed,
   iconPending,
   iconSent,
+  tokenSmall,
 } from './styles';
 import { ReactComponent as SwapIcon } from './swap.svg';
 
@@ -44,9 +46,6 @@ const NUMBER_FORMAT_FULL: Partial<React.ComponentPropsWithoutRef<typeof Formatte
   notation: 'standard',
   useGrouping: true,
 };
-
-const AMOUNT_IN = 1e-8;
-const AMOUNT_OUT = Number.MAX_SAFE_INTEGER;
 
 const Context = createContext<ParaInchHistoryItem[]>([]);
 
@@ -90,13 +89,19 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         )}
       </div>
 
-      {false && (
+      {Number(item.amountOut) > 0 && (
         <>
-          <div css={amountIn} title={formatNumber(AMOUNT_IN, NUMBER_FORMAT_FULL)}>
-            {formatNumber(AMOUNT_IN, NUMBER_FORMAT_SHORT)}
+          <div css={amountRow}>
+            <img src={item.tokenLogoIn} alt="token-out" css={tokenSmall} />
+            <div css={amountIn} title={formatNumber(Number(item.amountIn), NUMBER_FORMAT_FULL)}>
+              {formatNumber(Number(item.amountIn), NUMBER_FORMAT_SHORT)}
+            </div>
           </div>
-          <div css={amountOut} title={formatNumber(AMOUNT_OUT, NUMBER_FORMAT_FULL)}>
-            {formatNumber(AMOUNT_OUT, NUMBER_FORMAT_SHORT)}
+          <div css={amountRow}>
+            <img src={item.tokenLogoOut} alt="token-in" css={tokenSmall} />
+            <div css={amountOut} title={formatNumber(Number(item.amountOut), NUMBER_FORMAT_FULL)}>
+              {formatNumber(Number(item.amountOut), NUMBER_FORMAT_SHORT)}
+            </div>
           </div>
         </>
       )}

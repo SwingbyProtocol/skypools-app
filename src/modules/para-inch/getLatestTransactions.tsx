@@ -20,6 +20,26 @@ type ApiResult = {
   }> | null;
 };
 
+type DexHistoryResult = {
+  hash: string;
+  depositAddress: string;
+  receivingAddress: string;
+  currencyOut: string;
+  amountOut: string;
+  tokenLogoOut: string;
+  currencyIn: string;
+  amountIn: string;
+  tokenLogoIn: string;
+  method: string;
+  type: string;
+};
+
+// Ref: https://developers.paraswap.network/smartcontracts
+const paraSwapSpender = [
+  '0x1bd435f3c054b6e901b7b108a0ab7617c808677b',
+  '0x55a0e3b6579972055faa983482aceb4b251dcf15',
+];
+
 export const getLatestTransactions = async ({
   address: addressParam,
   network,
@@ -31,6 +51,7 @@ export const getLatestTransactions = async ({
 }) => {
   const address = addressParam.toLowerCase();
   const spender = spenderParam.toLowerCase();
+  const dex = paraSwapSpender.includes(spender) ? 'paraswap' : '1inch';
 
   logger.debug({ address, spender }, 'Will fetch latest transaction list');
 
@@ -66,7 +87,33 @@ export const getLatestTransactions = async ({
     }))
     .filter((it) => it.to.toLowerCase() === spender && it.from.toLowerCase() === address);
 
-  logger.debug({ address, spender, result, response }, 'Got latest transaction list');
+  const mergedResult = await Promise.all(
+    result.map(async (it) => {
+      const base = 'https://skybridge-stats.vercel.app/api/v1/dex-swap-history';
+      const url = stringifyUrl({
+        url: base,
+        query: {
+          dex,
+          network,
+          hash: `${it.hash}`,
+        },
+      });
+      try {
+        const { amountOut, amountIn, tokenLogoOut, tokenLogoIn } = await fetcher<DexHistoryResult>(
+          url,
+        );
+        return { ...it, amountOut, amountIn, tokenLogoOut, tokenLogoIn };
+      } catch (error) {
+        return {
+          ...it,
+          amountOut: '0',
+          amountIn: '0',
+        };
+      }
+    }),
+  );
 
-  return result;
+  logger.debug({ address, spender, result, response, mergedResult }, 'Got latest transaction list');
+
+  return mergedResult;
 };

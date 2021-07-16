@@ -17,6 +17,10 @@ type PendingItem = {
   from: string;
   to: string;
   status: 'pending';
+  amountIn?: string;
+  amountOut?: string;
+  tokenLogoIn?: string;
+  tokenLogoOut?: string;
 };
 
 export type ParaInchHistoryItem = TransactionItem | PendingItem;
