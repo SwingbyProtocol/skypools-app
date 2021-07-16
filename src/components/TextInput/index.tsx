@@ -19,6 +19,7 @@ import {
   sizeState,
   stateDanger,
   stateNormal,
+  inputContainerDisabled,
 } from './styles';
 
 export type Props = Omit<
@@ -47,6 +48,7 @@ export const TextInput = ({
   right,
   size,
   id: idProp,
+  disabled,
   ...props
 }: Props) => {
   const { buildTestId } = useBuildTestId({ id: testId });
@@ -85,6 +87,7 @@ export const TextInput = ({
           size === 'city' && sizeCity,
           size === 'country' && sizeCountry,
           size === 'state' && sizeState,
+          disabled && inputContainerDisabled,
         ]}
       >
         {left && (
@@ -99,6 +102,7 @@ export const TextInput = ({
           id={id}
           onFocus={focus}
           onBlur={blur}
+          disabled={disabled}
         />
         {right && (
           <div css={rightClass} data-testid={buildTestId('right')}>
