@@ -72,6 +72,11 @@ export const iconPending = css`
   ${pulseAnimation};
 `;
 
+export const iconFailed = css`
+  background: hsla(var(--sp-color-danger-active));
+  color: hsla(var(--sp-color-warning-text));
+`;
+
 export const status = css`
   grid-area: status;
   align-self: flex-start;

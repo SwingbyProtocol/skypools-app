@@ -17,6 +17,7 @@ type ApiResult = {
     from: string;
     value: string;
     confirmations: string;
+    isError: string;
   }> | null;
 };
 
@@ -51,7 +52,6 @@ export const getLatestTransactions = async ({
 }) => {
   const address = addressParam.toLowerCase();
   const spender = spenderParam.toLowerCase();
-  const dex = paraSwapSpender.includes(spender) ? 'paraswap' : '1inch';
 
   logger.debug({ address, spender }, 'Will fetch latest transaction list');
 
@@ -77,9 +77,10 @@ export const getLatestTransactions = async ({
       hash: `${it.hash}`,
       from: `${it.from}`,
       to: `${it.to}`,
-      status: ((): 'pending' | 'sent' | 'confirmed' => {
+      status: ((): 'pending' | 'sent' | 'confirmed' | 'failed' => {
         try {
-          return new Big(it.confirmations).gte(15) ? 'confirmed' : 'sent';
+          const isFailedTx = Number(it.isError) > 0;
+          return isFailedTx ? 'failed' : new Big(it.confirmations).gte(15) ? 'confirmed' : 'sent';
         } catch (e) {
           return 'sent';
         }
@@ -90,6 +91,8 @@ export const getLatestTransactions = async ({
   const mergedResult = await Promise.all(
     result.map(async (it) => {
       const base = 'https://skybridge-stats.vercel.app/api/v1/dex-swap-history';
+      const dex = paraSwapSpender.includes(spender) ? 'paraswap' : '1inch';
+
       const url = stringifyUrl({
         url: base,
         query: {
