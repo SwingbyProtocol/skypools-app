@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { createContext, ReactNode, useState, useMemo, useCallback, useEffect } from 'react';
 import { Big } from 'big.js';
+import { stringifyUrl } from 'query-string';
 
 import type { ParaInchToken, SupportedNetworkId, SwapQuote } from '../para-inch';
 import { getSwapQuote } from '../para-inch';
@@ -12,9 +13,9 @@ export type ParaInchContextValue = {
   fromToken: ParaInchToken | null;
   network: SupportedNetworkId;
   setAmount: (amount: string | null) => void;
-  setFromToken: (amount: string) => void;
+  setFromToken: (address: string) => void;
   setNetwork: (amount: SupportedNetworkId) => void;
-  setToToken: (amount: string) => void;
+  setToToken: (address: string) => void;
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
   isAmountValid: boolean;
@@ -42,7 +43,10 @@ export const ParaInchTokenProvider = ({
   children?: ReactNode;
   value: Pick<ParaInchContextValue, 'fromToken' | 'network' | 'toToken' | 'tokens'>;
 }) => {
-  const { push } = useRouter();
+  const {
+    push,
+    query: { skybridgeSwap },
+  } = useRouter();
   const { wallet, address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
@@ -60,11 +64,18 @@ export const ParaInchTokenProvider = ({
       }
 
       setFromTokenState(token);
-      push(`/swap/${valueParam.network}/${token.address}/${toToken?.address}`, '', {
-        shallow: true,
-      });
+      push(
+        stringifyUrl({
+          url: `/swap/${valueParam.network}/${token.address}/${toToken?.address}`,
+          query: { skybridgeSwap },
+        }),
+        '',
+        {
+          shallow: true,
+        },
+      );
     },
-    [valueParam.tokens, push, toToken, valueParam.network],
+    [valueParam.tokens, push, toToken, valueParam.network, skybridgeSwap],
   );
 
   const setToToken = useCallback(
@@ -77,18 +88,31 @@ export const ParaInchTokenProvider = ({
       }
 
       setToTokenState(token);
-      push(`/swap/${valueParam.network}/${fromToken?.address}/${token.address}`, '', {
-        shallow: true,
-      });
+      push(
+        stringifyUrl({
+          url: `/swap/${valueParam.network}/${fromToken?.address}/${token.address}`,
+          query: { skybridgeSwap },
+        }),
+        '',
+        {
+          shallow: true,
+        },
+      );
     },
-    [valueParam.tokens, push, fromToken, valueParam.network],
+    [valueParam.tokens, push, fromToken, valueParam.network, skybridgeSwap],
   );
 
   const setNetwork = useCallback(
     (value: SupportedNetworkId) => {
-      push(`/swap/${value}/${fromToken?.address}/${toToken?.address}`, '');
+      push(
+        stringifyUrl({
+          url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
+          query: { skybridgeSwap },
+        }),
+        '',
+      );
     },
-    [push, fromToken, toToken],
+    [push, fromToken, toToken, skybridgeSwap],
   );
 
   useEffect(() => {

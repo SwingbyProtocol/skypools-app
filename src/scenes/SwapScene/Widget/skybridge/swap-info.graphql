@@ -3,5 +3,7 @@ query SkybridgeSwapInfo($id: ID!) {
     id
     at
     status
+    depositCurrency
+    receivingCurrency
   }
 }

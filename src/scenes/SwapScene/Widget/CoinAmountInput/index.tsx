@@ -37,7 +37,7 @@ type Props = {
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
-  amountDisabled?: boolean;
+  disabled?: 'amount' | 'all';
 };
 
 const theme = (theme: Theme): Theme => ({
@@ -137,7 +137,7 @@ export const CoinAmountInput = ({
   className,
   value,
   onChange,
-  amountDisabled = false,
+  disabled = 'amount',
 }: Props) => {
   const coins = useMemo(
     () =>
@@ -212,6 +212,7 @@ export const CoinAmountInput = ({
         filterOption={createFilter({
           stringify: (option: OptionType) => `${option.value.symbol} ${option.value.address}`,
         })}
+        isDisabled={disabled === 'all'}
       />
 
       <div css={textInputContainer}>
@@ -226,7 +227,7 @@ export const CoinAmountInput = ({
               amountInfo: value.amountInfo,
             })
           }
-          disabled={amountDisabled}
+          disabled={disabled === 'all' || disabled === 'amount'}
         />
 
         {!!value.amountInfo && <span css={info}>{value.amountInfo}</span>}
