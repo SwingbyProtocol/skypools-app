@@ -10,6 +10,7 @@ export const container = css`
   align-items: center;
   justify-items: start;
   background: hsla(var(--sp-color-warning-normal), 75%);
+  color: hsl(var(--sp-color-warning-text));
   padding-inline-start: ${rem(size.drawer)};
   padding-inline-end: ${rem(size.drawer)};
   padding-block-start: ${rem(size.box)};
@@ -21,6 +22,12 @@ export const container = css`
 
 export const statusCompleted = css`
   background: hsla(var(--sp-color-success-normal), 75%);
+  color: hsl(var(--sp-color-success-text));
+`;
+
+export const statusFailed = css`
+  background: hsla(var(--sp-color-danger-normal), 75%);
+  color: hsl(var(--sp-color-danger-text));
 `;
 
 export const loading = css`
