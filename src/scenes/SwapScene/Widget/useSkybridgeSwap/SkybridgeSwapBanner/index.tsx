@@ -22,40 +22,26 @@ export const SkybridgeSwapBanner = ({ className }: { className?: string }) => {
       {loading && <Loading css={loadingStyles} />}
       {!!data && (
         <div css={content}>
-          {data.transaction.status !== TransactionStatus.Completed ? (
-            <FormattedMessage
-              id="widget.skybridge.waiting"
-              values={{
-                status: data.transaction.status,
-                swap: (
-                  <a
-                    href={`https://widget.skybridge.exchange/production/swap/${data.transaction.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={data.transaction.id}
-                  >
-                    {shortenAddress({ value: data.transaction.id })}
-                  </a>
-                ),
-              }}
-            />
-          ) : (
-            <FormattedMessage
-              id="widget.skybridge.completed"
-              values={{
-                swap: (
-                  <a
-                    href={`https://widget.skybridge.exchange/production/swap/${data.transaction.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title={data.transaction.id}
-                  >
-                    {shortenAddress({ value: data.transaction.id })}
-                  </a>
-                ),
-              }}
-            />
-          )}
+          <FormattedMessage
+            id={
+              data.transaction.status !== TransactionStatus.Completed
+                ? 'widget.skybridge.waiting'
+                : 'widget.skybridge.completed'
+            }
+            values={{
+              status: data.transaction.status,
+              swap: (
+                <a
+                  href={`https://widget.skybridge.exchange/production/swap/${data.transaction.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={data.transaction.id}
+                >
+                  {shortenAddress({ value: data.transaction.id })}
+                </a>
+              ),
+            }}
+          />
         </div>
       )}
     </div>
