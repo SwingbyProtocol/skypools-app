@@ -72,24 +72,31 @@ const styles: StylesConfig<OptionType, false> = {
     '--coin-name-color': isSelected ? 'hsl(var(--sp-color-primary-text))' : undefined,
   }),
   indicatorSeparator: () => ({ display: 'none' }),
-  dropdownIndicator: (styles) => ({
+  dropdownIndicator: (styles, { isDisabled }) => ({
     ...styles,
+    display: isDisabled ? 'none' : undefined,
     color: 'hsl(var(--sp-color-primary-normal))',
     ':hover': {
       color: 'hsl(var(--sp-color-primary-active))',
     },
   }),
-  control: (styles, { isFocused }) => ({
+  control: (styles, { isFocused, isDisabled }) => ({
     ...styles,
     borderRadius: rem(size.closet),
     blockSize: rem(size.country),
-    borderColor: isFocused
+    borderColor: isDisabled
+      ? 'transparent'
+      : isFocused
       ? 'hsl(var(--sp-color-primary-normal))'
       : 'hsl(var(--sp-color-border-normal))',
     boxShadow: 'none',
-    backgroundColor: 'hsl(var(--sp-color-input-bg))',
+    backgroundColor: isDisabled
+      ? 'hsla(var(--sp-color-input-bg), 75%)'
+      : 'hsl(var(--sp-color-input-bg))',
     ':hover': {
-      borderColor: isFocused
+      borderColor: isDisabled
+        ? 'transparent'
+        : isFocused
         ? 'hsl(var(--sp-color-primary-active))'
         : 'hsl(var(--sp-color-border-hover))',
     },
