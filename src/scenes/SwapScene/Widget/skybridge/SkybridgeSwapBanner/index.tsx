@@ -1,7 +1,9 @@
 import { FormattedMessage } from 'react-intl';
 
+import { Icon } from '../../../../../components/Icon';
 import { Loading } from '../../../../../components/Loading';
 import { TransactionStatus } from '../../../../../generated/graphql';
+import { useParaInch } from '../../../../../modules/para-inch-react';
 import { shortenAddress } from '../../../../../modules/short-address';
 import { useSkybridgeSwap } from '../useSkybridgeSwap';
 
@@ -11,10 +13,12 @@ import {
   loading as loadingStyles,
   content,
   statusFailed,
+  unlink as unlinkStyles,
 } from './styles';
 
 export const SkybridgeSwapBanner = ({ className }: { className?: string }) => {
-  const { data, loading, swapId } = useSkybridgeSwap();
+  const { unlinkSkybridgeSwap } = useParaInch();
+  const { data, loading, swapId, isValid } = useSkybridgeSwap();
 
   const hasSwapFailed: boolean =
     !!data &&
@@ -34,7 +38,7 @@ export const SkybridgeSwapBanner = ({ className }: { className?: string }) => {
       css={[
         container,
         data?.transaction.status === TransactionStatus.Completed && statusCompleted,
-        hasSwapFailed && statusFailed,
+        (hasSwapFailed || !isValid) && statusFailed,
       ]}
       className={className}
     >
@@ -43,7 +47,9 @@ export const SkybridgeSwapBanner = ({ className }: { className?: string }) => {
         <div css={content}>
           <FormattedMessage
             id={
-              hasSwapFailed
+              !isValid
+                ? 'widget.skybridge.invalid'
+                : hasSwapFailed
                 ? 'widget.skybridge.failed'
                 : data.transaction.status === TransactionStatus.Completed
                 ? 'widget.skybridge.completed'
@@ -64,6 +70,11 @@ export const SkybridgeSwapBanner = ({ className }: { className?: string }) => {
             }}
           />
         </div>
+      )}
+      {!loading && (
+        <button css={unlinkStyles} onClick={unlinkSkybridgeSwap}>
+          <Icon.Cross />
+        </button>
       )}
     </div>
   );

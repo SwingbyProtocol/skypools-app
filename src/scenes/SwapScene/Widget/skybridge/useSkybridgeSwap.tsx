@@ -63,15 +63,18 @@ export const useSkybridgeSwap = () => {
     }
   }, [data, network, setFromToken, fromToken, setAmount]);
 
+  const fromDisabled = (() => {
+    return (
+      (network === 1 && data?.transaction.receivingCurrency === TransactionCurrency.WbtcErc20) ||
+      (network === 56 && data?.transaction.receivingCurrency === TransactionCurrency.BtcbBep20)
+    );
+  })();
+
   return {
     data,
     loading,
     swapId,
-    fromDisabled: (() => {
-      return (
-        (network === 1 && data?.transaction.receivingCurrency === TransactionCurrency.WbtcErc20) ||
-        (network === 56 && data?.transaction.receivingCurrency === TransactionCurrency.BtcbBep20)
-      );
-    })(),
+    isValid: fromDisabled,
+    fromDisabled,
   };
 };

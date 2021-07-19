@@ -16,6 +16,7 @@ export type ParaInchContextValue = {
   setFromToken: (address: string) => void;
   setNetwork: (amount: SupportedNetworkId) => void;
   setToToken: (address: string) => void;
+  unlinkSkybridgeSwap: () => void;
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
   isAmountValid: boolean;
@@ -30,6 +31,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
   setFromToken: () => {},
   setNetwork: () => {},
   setToToken: () => {},
+  unlinkSkybridgeSwap: () => {},
   tokens: [],
   toToken: null,
   isAmountValid: false,
@@ -70,9 +72,7 @@ export const ParaInchTokenProvider = ({
           query: { skybridgeSwap },
         }),
         '',
-        {
-          shallow: true,
-        },
+        { shallow: true },
       );
     },
     [valueParam.tokens, push, toToken, valueParam.network, skybridgeSwap],
@@ -94,9 +94,7 @@ export const ParaInchTokenProvider = ({
           query: { skybridgeSwap },
         }),
         '',
-        {
-          shallow: true,
-        },
+        { shallow: true },
       );
     },
     [valueParam.tokens, push, fromToken, valueParam.network, skybridgeSwap],
@@ -109,11 +107,19 @@ export const ParaInchTokenProvider = ({
           url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
-        '',
       );
     },
     [push, fromToken, toToken, skybridgeSwap],
   );
+
+  const unlinkSkybridgeSwap = useCallback(() => {
+    push(
+      stringifyUrl({
+        url: `/swap/${amount}/${fromToken?.address}/${toToken?.address}`,
+        query: { skybridgeSwap: undefined },
+      }),
+    );
+  }, [push, amount, fromToken, toToken]);
 
   useEffect(() => {
     let cancelled = false;
@@ -171,6 +177,7 @@ export const ParaInchTokenProvider = ({
         }
       })(),
       swapQuote,
+      unlinkSkybridgeSwap,
     }),
     [
       valueParam.network,
@@ -182,6 +189,7 @@ export const ParaInchTokenProvider = ({
       setToToken,
       setNetwork,
       swapQuote,
+      unlinkSkybridgeSwap,
     ],
   );
 
