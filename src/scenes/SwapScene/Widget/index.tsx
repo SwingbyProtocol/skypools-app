@@ -3,7 +3,6 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { useParaInch, useParaInchSwap } from '../../../modules/para-inch-react';
-import { TransactionCurrency } from '../../../generated/graphql';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -35,7 +34,7 @@ export const Widget = () => {
     swapQuote,
   } = useParaInch();
   const { isApprovalNeeded, approve, swap } = useParaInchSwap();
-  const { data, fromDisabled } = useSkybridgeSwap();
+  const { fromDisabled } = useSkybridgeSwap();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
