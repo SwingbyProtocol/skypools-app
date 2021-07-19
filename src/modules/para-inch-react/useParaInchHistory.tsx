@@ -4,30 +4,29 @@ import type { PromiseValue } from 'type-fest';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getLatestTransactions, getSpender } from '../para-inch';
+import { getLatestTransactions, getSpender, ParaInchToken } from '../para-inch';
 
 import { useParaInch } from './useParaInch';
 
-type TransactionItem = PromiseValue<ReturnType<typeof getLatestTransactions>>[number];
+type TransactionItem = Omit<
+  PromiseValue<ReturnType<typeof getLatestTransactions>>[number],
+  'fromTokenAddress' | 'toTokenAddress'
+> & {
+  fromToken: ParaInchToken | null;
+  toToken: ParaInchToken | null;
+};
 
-type PendingItem = {
-  hash: string;
+type PendingItem = Omit<TransactionItem, 'at' | 'blockNumber' | 'status'> & {
   at: null;
   blockNumber: string | null;
-  from: string;
-  to: string;
   status: 'pending';
-  amountIn?: string;
-  amountOut?: string;
-  tokenLogoIn?: string;
-  tokenLogoOut?: string;
 };
 
 export type ParaInchHistoryItem = TransactionItem | PendingItem;
 
 export const useParaInchHistory = () => {
   const { address, wallet } = useOnboard();
-  const { network } = useParaInch();
+  const { network, tokens } = useParaInch();
   const [spender, setSpender] = useState<string | null>(null);
   const [pendingTransactions, setPendingTransactions] = useState<PendingItem[]>([]);
   const [latestTransactions, setLatestTransactions] = useState<TransactionItem[]>([]);
@@ -76,6 +75,10 @@ export const useParaInchHistory = () => {
               from: it.from,
               to: `${it.to}`,
               status: 'pending',
+              fromAmount: null,
+              toAmount: null,
+              fromToken: null,
+              toToken: null,
             }),
           )
           .filter((it) => it.to.toLowerCase() === spender);
@@ -116,7 +119,16 @@ export const useParaInchHistory = () => {
       try {
         if (cancelled) return;
 
-        const transactions = await getLatestTransactions({ address, network, spender });
+        const transactions = (await getLatestTransactions({ address, network, spender })).map(
+          (it): TransactionItem => ({
+            ...it,
+            fromToken:
+              tokens.find(({ address }) => address.toLowerCase() === it.fromTokenAddress) ?? null,
+            toToken:
+              tokens.find(({ address }) => address.toLowerCase() === it.toTokenAddress) ?? null,
+          }),
+        );
+
         if (cancelled) return;
 
         setLatestTransactions((old) => {
@@ -143,7 +155,7 @@ export const useParaInchHistory = () => {
     return () => {
       cancelled = true;
     };
-  }, [address, network, spender]);
+  }, [address, network, spender, tokens]);
 
   return {
     pendingTransactions,

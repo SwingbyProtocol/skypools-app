@@ -29,6 +29,6 @@
   "history.status.confirmed": "Confirmed",
   "history.status.sent": "Sent",
   "history.status.pending": "Pending",
-  "history.status.failed": "Transaction Failed",
+  "history.status.failed": "Failed",
   "comparison.match": "MATCH"
 }

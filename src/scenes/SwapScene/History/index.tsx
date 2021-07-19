@@ -12,6 +12,7 @@ import {
 } from '../../../modules/para-inch-react';
 import { shortenAddress } from '../../../modules/short-address';
 import { buildLinkToTransaction } from '../../../modules/web3';
+import { Coin } from '../../../components/Coin';
 
 import {
   amountIn,
@@ -24,13 +25,13 @@ import {
   status,
   firstRow,
   lastRow,
-  amountRow,
   sizeCalc,
   iconConfirmed,
   iconPending,
   iconFailed,
   iconSent,
-  tokenSmall,
+  coinIn,
+  coinOut,
 } from './styles';
 import { ReactComponent as SwapIcon } from './swap.svg';
 
@@ -91,19 +92,20 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         )}
       </div>
 
-      {Number(item.amountOut) > 0 && (
+      {!!item.fromAmount?.gt(0) && (
         <>
-          <div css={amountRow}>
-            <img src={item.tokenLogoIn} alt="token-out" css={tokenSmall} />
-            <div css={amountIn} title={formatNumber(Number(item.amountIn), NUMBER_FORMAT_FULL)}>
-              {formatNumber(Number(item.amountIn), NUMBER_FORMAT_SHORT)}
-            </div>
+          <Coin src={item.fromToken?.logoUri} css={coinIn} />
+          <div css={amountIn} title={formatNumber(+item.fromAmount, NUMBER_FORMAT_FULL)}>
+            {formatNumber(+item.fromAmount, NUMBER_FORMAT_SHORT)}
           </div>
-          <div css={amountRow}>
-            <img src={item.tokenLogoOut} alt="token-in" css={tokenSmall} />
-            <div css={amountOut} title={formatNumber(Number(item.amountOut), NUMBER_FORMAT_FULL)}>
-              {formatNumber(Number(item.amountOut), NUMBER_FORMAT_SHORT)}
-            </div>
+        </>
+      )}
+
+      {!!item.toAmount?.gt(0) && (
+        <>
+          <Coin src={item.toToken?.logoUri} css={coinOut} />
+          <div css={amountOut} title={formatNumber(+item.toAmount, NUMBER_FORMAT_FULL)}>
+            {formatNumber(+item.toAmount, NUMBER_FORMAT_SHORT)}
           </div>
         </>
       )}

@@ -21,11 +21,12 @@ export const rowContainer = css`
   display: grid;
   align-items: center;
   grid-column-gap: ${rem(size.drawer)};
-  grid-template-columns: min-content 1fr 1fr 1fr;
+  grid-row-gap: ${rem(1)};
+  grid-template-columns: min-content 1fr min-content min-content 1fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas:
-    'icon time amount-in hash'
-    'icon status amount-out hash';
+    'icon time coin-in amount-in hash'
+    'icon status coin-out amount-out hash';
   overflow: hidden;
   white-space: nowrap;
   font-size: ${rem(size.closet)};
@@ -67,14 +68,14 @@ export const iconSent = css`
 `;
 
 export const iconPending = css`
-  background: hsla(var(--sp-color-warning-normal));
-  color: hsla(var(--sp-color-warning-text));
+  background: hsl(var(--sp-color-warning-normal));
+  color: hsl(var(--sp-color-warning-text));
   ${pulseAnimation};
 `;
 
 export const iconFailed = css`
-  background: hsla(var(--sp-color-danger-active));
-  color: hsla(var(--sp-color-warning-text));
+  background: hsl(var(--sp-color-danger-normal));
+  color: hsl(var(--sp-color-danger-text));
 `;
 
 export const status = css`
@@ -91,26 +92,29 @@ export const time = css`
 export const amountIn = css`
   grid-area: amount-in;
   align-self: flex-end;
-  justify-self: center;
+  justify-self: start;
 `;
 
 export const amountOut = css`
+  ${amountIn};
   grid-area: amount-out;
   align-self: flex-start;
+`;
+
+export const coinIn = css`
+  grid-area: coin-in;
+  align-self: flex-end;
   justify-self: center;
+  font-size: ${rem(size.room)};
+`;
+
+export const coinOut = css`
+  ${coinIn};
+  grid-area: coin-out;
+  align-self: flex-start;
 `;
 
 export const hash = css`
   grid-area: hash;
   justify-self: flex-end;
-`;
-
-export const amountRow = css`
-  display: flex;
-  justify-items: center;
-`;
-
-export const tokenSmall = css`
-  height: ${rem(size.room)};
-  margin-inline-end: ${rem(size.drawer)};
 `;

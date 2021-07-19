@@ -5,8 +5,22 @@ import { Big } from 'big.js';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { getScanApiUrl } from '../web3';
+import { shouldUseParaSwap } from '../env';
 
 import { SupportedNetworkId } from './isSupportedNetwork';
+
+type HistoryItem = {
+  hash: string;
+  at: DateTime;
+  blockNumber: string;
+  from: string;
+  to: string;
+  status: 'pending' | 'sent' | 'confirmed' | 'failed';
+  fromTokenAddress: string | null;
+  toTokenAddress: string | null;
+  fromAmount: Big | null;
+  toAmount: Big | null;
+};
 
 type ApiResult = {
   result?: Array<{
@@ -35,12 +49,6 @@ type DexHistoryResult = {
   type: string;
 };
 
-// Ref: https://developers.paraswap.network/smartcontracts
-const paraSwapSpender = [
-  '0x1bd435f3c054b6e901b7b108a0ab7617c808677b',
-  '0x55a0e3b6579972055faa983482aceb4b251dcf15',
-];
-
 export const getLatestTransactions = async ({
   address: addressParam,
   network,
@@ -49,7 +57,7 @@ export const getLatestTransactions = async ({
   address: string;
   network: SupportedNetworkId;
   spender: string;
-}) => {
+}): Promise<HistoryItem[]> => {
   const address = addressParam.toLowerCase();
   const spender = spenderParam.toLowerCase();
 
@@ -71,49 +79,67 @@ export const getLatestTransactions = async ({
     ).result ?? [];
 
   const result = response
-    .map((it) => ({
-      blockNumber: `${it.blockNumber}`,
-      at: DateTime.fromMillis(+it.timeStamp * 1000, { zone: 'utc' }),
-      hash: `${it.hash}`,
-      from: `${it.from}`,
-      to: `${it.to}`,
-      status: ((): 'pending' | 'sent' | 'confirmed' | 'failed' => {
-        try {
-          const isFailedTx = Number(it.isError) > 0;
-          return isFailedTx ? 'failed' : new Big(it.confirmations).gte(15) ? 'confirmed' : 'sent';
-        } catch (e) {
-          return 'sent';
-        }
-      })(),
-    }))
+    .map(
+      (it): HistoryItem => ({
+        blockNumber: `${it.blockNumber}`,
+        at: DateTime.fromMillis(+it.timeStamp * 1000, { zone: 'utc' }),
+        hash: `${it.hash}`,
+        from: `${it.from}`,
+        to: `${it.to}`,
+        status: ((): 'pending' | 'sent' | 'confirmed' | 'failed' => {
+          try {
+            return Number.parseInt(it.isError) !== 0
+              ? 'failed'
+              : new Big(it.confirmations).gte(15)
+              ? 'confirmed'
+              : 'sent';
+          } catch (e) {
+            return 'sent';
+          }
+        })(),
+        fromAmount: null,
+        toAmount: null,
+        fromTokenAddress: null,
+        toTokenAddress: null,
+      }),
+    )
     .filter((it) => it.to.toLowerCase() === spender && it.from.toLowerCase() === address);
 
   const mergedResult = await Promise.all(
-    result.map(async (it) => {
-      const base = 'https://skybridge-stats.vercel.app/api/v1/dex-swap-history';
-      const dex = paraSwapSpender.includes(spender) ? 'paraswap' : '1inch';
-
-      const url = stringifyUrl({
-        url: base,
-        query: {
-          dex,
-          network,
-          hash: `${it.hash}`,
-        },
-      });
+    result.map(async (it): Promise<HistoryItem> => {
       try {
-        const { amountOut, amountIn, tokenLogoOut, tokenLogoIn } = await fetcher<DexHistoryResult>(
-          url,
+        const { amountOut, amountIn, currencyIn, currencyOut } = await fetcher<DexHistoryResult>(
+          stringifyUrl({
+            url: 'https://skybridge-stats.vercel.app/api/v1/dex-swap-history',
+            query: {
+              dex: shouldUseParaSwap ? 'paraswap' : '1inch',
+              network,
+              hash: `${it.hash}`,
+            },
+          }),
         );
-        return { ...it, amountOut, amountIn, tokenLogoOut, tokenLogoIn };
-      } catch (error) {
+
         return {
           ...it,
-          amountOut: '0',
-          amountIn: '0',
-          tokenLogoIn: '',
-          tokenLogoOut: '',
+          fromAmount: (() => {
+            try {
+              return new Big(amountIn);
+            } catch (e) {
+              return null;
+            }
+          })(),
+          toAmount: (() => {
+            try {
+              return new Big(amountOut);
+            } catch (e) {
+              return null;
+            }
+          })(),
+          fromTokenAddress: currencyIn,
+          toTokenAddress: currencyOut,
         };
+      } catch (error) {
+        return it;
       }
     }),
   );
