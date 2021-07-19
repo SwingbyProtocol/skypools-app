@@ -1,0 +1,10 @@
+query SkybridgeSwapInfo($id: ID!) {
+  transaction(id: $id) {
+    id
+    at
+    status
+    depositCurrency
+    receivingCurrency
+    receivingAmount
+  }
+}
