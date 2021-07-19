@@ -47,16 +47,16 @@ export const getTransactionDetails = async ({
     logger.debug('Found "Swapped" event');
 
     const fromTokenAddress = findLogValue(events, 'srcToken');
-    const toTokenAddress = findLogValue(events, 'destToken');
+    const toTokenAddress = findLogValue(events, shouldUseParaSwap ? 'destToken' : 'dstToken');
 
     const fromAmount = await parseAmount({
-      amount: findLogValue(events, 'srcAmount'),
+      amount: findLogValue(events, shouldUseParaSwap ? 'srcAmount' : 'spentAmount'),
       tokenAddress: fromTokenAddress,
       web3,
       logger,
     });
     const toAmount = await parseAmount({
-      amount: findLogValue(events, 'receivedAmount'),
+      amount: findLogValue(events, shouldUseParaSwap ? 'receivedAmount' : 'returnAmount'),
       tokenAddress: toTokenAddress,
       web3,
       logger,
