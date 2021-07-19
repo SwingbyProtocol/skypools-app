@@ -144,7 +144,7 @@ export const CoinAmountInput = ({
   className,
   value,
   onChange,
-  disabled = 'amount',
+  disabled,
 }: Props) => {
   const coins = useMemo(
     () =>

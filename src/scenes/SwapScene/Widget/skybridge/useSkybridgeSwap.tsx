@@ -69,8 +69,8 @@ export const useSkybridgeSwap = () => {
     swapId,
     fromDisabled: (() => {
       return (
-        network === 1 &&
-        data?.transaction.receivingCurrency.toLowerCase() === TransactionCurrency.WbtcErc20
+        (network === 1 && data?.transaction.receivingCurrency === TransactionCurrency.WbtcErc20) ||
+        (network === 56 && data?.transaction.receivingCurrency === TransactionCurrency.BtcbBep20)
       );
     })(),
   };
