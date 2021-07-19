@@ -12,6 +12,7 @@ import {
 } from '../../../modules/para-inch-react';
 import { shortenAddress } from '../../../modules/short-address';
 import { buildLinkToTransaction } from '../../../modules/web3';
+import { Coin } from '../../../components/Coin';
 
 import {
   amountIn,
@@ -27,7 +28,10 @@ import {
   sizeCalc,
   iconConfirmed,
   iconPending,
+  iconFailed,
   iconSent,
+  coinIn,
+  coinOut,
 } from './styles';
 import { ReactComponent as SwapIcon } from './swap.svg';
 
@@ -44,9 +48,6 @@ const NUMBER_FORMAT_FULL: Partial<React.ComponentPropsWithoutRef<typeof Formatte
   notation: 'standard',
   useGrouping: true,
 };
-
-const AMOUNT_IN = 1e-8;
-const AMOUNT_OUT = Number.MAX_SAFE_INTEGER;
 
 const Context = createContext<ParaInchHistoryItem[]>([]);
 
@@ -71,6 +72,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
           item.status === 'confirmed' && iconConfirmed,
           item.status === 'pending' && iconPending,
           item.status === 'sent' && iconSent,
+          item.status === 'failed' && iconFailed,
         ]}
       >
         <SwapIcon />
@@ -90,13 +92,20 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         )}
       </div>
 
-      {false && (
+      {!!item.fromAmount?.gt(0) && (
         <>
-          <div css={amountIn} title={formatNumber(AMOUNT_IN, NUMBER_FORMAT_FULL)}>
-            {formatNumber(AMOUNT_IN, NUMBER_FORMAT_SHORT)}
+          <Coin src={item.fromToken?.logoUri} css={coinIn} />
+          <div css={amountIn} title={formatNumber(+item.fromAmount, NUMBER_FORMAT_FULL)}>
+            {formatNumber(+item.fromAmount, NUMBER_FORMAT_SHORT)}
           </div>
-          <div css={amountOut} title={formatNumber(AMOUNT_OUT, NUMBER_FORMAT_FULL)}>
-            {formatNumber(AMOUNT_OUT, NUMBER_FORMAT_SHORT)}
+        </>
+      )}
+
+      {!!item.toAmount?.gt(0) && (
+        <>
+          <Coin src={item.toToken?.logoUri} css={coinOut} />
+          <div css={amountOut} title={formatNumber(+item.toAmount, NUMBER_FORMAT_FULL)}>
+            {formatNumber(+item.toAmount, NUMBER_FORMAT_SHORT)}
           </div>
         </>
       )}
