@@ -5,9 +5,9 @@ import { Big } from 'big.js';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { getScanApiUrl } from '../web3';
-import { shouldUseParaSwap } from '../env';
 
 import { SupportedNetworkId } from './isSupportedNetwork';
+import { getTransactionDetails } from './getTransactionDetails';
 
 type HistoryItem = {
   hash: string;
@@ -35,28 +35,16 @@ type ApiResult = {
   }> | null;
 };
 
-type DexHistoryResult = {
-  hash: string;
-  depositAddress: string;
-  receivingAddress: string;
-  currencyOut: string;
-  amountOut: string;
-  tokenLogoOut: string;
-  currencyIn: string;
-  amountIn: string;
-  tokenLogoIn: string;
-  method: string;
-  type: string;
-};
-
 export const getLatestTransactions = async ({
   address: addressParam,
   network,
   spender: spenderParam,
+  walletProvider,
 }: {
   address: string;
   network: SupportedNetworkId;
   spender: string;
+  walletProvider: any;
 }): Promise<HistoryItem[]> => {
   const address = addressParam.toLowerCase();
   const spender = spenderParam.toLowerCase();
@@ -78,7 +66,7 @@ export const getLatestTransactions = async ({
       )
     ).result ?? [];
 
-  const result = response
+  const withoutDetails = response
     .map(
       (it): HistoryItem => ({
         blockNumber: `${it.blockNumber}`,
@@ -105,46 +93,27 @@ export const getLatestTransactions = async ({
     )
     .filter((it) => it.to.toLowerCase() === spender && it.from.toLowerCase() === address);
 
-  const mergedResult = await Promise.all(
-    result.map(async (it): Promise<HistoryItem> => {
-      try {
-        const { amountOut, amountIn, currencyIn, currencyOut } = await fetcher<DexHistoryResult>(
-          stringifyUrl({
-            url: 'https://skybridge-stats.vercel.app/api/v1/dex-swap-history',
-            query: {
-              dex: shouldUseParaSwap ? 'paraswap' : '1inch',
-              network,
-              hash: `${it.hash}`,
-            },
-          }),
-        );
+  const result = !walletProvider
+    ? withoutDetails
+    : await Promise.all(
+        withoutDetails.map(async (it) => {
+          try {
+            const { toTokenAddress, fromTokenAddress, toAmount, fromAmount } =
+              await getTransactionDetails({
+                hash: it.hash,
+                network,
+                walletProvider,
+              });
 
-        return {
-          ...it,
-          fromAmount: (() => {
-            try {
-              return new Big(amountIn);
-            } catch (e) {
-              return null;
-            }
-          })(),
-          toAmount: (() => {
-            try {
-              return new Big(amountOut);
-            } catch (e) {
-              return null;
-            }
-          })(),
-          fromTokenAddress: currencyIn,
-          toTokenAddress: currencyOut,
-        };
-      } catch (error) {
-        return it;
-      }
-    }),
-  );
+            return { ...it, toTokenAddress, fromTokenAddress, toAmount, fromAmount };
+          } catch (err) {
+            logger.warn({ err }, 'Failed to get transaction details');
+            return it;
+          }
+        }),
+      );
 
-  logger.debug({ address, spender, result, response, mergedResult }, 'Got latest transaction list');
+  logger.debug({ address, spender, result, response }, 'Got latest transaction list');
 
-  return mergedResult;
+  return result;
 };

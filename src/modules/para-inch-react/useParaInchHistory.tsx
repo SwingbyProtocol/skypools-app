@@ -111,7 +111,11 @@ export const useParaInchHistory = () => {
   }, [spender, wallet?.provider]);
 
   useEffect(() => {
-    if (!address || !spender) return;
+    const walletProvider = wallet?.provider;
+    if (!address || !spender || !walletProvider) {
+      setLatestTransactions([]);
+      return;
+    }
 
     let cancelled = false;
 
@@ -119,7 +123,9 @@ export const useParaInchHistory = () => {
       try {
         if (cancelled) return;
 
-        const transactions = (await getLatestTransactions({ address, network, spender })).map(
+        const transactions = (
+          await getLatestTransactions({ address, network, spender, walletProvider })
+        ).map(
           (it): TransactionItem => ({
             ...it,
             fromToken:
@@ -155,7 +161,7 @@ export const useParaInchHistory = () => {
     return () => {
       cancelled = true;
     };
-  }, [address, network, spender, tokens]);
+  }, [address, network, spender, tokens, wallet?.provider]);
 
   return {
     pendingTransactions,
