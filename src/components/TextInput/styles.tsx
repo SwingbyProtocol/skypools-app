@@ -42,6 +42,7 @@ export const inputContainer = css`
   color: hsl(var(--sp-color-text-normal));
   overflow: hidden;
   font-size: ${rem(size.house)};
+  ${transitions(['color', 'background', 'border'], 'var(--sp-duration-normal) ease-in-out')};
 
   :hover {
     border-color: hsl(var(--sp-color-border-hover));
@@ -54,8 +55,17 @@ export const inputContainer = css`
   :focus-within:hover {
     border-color: hsl(var(--sp-color-primary-active));
   }
+`;
 
-  ${transitions(['color', 'background', 'border'], 'var(--sp-duration-normal) ease-in-out')};
+export const inputContainerDisabled = css`
+  background: hsla(var(--sp-color-input-bg), 75%);
+  border-color: transparent;
+
+  :hover,
+  :focus-within,
+  :focus-within:hover {
+    border-color: transparent;
+  }
 `;
 
 export const input = css`

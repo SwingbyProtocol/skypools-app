@@ -6,7 +6,7 @@ import { size } from '../../../../../modules/styles';
 export const container = css`
   display: grid;
   grid-template-columns: min-content auto;
-  grid-template-areas: 'loading content';
+  grid-template-areas: 'loading content unlink';
   align-items: center;
   justify-items: start;
   background: hsla(var(--sp-color-warning-normal), 75%);
@@ -37,4 +37,22 @@ export const loading = css`
 
 export const content = css`
   grid-area: content;
+`;
+
+export const unlink = css`
+  grid-area: unlink;
+  justify-self: end;
+  align-self: flex-start;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  block-size: ${rem(size.room)};
+  inline-size: ${rem(size.room)};
+  font-size: ${rem(size.drawer)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 `;

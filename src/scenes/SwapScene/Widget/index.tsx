@@ -19,7 +19,7 @@ import {
   infoValueHighlight,
   skybridge,
 } from './styles';
-import { SkybridgeSwapBanner } from './useSkybridgeSwap';
+import { SkybridgeSwapBanner, useSkybridgeSwap } from './skybridge';
 
 export const Widget = () => {
   const {
@@ -34,6 +34,7 @@ export const Widget = () => {
     swapQuote,
   } = useParaInch();
   const { isApprovalNeeded, approve, swap } = useParaInchSwap();
+  const { fromDisabled } = useSkybridgeSwap();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -96,7 +97,9 @@ export const Widget = () => {
             setFromToken(coin.address);
           }
         }}
+        disabled={fromDisabled ? 'all' : undefined}
       />
+
       <div css={[label, toLabel]}>
         <FormattedMessage id="widget.to" />
       </div>
@@ -104,13 +107,14 @@ export const Widget = () => {
         css={toInput}
         availableCoins={toCoins}
         value={to}
-        amountDisabled
+        disabled="amount"
         onChange={({ coin }) => {
           if (coin) {
             setToToken(coin.address);
           }
         }}
       />
+
       {!isApprovalNeeded && (
         <Button
           variant="primary"
@@ -127,6 +131,7 @@ export const Widget = () => {
           <FormattedMessage id="widget.approve" />
         </Button>
       )}
+
       {isAmountValid && swapQuote && (
         <table css={info}>
           <tbody>
