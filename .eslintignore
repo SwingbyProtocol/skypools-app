@@ -1,2 +1,2 @@
 /nexus-typegen.d.ts
-/src/generated/graphql.tsx
+/src/generated/*-graphql.tsx

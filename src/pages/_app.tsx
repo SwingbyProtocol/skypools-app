@@ -2,8 +2,9 @@ import { AppProps } from 'next/app';
 import { useMemo } from 'react';
 import { IntlProvider } from 'react-intl';
 import Head from 'next/head';
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from '@apollo/client';
 import { relayStylePagination } from '@apollo/client/utilities'; // eslint-disable-line import/no-internal-modules
+import { RetryLink } from '@apollo/client/link/retry'; // eslint-disable-line import/no-internal-modules
 
 import { languages } from '../modules/i18n';
 import { Favicon } from '../components/Favicon';
@@ -11,7 +12,11 @@ import { GlobalStyles } from '../modules/styles';
 import { OnboardProvider } from '../modules/onboard';
 
 const apolloClient = new ApolloClient({
-  uri: 'https://network.skybridge.exchange/api/v3/graphql',
+  link: new RetryLink().split(
+    (operation) => operation.getContext().serviceName === 'skybridge',
+    new HttpLink({ uri: 'https://network.skybridge.exchange/api/v3/graphql' }),
+    new HttpLink({ uri: '/api/graphql' }),
+  ),
   cache: new InMemoryCache({
     typePolicies: {
       Query: {

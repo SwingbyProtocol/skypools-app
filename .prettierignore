@@ -1,4 +1,4 @@
 /.next
 /nexus-typegen.d.ts
 /schema.graphql
-/src/generated/graphql.tsx
+/src/generated/*-graphql.tsx

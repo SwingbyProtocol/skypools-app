@@ -5,7 +5,7 @@ import {
   TransactionCurrency,
   TransactionStatus,
   useSkybridgeSwapInfoLazyQuery,
-} from '../../../../generated/graphql';
+} from '../../../../generated/skybridge-graphql';
 import { useParaInch } from '../../../../modules/para-inch-react';
 
 const ETH_WBTC = '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599';
