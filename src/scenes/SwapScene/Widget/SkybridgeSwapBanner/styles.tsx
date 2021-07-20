@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { rem } from 'polished';
 
-import { size } from '../../../../../modules/styles';
+import { size } from '../../../../modules/styles';
 
 export const container = css`
   display: grid;

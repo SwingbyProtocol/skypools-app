@@ -17,6 +17,7 @@ import {
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
+import { useSkybridgeSwap } from '../../modules/skybridge';
 
 import { History } from './History';
 import {
@@ -33,7 +34,6 @@ import {
 } from './styles';
 import { Widget } from './Widget';
 import { OtherExchanges } from './OtherExchanges';
-import { useSkybridgeSwap } from './Widget/skybridge';
 
 const FAKE_PRICE_HISTORY = new Array(150)
   .fill(null)
@@ -134,7 +134,7 @@ export const SwapScene = () => {
     return () => {
       cancelled = true;
     };
-  }, [wallet, setAmount, address, fromToken]);
+  }, [wallet, setAmount, address, fromToken, swapId]);
 
   return (
     <div css={swapScene}>
