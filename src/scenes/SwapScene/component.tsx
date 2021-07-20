@@ -33,6 +33,7 @@ import {
 } from './styles';
 import { Widget } from './Widget';
 import { OtherExchanges } from './OtherExchanges';
+import { useSkybridgeSwap } from './Widget/skybridge';
 
 const FAKE_PRICE_HISTORY = new Array(150)
   .fill(null)
@@ -58,6 +59,7 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 export const SwapScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInch();
+  const { swapId } = useSkybridgeSwap();
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
   >(null);
@@ -106,7 +108,7 @@ export const SwapScene = () => {
   useEffect(() => {
     const walletProvider = wallet?.provider;
 
-    if (!walletProvider || !fromToken || !address) {
+    if (!walletProvider || !fromToken || !address || !!swapId) {
       return;
     }
 
