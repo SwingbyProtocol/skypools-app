@@ -14,9 +14,10 @@ enum Network {
 }
 
 model TokenUsdPriceHistoric {
-  id    String
-  at    DateTime
-  price Decimal  @db.Decimal(65, 20)
+  network Network
+  address String
+  at      DateTime
+  price   Decimal  @db.Decimal(65, 20)
 
-  @@id([id, at])
+  @@id([network, address, at])
 }
