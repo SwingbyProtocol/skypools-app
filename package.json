@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "yarn -s generate && next dev | pino-pretty",
-    "generate": "yarn prisma generate && yarn ts-node --transpile-only src/modules/model && graphql-codegen --config codegen.yml",
+    "generate": "yarn prisma generate && yarn ts-node --transpile-only src/modules/server__gql-model && graphql-codegen --config codegen.yml",
     "build": "yarn -s generate && next build",
     "start": "next start",
     "lint": "eslint .",
