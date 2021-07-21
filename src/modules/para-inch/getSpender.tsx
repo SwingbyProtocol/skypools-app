@@ -2,13 +2,13 @@ import { ParaSwap } from 'paraswap';
 
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
+import { Network, getNetworkId } from '../onboard';
 
 import { isParaSwapApiError } from './isParaSwapApiError';
-import type { SupportedNetworkId } from './isSupportedNetwork';
 
-export const getSpender = async ({ network }: { network: SupportedNetworkId }): Promise<string> => {
+export const getSpender = async ({ network }: { network: Network }): Promise<string> => {
   if (shouldUseParaSwap) {
-    const result = await new ParaSwap(network).getAdapters();
+    const result = await new ParaSwap(getNetworkId(network)).getAdapters();
     if (isParaSwapApiError(result) || !result?.augustus.exchange) {
       throw result;
     }

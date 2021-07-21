@@ -8,12 +8,7 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import {
-  getPriceHistory,
-  isNativeToken,
-  isSupportedNetworkId,
-  SwapQuoteRoute,
-} from '../../modules/para-inch';
+import { getPriceHistory, isNativeToken, SwapQuoteRoute } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
@@ -65,8 +60,7 @@ export const SwapScene = () => {
   >(null);
 
   useEffect(() => {
-    if (!onboardNetwork || network === onboardNetwork || !isSupportedNetworkId(onboardNetwork))
-      return;
+    if (!onboardNetwork) return;
     setNetwork(onboardNetwork);
   }, [onboardNetwork, network, setNetwork]);
 

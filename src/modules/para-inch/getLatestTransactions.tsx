@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
 import { stringifyUrl } from 'query-string';
 import { Big } from 'big.js';
+import { Network } from '@prisma/client';
 
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { getScanApiUrl } from '../web3';
 
-import { SupportedNetworkId } from './isSupportedNetwork';
 import { getTransactionDetails } from './getTransactionDetails';
 
 type HistoryItem = {
@@ -42,7 +42,7 @@ export const getLatestTransactions = async ({
   walletProvider,
 }: {
   address: string;
-  network: SupportedNetworkId;
+  network: Network;
   spender: string;
   walletProvider: any;
 }): Promise<HistoryItem[]> => {

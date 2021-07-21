@@ -3,18 +3,18 @@ import { createContext, ReactNode, useState, useMemo, useCallback, useEffect } f
 import { Big } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
-import type { ParaInchToken, SupportedNetworkId, SwapQuote } from '../para-inch';
+import type { ParaInchToken, SwapQuote } from '../para-inch';
 import { getSwapQuote } from '../para-inch';
-import { useOnboard } from '../onboard';
+import { Network, useOnboard } from '../onboard';
 import { logger } from '../logger';
 
 export type ParaInchContextValue = {
   amount: string | null;
   fromToken: ParaInchToken | null;
-  network: SupportedNetworkId;
+  network: Network;
   setAmount: (amount: string | null) => void;
   setFromToken: (address: string) => void;
-  setNetwork: (amount: SupportedNetworkId) => void;
+  setNetwork: (amount: Network) => void;
   setToToken: (address: string) => void;
   unlinkSkybridgeSwap: () => void;
   tokens: ParaInchToken[];
@@ -26,7 +26,7 @@ export type ParaInchContextValue = {
 export const ParaInchContext = createContext<ParaInchContextValue>({
   amount: null,
   fromToken: null,
-  network: 1,
+  network: Network.ETHEREUM,
   setAmount: () => {},
   setFromToken: () => {},
   setNetwork: () => {},
@@ -68,7 +68,7 @@ export const ParaInchTokenProvider = ({
       setFromTokenState(token);
       push(
         stringifyUrl({
-          url: `/swap/${valueParam.network}/${token.address}/${toToken?.address}`,
+          url: `/swap/${valueParam.network.toLowerCase()}/${token.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -90,7 +90,7 @@ export const ParaInchTokenProvider = ({
       setToTokenState(token);
       push(
         stringifyUrl({
-          url: `/swap/${valueParam.network}/${fromToken?.address}/${token.address}`,
+          url: `/swap/${valueParam.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -101,10 +101,10 @@ export const ParaInchTokenProvider = ({
   );
 
   const setNetwork = useCallback(
-    (value: SupportedNetworkId) => {
+    (value: Network) => {
       push(
         stringifyUrl({
-          url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
+          url: `/swap/${value.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
       );
@@ -115,11 +115,11 @@ export const ParaInchTokenProvider = ({
   const unlinkSkybridgeSwap = useCallback(() => {
     push(
       stringifyUrl({
-        url: `/swap/${amount}/${fromToken?.address}/${toToken?.address}`,
+        url: `/swap/${valueParam.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
         query: { skybridgeSwap: undefined },
       }),
     );
-  }, [push, amount, fromToken, toToken]);
+  }, [push, valueParam.network, fromToken, toToken]);
 
   useEffect(() => {
     let cancelled = false;

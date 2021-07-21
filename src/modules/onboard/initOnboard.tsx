@@ -11,6 +11,8 @@ const RPC_URLS = {
   5: `https://goerli.infura.io/v3/${infuraApiKey}`,
   56: 'https://bsc-dataseed1.binance.org:443',
   97: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+  137: 'https://rpc-mainnet.matic.network',
+  80001: 'https://rpc-mumbai.matic.today',
 } as const;
 
 export const initOnboard = ({

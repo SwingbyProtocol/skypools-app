@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { API as OnboardInstance } from 'bnc-onboard/dist/src/interfaces'; // eslint-disable-line import/no-internal-modules
 import { useMedia } from 'react-use';
 
-import { isValidNetworkId } from './networks';
+import { getNetwork, isValidNetworkId } from './networks';
 import { initOnboard } from './initOnboard';
 
 export const useOnboardInstance = () => {
@@ -56,7 +56,7 @@ export const useOnboardInstance = () => {
       address: onboard?.getState().address ?? null,
       wallet: wallet?.provider ? wallet : null,
       onboard,
-      network: isValidNetworkId(network) ? network : null,
+      network: getNetwork(network ?? -1),
     };
   }, [onboard, updateCount]);
 };

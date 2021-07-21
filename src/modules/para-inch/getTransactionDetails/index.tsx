@@ -5,7 +5,7 @@ import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
 import { shouldUseParaSwap } from '../../env';
-import { SupportedNetworkId } from '../isSupportedNetwork';
+import { Network } from '../../onboard';
 import { fetcher } from '../../fetch';
 import { getScanApiUrl } from '../../web3';
 import { logger as baseLogger } from '../../logger';
@@ -22,7 +22,7 @@ type TransactionDetails = {
 };
 
 type Params = {
-  network: SupportedNetworkId;
+  network: Network;
   hash: string;
   walletProvider: any;
 };
@@ -129,7 +129,7 @@ const getToAmountFromScan = async ({
   receivingAddress,
   logger,
 }: {
-  network: SupportedNetworkId;
+  network: Network;
   toTokenAddress: string;
   hash: string;
   receivingAddress: string;

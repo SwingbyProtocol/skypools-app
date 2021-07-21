@@ -6,9 +6,9 @@ import { FixedSizeList as List } from 'react-window';
 
 import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
-import { NetworkId } from '../../../../modules/onboard';
 import { size } from '../../../../modules/styles';
 import { isNativeToken } from '../../../../modules/para-inch';
+import { Network } from '../../../../modules/onboard';
 
 import {
   container,
@@ -23,7 +23,7 @@ import {
   info,
 } from './styles';
 
-type CoinInfo = { symbol: string; address: string; logoUri: string | null; network: NetworkId };
+type CoinInfo = { symbol: string; address: string; logoUri: string | null; network: Network };
 export type CoinAmountInputValue = {
   coin: CoinInfo | null;
   amount: string | null;
@@ -163,7 +163,9 @@ export const CoinAmountInput = ({
                       values={{
                         chain: (
                           <FormattedMessage
-                            id={`network.${coin.network === 1 ? 'full' : 'short'}.${coin.network}`}
+                            id={`network.${coin.network === Network.ETHEREUM ? 'full' : 'short'}.${
+                              coin.network
+                            }`}
                           />
                         ),
                       }}

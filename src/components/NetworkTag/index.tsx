@@ -1,34 +1,32 @@
 import { useIntl } from 'react-intl';
 
-import { isValidNetworkId, NetworkId } from '../../modules/onboard';
+import { Network } from '../../modules/onboard';
 
-import { container, bsc, eth, goerli, bsct } from './styled';
+import { container, bsc, eth } from './styled';
 
-export function NetworkTag(props: { network: number | null; className?: string }): JSX.Element;
-export function NetworkTag(props: { network: NetworkId | null; className?: string }): JSX.Element;
-export function NetworkTag({
+export const NetworkTag = ({
   network,
   className,
 }: {
-  network: NetworkId | number | null;
+  network: Network | null;
   className?: string;
-}): JSX.Element {
+}): JSX.Element => {
   const { formatMessage } = useIntl();
   return (
     <div
       css={[
         container,
-        network === 1 && eth,
-        network === 5 && goerli,
-        network === 56 && bsc,
-        network === 97 && bsct,
+        network === Network.ETHEREUM && eth,
+        // network === 5 && goerli,
+        network === Network.BSC && bsc,
+        // network === 97 && bsct,
       ]}
       className={className}
       title={formatMessage({
-        id: isValidNetworkId(network) ? `network.full.${network}` : 'network.invalid',
+        id: network ? `network.full.${network}` : 'network.invalid',
       })}
     >
-      {isValidNetworkId(network) ? formatMessage({ id: `network.short.${network}` }) : '?'}
+      {network ? formatMessage({ id: `network.short.${network}` }) : '?'}
     </div>
   );
-}
+};
