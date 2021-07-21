@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
 import { stringifyUrl } from 'query-string';
 import { Big } from 'big.js';
-import { Network } from '@prisma/client';
 
+import { Network } from '../onboard';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { getScanApiUrl } from '../web3';

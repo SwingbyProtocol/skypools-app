@@ -1,8 +1,8 @@
-import { Network } from '@prisma/client';
 import { Big } from 'big.js';
 import { DateTime, Duration } from 'luxon';
 import { stringifyUrl } from 'query-string';
 
+import { Network } from '../onboard';
 import { fetcher } from '../fetch';
 
 import { isNativeToken } from './isNativeToken';

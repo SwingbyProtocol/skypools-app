@@ -1,4 +1,4 @@
-import { Network } from '@prisma/client';
+import { Network } from '../onboard';
 
 export const getScanApiUrl = ({ network }: { network: Network }) => {
   switch (network) {
