@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "yarn -s generate && next dev | pino-pretty",
     "generate": "yarn prisma generate && yarn ts-node --transpile-only src/modules/server__gql-model && graphql-codegen --config codegen.yml",
+    "clean": "rimraf graphql.schema.json nexus-typegen.d.ts *.log src/generated",
     "build": "yarn -s generate && next build",
     "start": "next start",
     "lint": "eslint .",
