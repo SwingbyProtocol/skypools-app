@@ -13,11 +13,25 @@ enum Network {
   POLYGON
 }
 
-model TokenUsdPriceHistoric {
-  network Network
-  address String
-  at      DateTime
-  price   Decimal  @db.Decimal(65, 20)
+model Token {
+  network          Network
+  address          String
+  decimals         Int                     @db.SmallInt
+  symbol           String
+  logoUri          String?
+  usdPriceHistoric TokenUsdPriceHistoric[] @relation("TokenUsdPriceHistoric")
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
 
-  @@id([network, address, at])
+  @@id([network, address])
+}
+
+model TokenUsdPriceHistoric {
+  tokenNetwork Network
+  tokenAddress String
+  token        Token    @relation("TokenUsdPriceHistoric", fields: [tokenNetwork, tokenAddress], references: [network, address])
+  at           DateTime
+  price        Decimal  @db.Decimal(65, 20)
+
+  @@id([tokenNetwork, tokenAddress, at])
 }

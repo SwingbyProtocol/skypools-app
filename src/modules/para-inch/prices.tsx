@@ -66,6 +66,36 @@ export const getPriceUsd = async ({
 
 export const getPriceHistory = async ({
   network,
+  tokenAddress,
+}: {
+  network: Network;
+  tokenAddress: string;
+}): Promise<PriceHistory> => {
+  const result = await fetcher<{
+    prices: Array<[number, number]>;
+    market_caps: Array<[number, number]>;
+    total_volumes: Array<[number, number]>;
+  }>(
+    `https://api.coingecko.com/api/v3/coins/${getCoingeckoNetworkId(
+      network,
+    )}/contract/${getContractAddress({
+      address: tokenAddress,
+      network,
+    })}/market_chart/?vs_currency=usd&days=${HISTORY_LENGTH.as('days')}`,
+  );
+
+  return result.prices
+    .map(
+      ([at, value]): PriceHistoryItem => ({
+        at: DateTime.fromMillis(at, { zone: 'utc' }),
+        value: new Big(value),
+      }),
+    )
+    .sort((a, b) => a.at.toMillis() - b.at.toMillis());
+};
+
+export const getPairPriceHistory = async ({
+  network,
   fromTokenAddress,
   toTokenAddress,
 }: {
@@ -73,33 +103,11 @@ export const getPriceHistory = async ({
   fromTokenAddress: string;
   toTokenAddress: string;
 }): Promise<PriceHistory> => {
-  const [fromTokenHistories, toTokenHistories] = (
-    await Promise.all(
-      [fromTokenAddress, toTokenAddress].map((address) =>
-        fetcher<{
-          prices: Array<[number, number]>;
-          market_caps: Array<[number, number]>;
-          total_volumes: Array<[number, number]>;
-        }>(
-          `https://api.coingecko.com/api/v3/coins/${getCoingeckoNetworkId(
-            network,
-          )}/contract/${getContractAddress({
-            address,
-            network,
-          })}/market_chart/?vs_currency=usd&days=${HISTORY_LENGTH.as('days')}`,
-        ),
-      ),
-    )
-  ).map((data) => {
-    return data.prices
-      .map(
-        ([at, value]): PriceHistoryItem => ({
-          at: DateTime.fromMillis(at, { zone: 'utc' }),
-          value: new Big(value),
-        }),
-      )
-      .sort((a, b) => a.at.toMillis() - b.at.toMillis());
-  });
+  const [fromTokenHistories, toTokenHistories] = await Promise.all(
+    [fromTokenAddress, toTokenAddress].map((tokenAddress) =>
+      getPriceHistory({ network, tokenAddress }),
+    ),
+  );
 
   return fromTokenHistories
     .map((fromToken) => {

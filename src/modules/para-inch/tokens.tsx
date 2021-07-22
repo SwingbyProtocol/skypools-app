@@ -27,7 +27,7 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
       .map(
         (it): ParaInchToken => ({
           symbol: it.symbol ?? '',
-          decimals: it.decimals,
+          decimals: +it.decimals,
           address: it.address,
           logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
           network: getNetwork(it.network)!,
@@ -46,7 +46,7 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
   return Object.values(result.tokens).map(
     (it): ParaInchToken => ({
       symbol: it.symbol,
-      decimals: it.decimals,
+      decimals: +it.decimals,
       address: it.address,
       logoUri: it.logoURI || null,
       network,
