@@ -2,6 +2,7 @@ import { Big } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
 import { fetcher } from '../../fetch';
+import { getNetworkId } from '../../onboard';
 import { ENDPOINT_1INCH_API } from '../constants';
 import { NATIVE_TOKEN_ADDRESS } from '../isNativeToken';
 import { getPriceUsd } from '../prices';
@@ -114,7 +115,7 @@ export const getOneInchSwapQuote = async ({
 
   const transaction = await (async (): Promise<SwapQuote['bestRoute']['transaction']> => {
     if (!result.tx || !isAmountValid) return null;
-    return { ...result.tx, chainId: network };
+    return { ...result.tx, chainId: getNetworkId(network) };
   })();
 
   return {

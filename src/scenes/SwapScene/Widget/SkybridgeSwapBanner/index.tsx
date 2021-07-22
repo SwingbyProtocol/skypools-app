@@ -1,11 +1,11 @@
 import { FormattedMessage } from 'react-intl';
 
-import { Icon } from '../../../../../components/Icon';
-import { Loading } from '../../../../../components/Loading';
-import { TransactionStatus } from '../../../../../generated/graphql';
-import { useParaInch } from '../../../../../modules/para-inch-react';
-import { shortenAddress } from '../../../../../modules/short-address';
-import { useSkybridgeSwap } from '../useSkybridgeSwap';
+import { Icon } from '../../../../components/Icon';
+import { Loading } from '../../../../components/Loading';
+import { TransactionStatus } from '../../../../generated/skybridge-graphql';
+import { useParaInch } from '../../../../modules/para-inch-react';
+import { shortenAddress } from '../../../../modules/short-address';
+import { useSkybridgeSwap } from '../../../../modules/skybridge';
 
 import {
   container,

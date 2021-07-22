@@ -1,7 +1,8 @@
 import { GetServerSideProps } from 'next';
 import { useMemo } from 'react';
 
-import { isSupportedNetworkId, getTokens, isNativeToken } from '../../../../modules/para-inch';
+import { Network } from '../../../../modules/onboard';
+import { getTokens, isNativeToken } from '../../../../modules/para-inch';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
 import { SwapScene } from '../../../../scenes/SwapScene';
@@ -25,14 +26,19 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const fromCoinAddress = ctx.query.fromCoin;
   const toCoinAddress = ctx.query.toCoin;
 
-  const network = (() => {
-    const asNumber = typeof ctx.query.network === 'string' && +ctx.query.network;
-    return isSupportedNetworkId(asNumber) ? asNumber : null;
+  const network = ((): Network | null => {
+    const value = typeof ctx.query.network === 'string' ? ctx.query.network : null;
+    if (!value) return null;
+
+    return Network[value.toUpperCase() as Network] ?? null;
   })();
 
   if (!network) {
     return {
-      redirect: { destination: `/swap/1/${fromCoinAddress}/${toCoinAddress}`, permanent: false },
+      redirect: {
+        destination: `/swap/ethereum/${fromCoinAddress}/${toCoinAddress}`,
+        permanent: false,
+      },
     };
   }
 

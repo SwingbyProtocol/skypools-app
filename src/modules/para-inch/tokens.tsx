@@ -2,27 +2,22 @@ import { ParaSwap } from 'paraswap';
 
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
-import { NetworkId } from '../onboard';
+import { Network, getNetworkId, getNetwork } from '../onboard';
 
 import { ENDPOINT_1INCH_API } from './constants';
 import { isParaSwapApiError } from './isParaSwapApiError';
-import { SupportedNetworkId } from './isSupportedNetwork';
 
 export type ParaInchToken = {
   symbol: string;
   decimals: number;
   address: string;
   logoUri: string | null;
-  network: NetworkId;
+  network: Network;
 };
 
-export const getTokens = async ({
-  network,
-}: {
-  network: SupportedNetworkId;
-}): Promise<ParaInchToken[]> => {
+export const getTokens = async ({ network }: { network: Network }): Promise<ParaInchToken[]> => {
   if (shouldUseParaSwap) {
-    const paraSwap = new ParaSwap(network);
+    const paraSwap = new ParaSwap(getNetworkId(network));
     const tokens = await paraSwap.getTokens();
     if (isParaSwapApiError(tokens)) {
       throw new Error(`${tokens.status}: ${tokens.message}`);
@@ -35,7 +30,7 @@ export const getTokens = async ({
           decimals: it.decimals,
           address: it.address,
           logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
-          network: it.network as NetworkId,
+          network: getNetwork(it.network)!,
         }),
       )
       .filter((it) => !!it.symbol && !!it.address);

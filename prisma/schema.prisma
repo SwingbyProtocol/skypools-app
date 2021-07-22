@@ -1,0 +1,23 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Network {
+  ETHEREUM
+  BSC
+  POLYGON
+}
+
+model TokenUsdPriceHistoric {
+  network Network
+  address String
+  at      DateTime
+  price   Decimal  @db.Decimal(65, 20)
+
+  @@id([network, address, at])
+}

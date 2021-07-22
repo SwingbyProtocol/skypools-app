@@ -8,15 +8,11 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import {
-  getPriceHistory,
-  isNativeToken,
-  isSupportedNetworkId,
-  SwapQuoteRoute,
-} from '../../modules/para-inch';
+import { getPriceHistory, isNativeToken, SwapQuoteRoute } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
+import { useSkybridgeSwap } from '../../modules/skybridge';
 
 import { History } from './History';
 import {
@@ -58,13 +54,13 @@ const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
 export const SwapScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInch();
+  const { swapId } = useSkybridgeSwap();
   const [priceHistory, setPriceHistory] = useState<
     React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
   >(null);
 
   useEffect(() => {
-    if (!onboardNetwork || network === onboardNetwork || !isSupportedNetworkId(onboardNetwork))
-      return;
+    if (!onboardNetwork) return;
     setNetwork(onboardNetwork);
   }, [onboardNetwork, network, setNetwork]);
 
@@ -106,7 +102,7 @@ export const SwapScene = () => {
   useEffect(() => {
     const walletProvider = wallet?.provider;
 
-    if (!walletProvider || !fromToken || !address) {
+    if (!walletProvider || !fromToken || !address || !!swapId) {
       return;
     }
 
@@ -132,7 +128,7 @@ export const SwapScene = () => {
     return () => {
       cancelled = true;
     };
-  }, [wallet, setAmount, address, fromToken]);
+  }, [wallet, setAmount, address, fromToken, swapId]);
 
   return (
     <div css={swapScene}>

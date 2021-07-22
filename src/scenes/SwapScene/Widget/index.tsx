@@ -3,6 +3,7 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { useParaInch, useParaInchSwap } from '../../../modules/para-inch-react';
+import { useSkybridgeSwap } from '../../../modules/skybridge';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -19,7 +20,7 @@ import {
   infoValueHighlight,
   skybridge,
 } from './styles';
-import { SkybridgeSwapBanner, useSkybridgeSwap } from './skybridge';
+import { SkybridgeSwapBanner } from './SkybridgeSwapBanner';
 
 export const Widget = () => {
   const {

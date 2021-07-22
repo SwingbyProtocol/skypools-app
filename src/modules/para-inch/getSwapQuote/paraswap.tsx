@@ -3,6 +3,7 @@ import { ParaSwap } from 'paraswap';
 import Web3 from 'web3';
 
 import { logger } from '../../logger';
+import { getNetworkId } from '../../onboard';
 import { NATIVE_TOKEN_ADDRESS } from '../isNativeToken';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 import { getPriceUsd } from '../prices';
@@ -30,7 +31,7 @@ export const getParaSwapSwapQuote = async ({
     ),
   );
 
-  const paraSwap = new ParaSwap(network);
+  const paraSwap = new ParaSwap(getNetworkId(network));
   const result = await paraSwap.getRate(fromToken.address, toToken.address, amount.toFixed());
   if (isParaSwapApiError(result)) {
     throw result;

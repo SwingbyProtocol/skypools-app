@@ -2,13 +2,14 @@ import { Big } from 'big.js';
 import { DateTime, Duration } from 'luxon';
 import { stringifyUrl } from 'query-string';
 
+import { Network } from '../onboard';
 import { fetcher } from '../fetch';
 
 import { isNativeToken } from './isNativeToken';
-import { SupportedNetworkId } from './isSupportedNetwork';
 
 const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
+const WETH_POLYGON_ADDRESS = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
 
 const HISTORY_LENGTH = Duration.fromObject({ months: 6 });
 
@@ -19,24 +20,24 @@ type PriceHistoryItem = {
 
 export type PriceHistory = PriceHistoryItem[];
 
-const getCoingeckoNetworkId = (network: SupportedNetworkId) => {
+const getCoingeckoNetworkId = (network: Network) => {
   switch (network) {
-    case 1:
+    case Network.ETHEREUM:
       return 'ethereum';
-    case 56:
+    case Network.BSC:
       return 'binance-smart-chain';
+    case Network.POLYGON:
+      return 'polygon-pos';
   }
 };
 
-const getContractAddress = ({
-  address,
-  network,
-}: {
-  address: string;
-  network: SupportedNetworkId;
-}) => {
+const getContractAddress = ({ address, network }: { address: string; network: Network }) => {
   if (isNativeToken(address)) {
-    return network === 56 ? WBNB_ADDRESS : WETH_ADDRESS;
+    return network === Network.POLYGON
+      ? WETH_POLYGON_ADDRESS
+      : network === Network.BSC
+      ? WBNB_ADDRESS
+      : WETH_ADDRESS;
   }
 
   return address;
@@ -46,7 +47,7 @@ export const getPriceUsd = async ({
   network,
   tokenAddress,
 }: {
-  network: SupportedNetworkId;
+  network: Network;
   tokenAddress: string;
 }): Promise<Big> => {
   const address = getContractAddress({ address: tokenAddress, network });
@@ -68,7 +69,7 @@ export const getPriceHistory = async ({
   fromTokenAddress,
   toTokenAddress,
 }: {
-  network: SupportedNetworkId;
+  network: Network;
   fromTokenAddress: string;
   toTokenAddress: string;
 }): Promise<PriceHistory> => {

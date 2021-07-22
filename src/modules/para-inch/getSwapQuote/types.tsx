@@ -1,8 +1,8 @@
 import type { Big, BigSource } from 'big.js';
 import type { TransactionConfig } from 'web3-eth';
 
-import type { SupportedNetworkId } from '../isSupportedNetwork';
 import type { ParaInchToken } from '../tokens';
+import { Network } from '../../onboard';
 
 export type SwapQuoteRouteStep = {
   exchange: string;
@@ -49,7 +49,7 @@ export type SwapQuote = {
 };
 
 export type GetSwapQuoteParams = {
-  network: SupportedNetworkId;
+  network: Network;
   amount: BigSource;
   fromToken: ParaInchToken;
   toToken: ParaInchToken;
@@ -59,7 +59,7 @@ export type GetSwapQuoteParams = {
 };
 
 export type InteralGetSwapQuoteParams = {
-  network: SupportedNetworkId;
+  network: Network;
   amount: Big;
   isAmountValid: boolean;
   fromToken: ParaInchToken;

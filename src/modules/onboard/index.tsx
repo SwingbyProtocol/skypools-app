@@ -1,3 +1,3 @@
 export { useOnboard, OnboardProvider } from './context';
-export { isValidNetworkId, NETWORK_IDS } from './networks';
-export type { NetworkId } from './networks';
+export { getNetworkId, getNetwork } from './networks';
+export { Network } from '@prisma/client';
