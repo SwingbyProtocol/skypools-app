@@ -4,7 +4,6 @@ import { scalarType } from 'nexus';
 
 export const Decimal = scalarType({
   name: 'Decimal',
-  asNexusMethod: 'decimal',
   description: 'A number without precision limits.',
   sourceType: { module: '@prisma/client/runtime', export: 'Decimal' },
   serialize(value: Prisma.Decimal) {

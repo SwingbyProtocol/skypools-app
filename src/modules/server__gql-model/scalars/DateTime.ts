@@ -4,7 +4,6 @@ import { scalarType } from 'nexus';
 
 export const GraphQLDateTime = scalarType({
   name: 'DateTime',
-  asNexusMethod: 'dateTime',
   description: 'A timestamp.',
   sourceType: 'Date',
   serialize(value: Date) {

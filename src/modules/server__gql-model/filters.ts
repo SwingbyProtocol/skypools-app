@@ -40,14 +40,14 @@ export const StringFilter = inputObjectType({
 export const DecimalFilter = inputObjectType({
   name: 'DecimalFilter',
   definition(t) {
-    t.decimal('equals');
-    t.decimal('gt');
-    t.decimal('gte');
-    t.list.decimal('in');
-    t.decimal('lt');
-    t.decimal('lte');
+    t.field('equals', { type: 'Decimal' });
+    t.field('gt', { type: 'Decimal' });
+    t.field('gte', { type: 'Decimal' });
+    t.list.field('in', { type: 'Decimal' });
+    t.field('lt', { type: 'Decimal' });
+    t.field('lte', { type: 'Decimal' });
     t.field('not', { type: 'DecimalFilter' });
-    t.list.decimal('notIn');
+    t.list.field('notIn', { type: 'Decimal' });
   },
 });
 
@@ -68,13 +68,13 @@ export const IntFilter = inputObjectType({
 export const DateTimeFilter = inputObjectType({
   name: 'DateTimeFilter',
   definition(t) {
-    t.dateTime('equals');
-    t.dateTime('gt');
-    t.dateTime('gte');
-    t.list.dateTime('in');
-    t.dateTime('lt');
-    t.dateTime('lte');
+    t.field('equals', { type: 'DateTime' });
+    t.field('gt', { type: 'DateTime' });
+    t.field('gte', { type: 'DateTime' });
+    t.list.field('in', { type: 'DateTime' });
+    t.field('lt', { type: 'DateTime' });
+    t.field('lte', { type: 'DateTime' });
     t.field('not', { type: 'DateTimeFilter' });
-    t.list.dateTime('notIn');
+    t.list.field('notIn', { type: 'DateTime' });
   },
 });
