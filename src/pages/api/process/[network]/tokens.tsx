@@ -1,5 +1,4 @@
 import { StatusCodes } from 'http-status-codes';
-import { DateTime } from 'luxon';
 import Web3 from 'web3';
 
 import { getTokens } from '../../../../modules/para-inch';
@@ -10,30 +9,6 @@ export default createEndpoint({
   logId: 'process/tokens',
   fn: async ({ res, network, prisma, logger }) => {
     const web3 = new Web3();
-
-    const latestUpdate = (
-      await prisma.token.aggregate({ where: { network }, _max: { updatedAt: true } })
-    )._max.updatedAt;
-    if (latestUpdate) {
-      const keepDateGte = DateTime.fromJSDate(latestUpdate).minus({ days: 2 }).toJSDate();
-      logger.debug(
-        { latestUpdate, keepDateGte },
-        'Will delete tokens that have not been updated in a while',
-      );
-
-      const result = await prisma.token.deleteMany({
-        where: {
-          network,
-          updatedAt: { lt: keepDateGte },
-        },
-      });
-
-      logger.info(
-        { latestUpdate, keepDateGte },
-        'Deleted %d tokens that had not been updated recently',
-        result.count,
-      );
-    }
 
     const tokens = await getTokens({ network });
     const failed: typeof tokens = [];

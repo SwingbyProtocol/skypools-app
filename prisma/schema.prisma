@@ -32,6 +32,8 @@ model TokenUsdPriceHistoric {
   token        Token    @relation("TokenUsdPriceHistoric", fields: [tokenNetwork, tokenAddress], references: [network, address])
   at           DateTime
   price        Decimal  @db.Decimal(65, 20)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@id([tokenNetwork, tokenAddress, at])
 }

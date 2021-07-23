@@ -20,6 +20,8 @@ CREATE TABLE "TokenUsdPriceHistoric" (
     "tokenAddress" TEXT NOT NULL,
     "at" TIMESTAMP(3) NOT NULL,
     "price" DECIMAL(65,20) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     PRIMARY KEY ("tokenNetwork","tokenAddress","at")
 );
