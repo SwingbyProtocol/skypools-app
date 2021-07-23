@@ -4,8 +4,8 @@ import { DateTime, Duration } from 'luxon';
 import { Network } from '@prisma/client';
 
 import { corsMiddleware } from '../server__cors';
-import { logger } from '../logger';
-import { server__processTaskSecret, prisma } from '../server__env';
+import { logger as loggerBase } from '../logger';
+import { prisma, server__processTaskSecret } from '../server__env';
 
 const WARN_IF_SPENT_MORE_THAN = Duration.fromObject({ seconds: 30 });
 
@@ -25,7 +25,7 @@ export const getStringParam = <T extends string>({
   req: NextApiRequest;
   name: string;
   from: 'query' | 'body';
-  oneOf?: T[];
+  oneOf?: T[] | readonly T[];
   defaultValue?: T;
 }): T => {
   try {
@@ -51,18 +51,26 @@ export const getStringParam = <T extends string>({
 export const createEndpoint =
   <T extends any = any>({
     isSecret = false,
+    logId,
     fn,
   }: {
     isSecret?: boolean;
+    logId: string;
     fn: (params: {
       req: NextApiRequest;
       res: NextApiResponse<T>;
       network: Network;
       prisma: typeof prisma;
+      logger: typeof loggerBase;
     }) => void | Promise<void>;
   }) =>
   async (req: NextApiRequest, res: NextApiResponse<T>) => {
     const startedAt = DateTime.utc();
+
+    const ctx = {
+      network: undefined as Network | undefined,
+      logger: loggerBase.child({ logId }),
+    };
 
     try {
       await corsMiddleware({ req, res });
@@ -74,55 +82,62 @@ export const createEndpoint =
         );
       }
 
-      await fn({
+      return await fn({
         req,
         res,
         prisma,
         get network() {
-          const value = getStringParam({
-            req,
-            from: 'query',
-            name: 'network',
-            oneOf: Object.values(Network).map((it) => it.toLowerCase() as Lowercase<typeof it>),
-          });
+          if (!ctx.network) {
+            const value = getStringParam({
+              req,
+              from: 'query',
+              name: 'network',
+              oneOf: Object.values(Network).map((it) => it.toLowerCase() as Lowercase<typeof it>),
+            });
 
-          return Network[value.toUpperCase() as Uppercase<typeof value>];
+            ctx.network = Network[value.toUpperCase() as Uppercase<typeof value>];
+            ctx.logger = ctx.logger.child({ network: ctx.network });
+          }
+
+          return ctx.network;
+        },
+        get logger() {
+          return ctx.logger;
         },
       });
     } catch (e) {
       const message = e?.message || '';
 
       if (e instanceof InvalidParamError) {
-        logger.trace(e);
+        ctx.logger.trace(e);
         res.status(StatusCodes.BAD_REQUEST).json({ message } as any);
         return;
       }
 
       if (e instanceof InvalidParamError) {
-        logger.trace(e);
+        ctx.logger.trace(e);
         res.status(StatusCodes.METHOD_NOT_ALLOWED).json({ message } as any);
         return;
       }
 
       if (e instanceof NotAuthenticatedError) {
-        logger.trace(e);
+        ctx.logger.trace(e);
         res
           .status(StatusCodes.UNAUTHORIZED)
           .json({ message: message || 'No authentication was provided' } as any);
         return;
       }
 
-      logger.error(e);
+      ctx.logger.error(e);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ message: 'Something went wrong' } as any);
     } finally {
       const spent = DateTime.utc().diff(startedAt);
-      const finalLogger = logger.child({ spent: spent.toObject() });
 
-      finalLogger.info('Endpoint done!');
-      if (spent.as('milliseconds') > WARN_IF_SPENT_MORE_THAN.as('milliseconds')) {
-        finalLogger.warn('Took a bit long to finish');
-      }
+      const level: keyof typeof ctx.logger =
+        spent.as('milliseconds') > WARN_IF_SPENT_MORE_THAN.as('milliseconds') ? 'warn' : 'info';
+
+      ctx.logger[level]('Endpoint done in %dms!', spent.as('milliseconds'));
     }
   };

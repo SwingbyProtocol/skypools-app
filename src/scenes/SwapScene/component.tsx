@@ -8,7 +8,7 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { getPriceHistory, isNativeToken, SwapQuoteRoute } from '../../modules/para-inch';
+import { getPairPriceHistory, isNativeToken, SwapQuoteRoute } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { logger } from '../../modules/logger';
@@ -78,7 +78,7 @@ export const SwapScene = () => {
         if (cancelled) return;
 
         setPriceHistory(null);
-        const result = await getPriceHistory({
+        const result = await getPairPriceHistory({
           fromTokenAddress,
           toTokenAddress,
           network,
