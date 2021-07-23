@@ -8,6 +8,7 @@ CREATE TABLE "Token" (
     "decimals" SMALLINT NOT NULL,
     "symbol" TEXT NOT NULL,
     "logoUri" TEXT,
+    "priceHistoryUpdatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 

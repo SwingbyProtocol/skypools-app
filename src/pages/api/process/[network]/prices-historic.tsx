@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
+import { DateTime } from 'luxon';
 
 import { getPriceHistory } from '../../../../modules/para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
@@ -8,15 +9,34 @@ export default createEndpoint({
   isSecret: true,
   logId: 'process/tokens',
   fn: async ({ res, network, prisma, logger }) => {
-    const tokens = await prisma.token.findMany({ where: { network } });
     const failed: typeof tokens = [];
+    const tokens = await prisma.token.findMany({
+      where: { network },
+      orderBy: { priceHistoryUpdatedAt: 'asc' },
+      take: 5,
+    });
 
-    for (const token of tokens) {
+    const priceHistorics = await Promise.all(
+      tokens.map(async (it) => {
+        logger.debug({ token: it }, 'Will fetch price history');
+        const priceHistoric = await getPriceHistory({ network, tokenAddress: it.address });
+        logger.trace({ token: it, priceHistoric }, 'Got price history');
+
+        return priceHistoric;
+      }),
+    );
+
+    // We do this first to make sure that we rotate what tokens are processed each time.
+    await prisma.token.updateMany({
+      where: { network, address: { in: tokens.map((it) => it.address) } },
+      data: { priceHistoryUpdatedAt: DateTime.utc().toJSDate() },
+    });
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+      const priceHistoric = priceHistorics[i];
+
       try {
-        logger.debug({ token }, 'Will fetch price history');
-        const priceHistoric = await getPriceHistory({ network, tokenAddress: token.address });
-        logger.trace({ token, priceHistoric }, 'Got price history');
-
         logger.debug({ token }, 'Will save price history to DB');
         await prisma.$transaction(
           priceHistoric.map((it) => {
