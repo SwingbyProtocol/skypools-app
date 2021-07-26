@@ -6,7 +6,7 @@ import { logger } from '../../logger';
 import { getNetworkId } from '../../onboard';
 import { NATIVE_TOKEN_ADDRESS } from '../isNativeToken';
 import { isParaSwapApiError } from '../isParaSwapApiError';
-import { getPriceUsd } from '../prices';
+import { getPriceUsd } from '../coin-details';
 
 import type {
   InteralGetSwapQuoteParams,

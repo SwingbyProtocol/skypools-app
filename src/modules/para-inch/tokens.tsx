@@ -4,6 +4,7 @@ import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
 import { Network, getNetworkId, getNetwork } from '../onboard';
 
+import { getCoinLogo } from './coin-details';
 import { ENDPOINT_1INCH_API } from './constants';
 import { isParaSwapApiError } from './isParaSwapApiError';
 
@@ -23,17 +24,21 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
       throw new Error(`${tokens.status}: ${tokens.message}`);
     }
 
-    return tokens
-      .map(
-        (it): ParaInchToken => ({
-          symbol: it.symbol ?? '',
-          decimals: +it.decimals,
-          address: it.address,
-          logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
-          network: getNetwork(it.network)!,
-        }),
+    return (
+      await Promise.all(
+        tokens.map(
+          async (it): Promise<ParaInchToken> => ({
+            symbol: it.symbol ?? '',
+            decimals: +it.decimals,
+            address: it.address,
+            logoUri:
+              ((it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null) ??
+              (await getCoinLogo({ network, tokenAddress: it.address })),
+            network: getNetwork(it.network)!,
+          }),
+        ),
       )
-      .filter((it) => !!it.symbol && !!it.address);
+    ).filter((it) => !!it.symbol && !!it.address);
   }
 
   const result = await fetcher<{

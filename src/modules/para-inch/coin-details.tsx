@@ -64,6 +64,27 @@ export const getPriceUsd = async ({
   return new Big(result[address.toLowerCase()].usd);
 };
 
+export const getCoinLogo = async ({
+  network,
+  tokenAddress,
+}: {
+  network: Network;
+  tokenAddress: string;
+}): Promise<string | null> => {
+  const result = await fetcher<{
+    image: { large?: string | null };
+  }>(
+    `https://api.coingecko.com/api/v3/coins/${getCoingeckoNetworkId(
+      network,
+    )}/contract/${getContractAddress({
+      address: tokenAddress,
+      network,
+    })}`,
+  );
+
+  return result?.image?.large ?? null;
+};
+
 export const getPriceHistory = async ({
   network,
   tokenAddress,
