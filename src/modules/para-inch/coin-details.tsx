@@ -4,6 +4,7 @@ import { stringifyUrl } from 'query-string';
 
 import { Network } from '../onboard';
 import { fetcher } from '../fetch';
+import { logger } from '../logger';
 
 import { isNativeToken } from './isNativeToken';
 
@@ -71,18 +72,23 @@ export const getCoinLogo = async ({
   network: Network;
   tokenAddress: string;
 }): Promise<string | null> => {
-  const result = await fetcher<{
-    image: { large?: string | null };
-  }>(
-    `https://api.coingecko.com/api/v3/coins/${getCoingeckoNetworkId(
-      network,
-    )}/contract/${getContractAddress({
-      address: tokenAddress,
-      network,
-    })}`,
-  );
+  try {
+    const result = await fetcher<{
+      image: { large?: string | null };
+    }>(
+      `https://api.coingecko.com/api/v3/coins/${getCoingeckoNetworkId(
+        network,
+      )}/contract/${getContractAddress({
+        address: tokenAddress,
+        network,
+      })}`,
+    );
 
-  return result?.image?.large ?? null;
+    return result.image.large ?? null;
+  } catch (err) {
+    logger.trace({ err }, 'Could not fetch coin logo');
+    return null;
+  }
 };
 
 export const getPriceHistory = async ({

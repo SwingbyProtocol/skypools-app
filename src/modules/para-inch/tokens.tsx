@@ -3,7 +3,6 @@ import { ParaSwap } from 'paraswap';
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
 import { Network, getNetworkId, getNetwork } from '../onboard';
-import { prisma } from '../server__env';
 
 import { getCoinLogo } from './coin-details';
 import { ENDPOINT_1INCH_API } from './constants';
@@ -18,7 +17,14 @@ export type ParaInchToken = {
 };
 
 export const getTokens = async ({ network }: { network: Network }): Promise<ParaInchToken[]> => {
-  const dbTokens = await prisma.token.findMany({ where: { network } });
+  const dbTokens = await (async () => {
+    if (typeof window !== 'undefined') {
+      return [];
+    }
+
+    const { prisma } = await import('../server__env');
+    return await prisma.token.findMany({ where: { network } });
+  })();
 
   if (shouldUseParaSwap) {
     const paraSwap = new ParaSwap(getNetworkId(network));
