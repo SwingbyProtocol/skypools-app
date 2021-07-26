@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
 
-import { getPriceHistory } from '../../../../modules/para-inch';
+import { getPriceHistory } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({

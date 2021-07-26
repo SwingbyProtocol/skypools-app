@@ -4,7 +4,7 @@ import type { PromiseValue } from 'type-fest';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getLatestTransactions, getSpender, ParaInchToken } from '../para-inch';
+import { getLatestTransactions, getSpender, ParaInchToken } from '../server__para-inch';
 
 import { useParaInch } from './useParaInch';
 

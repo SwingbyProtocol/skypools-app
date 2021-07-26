@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import Web3 from 'web3';
 
-import { getTokens } from '../../../../modules/para-inch';
+import { getTokens } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({

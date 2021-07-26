@@ -3,7 +3,7 @@ import { useContainerQuery } from 'react-container-query';
 
 import { Icon } from '../Icon';
 import { Coin } from '../Coin';
-import type { SwapQuoteRoute } from '../../modules/para-inch';
+import type { SwapQuoteRoute } from '../../modules/server__para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 
 import { coin, swapPath, divider, wrapper } from './styles';

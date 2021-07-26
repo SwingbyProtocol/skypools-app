@@ -7,7 +7,7 @@ import { FixedSizeList as List } from 'react-window';
 import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
 import { size } from '../../../../modules/styles';
-import { isNativeToken } from '../../../../modules/para-inch';
+import { isNativeToken } from '../../../../modules/server__para-inch';
 import { Network } from '../../../../modules/onboard';
 
 import {

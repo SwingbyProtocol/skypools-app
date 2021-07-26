@@ -2,7 +2,7 @@ import { GetServerSideProps } from 'next';
 import { useMemo } from 'react';
 
 import { Network } from '../../../../modules/onboard';
-import { getTokens, isNativeToken } from '../../../../modules/para-inch';
+import { getTokens, isNativeToken } from '../../../../modules/server__para-inch';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
 import { SwapScene } from '../../../../scenes/SwapScene';
