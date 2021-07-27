@@ -43,16 +43,6 @@ const getContractAddress = ({ address, network }: { address: string; network: Ne
   return address;
 };
 
-export const buildTokenId = ({
-  network,
-  tokenAddress,
-}: {
-  network: Network;
-  tokenAddress: string;
-}) => {
-  return `${network}::${tokenAddress}`;
-};
-
 export const getPriceUsd = async ({
   network,
   tokenAddress,

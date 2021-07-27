@@ -6,7 +6,6 @@ import { fetcher } from '../fetch';
 import { Network, getNetworkId, getNetwork } from '../onboard';
 import { ParaInchToken } from '../para-inch';
 
-import { buildTokenId } from './coin-details';
 import { ENDPOINT_1INCH_API } from './constants';
 import { isParaSwapApiError } from './isParaSwapApiError';
 
@@ -56,4 +55,8 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
       };
     }),
   );
+};
+
+const buildTokenId = ({ network, tokenAddress }: { network: Network; tokenAddress: string }) => {
+  return Buffer.from(`${network}::${tokenAddress}`, 'utf-8').toString('base64');
 };
