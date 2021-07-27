@@ -1,7 +1,5 @@
 import { intArg, objectType, stringArg } from 'nexus';
 
-import type { NexusGenObjectNames } from '../../../../nexus-typegen';
-
 export const buildCursor = (value: string) => `0x${Buffer.from(value, 'utf-8').toString('hex')}`;
 
 const ForwardPaginationPageInfo = objectType({
@@ -36,7 +34,7 @@ export const paginatedType = ({
   nodeType,
   alias,
 }: {
-  nodeType: NexusGenObjectNames;
+  nodeType: NexusGen['objectNames'];
   alias?: string;
 }) => {
   const name = alias ?? nodeType;
