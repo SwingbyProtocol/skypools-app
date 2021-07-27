@@ -5,11 +5,13 @@ import { nexusPrisma } from 'nexus-plugin-prisma';
 
 import * as scalars from './scalars';
 import * as filters from './filters';
+import * as tokens from './tokens';
 
 export const schema = makeSchema({
   types: {
     ...scalars,
     ...filters,
+    ...tokens,
   },
   plugins: [nexusPrisma()],
   contextType: {

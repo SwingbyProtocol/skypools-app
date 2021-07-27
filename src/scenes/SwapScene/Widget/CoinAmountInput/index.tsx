@@ -9,6 +9,7 @@ import { TextInput } from '../../../../components/TextInput';
 import { size } from '../../../../modules/styles';
 import { isNativeToken } from '../../../../modules/para-inch';
 import { Network } from '../../../../modules/onboard';
+import type { ParaInchToken } from '../../../../modules/para-inch';
 
 import {
   container,
@@ -23,7 +24,7 @@ import {
   info,
 } from './styles';
 
-type CoinInfo = { symbol: string; address: string; logoUri: string | null; network: Network };
+type CoinInfo = Pick<ParaInchToken, 'symbol' | 'address' | 'logoUri' | 'network'>;
 export type CoinAmountInputValue = {
   coin: CoinInfo | null;
   amount: string | null;

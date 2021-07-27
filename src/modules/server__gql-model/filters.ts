@@ -1,3 +1,4 @@
+import { Network } from '@prisma/client';
 import { enumType, inputObjectType } from 'nexus';
 
 export const StringFilterMode = enumType({
@@ -76,5 +77,17 @@ export const DateTimeFilter = inputObjectType({
     t.field('lte', { type: 'DateTime' });
     t.field('not', { type: 'DateTimeFilter' });
     t.list.field('notIn', { type: 'DateTime' });
+  },
+});
+
+export const NetworkType = enumType({ name: 'Network', members: Network });
+
+export const NetworkEnumFilter = inputObjectType({
+  name: 'NetworkEnumFilter',
+  definition(t) {
+    t.field('equals', { type: 'Network' });
+    t.list.field('in', { type: 'Network' });
+    t.field('not', { type: 'NetworkEnumFilter' });
+    t.list.field('notIn', { type: 'Network' });
   },
 });

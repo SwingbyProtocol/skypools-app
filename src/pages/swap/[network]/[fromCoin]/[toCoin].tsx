@@ -2,10 +2,16 @@ import { GetServerSideProps } from 'next';
 import { useMemo } from 'react';
 
 import { Network } from '../../../../modules/onboard';
-import { getTokens, isNativeToken } from '../../../../modules/para-inch';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
 import { SwapScene } from '../../../../scenes/SwapScene';
+import { apolloClient } from '../../../../modules/apollo';
+import {
+  TokensDocument,
+  TokensQuery,
+  TokensQueryVariables,
+} from '../../../../generated/skypools-graphql';
+import { isNativeToken } from '../../../../modules/para-inch';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
@@ -44,7 +50,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
 
   const tokens = await (async () => {
     try {
-      return await getTokens({ network });
+      return (
+        await apolloClient.query<TokensQuery, TokensQueryVariables>({
+          query: TokensDocument,
+          variables: { where: { network: { equals: network } } },
+        })
+      ).data.tokens.edges.map((it) => it.node);
     } catch (err) {
       logger.fatal({ err }, 'Could not load token list');
       return [];

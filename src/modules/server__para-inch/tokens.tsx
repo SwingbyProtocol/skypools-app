@@ -1,30 +1,17 @@
 import { ParaSwap } from 'paraswap';
+import Web3 from 'web3';
 
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
 import { Network, getNetworkId, getNetwork } from '../onboard';
+import { ParaInchToken } from '../para-inch';
 
-import { getCoinLogo } from './coin-details';
+import { buildTokenId } from './coin-details';
 import { ENDPOINT_1INCH_API } from './constants';
 import { isParaSwapApiError } from './isParaSwapApiError';
 
-export type ParaInchToken = {
-  symbol: string;
-  decimals: number;
-  address: string;
-  logoUri: string | null;
-  network: Network;
-};
-
 export const getTokens = async ({ network }: { network: Network }): Promise<ParaInchToken[]> => {
-  const dbTokens = await (async () => {
-    if (typeof window !== 'undefined') {
-      return [];
-    }
-
-    const { prisma } = await import('../server__env');
-    return await prisma.token.findMany({ where: { network } });
-  })();
+  const web3 = new Web3();
 
   if (shouldUseParaSwap) {
     const paraSwap = new ParaSwap(getNetworkId(network));
@@ -36,19 +23,14 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
     return (
       await Promise.all(
         tokens.map(async (it): Promise<ParaInchToken> => {
-          const dbToken = dbTokens.find(
-            ({ address }) => address.toLowerCase() === it.address.toLowerCase(),
-          );
-
+          const network = getNetwork(it.network)!;
           return {
+            id: buildTokenId({ network, tokenAddress: it.address }),
             symbol: it.symbol ?? '',
             decimals: +it.decimals,
-            address: it.address,
-            logoUri:
-              ((it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null) ??
-              dbToken?.logoUri ??
-              (await getCoinLogo({ network, tokenAddress: it.address })),
-            network: getNetwork(it.network)!,
+            address: web3.utils.toChecksumAddress(it.address),
+            logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
+            network,
           };
         }),
       )
@@ -64,18 +46,12 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
 
   return await Promise.all(
     Object.values(result.tokens).map(async (it): Promise<ParaInchToken> => {
-      const dbToken = dbTokens.find(
-        ({ address }) => address.toLowerCase() === it.address.toLowerCase(),
-      );
-
       return {
+        id: buildTokenId({ network, tokenAddress: it.address }),
         symbol: it.symbol,
         decimals: +it.decimals,
-        address: it.address,
-        logoUri:
-          (it.logoURI || null) ??
-          dbToken?.logoUri ??
-          (await getCoinLogo({ network, tokenAddress: it.address })),
+        address: web3.utils.toChecksumAddress(it.address),
+        logoUri: it.logoURI || null,
         network,
       };
     }),

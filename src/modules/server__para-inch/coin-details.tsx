@@ -5,8 +5,7 @@ import { stringifyUrl } from 'query-string';
 import { Network } from '../onboard';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
-
-import { isNativeToken } from './isNativeToken';
+import { isNativeToken } from '../para-inch';
 
 const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
@@ -44,6 +43,16 @@ const getContractAddress = ({ address, network }: { address: string; network: Ne
   return address;
 };
 
+export const buildTokenId = ({
+  network,
+  tokenAddress,
+}: {
+  network: Network;
+  tokenAddress: string;
+}) => {
+  return `${network}::${tokenAddress}`;
+};
+
 export const getPriceUsd = async ({
   network,
   tokenAddress,
@@ -65,7 +74,7 @@ export const getPriceUsd = async ({
   return new Big(result[address.toLowerCase()].usd);
 };
 
-export const getCoinLogo = async ({
+export const getTokenLogoFromCoingecko = async ({
   network,
   tokenAddress,
 }: {

@@ -4,7 +4,7 @@ import Web3 from 'web3';
 
 import { logger } from '../../logger';
 import { getNetworkId } from '../../onboard';
-import { NATIVE_TOKEN_ADDRESS } from '../isNativeToken';
+import { NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 import { getPriceUsd } from '../coin-details';
 

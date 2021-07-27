@@ -14,6 +14,7 @@ enum Network {
 }
 
 model Token {
+  id                    String                  @id
   network               Network
   address               String
   decimals              Int                     @db.SmallInt
@@ -21,20 +22,21 @@ model Token {
   logoUri               String?
   usdPriceHistoric      TokenUsdPriceHistoric[] @relation("TokenUsdPriceHistoric")
   priceHistoryUpdatedAt DateTime                @default(now())
+  logoUpdatedAt         DateTime                @default(now())
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
 
-  @@id([network, address])
+  @@unique([network, address])
+  @@index([network, address])
 }
 
 model TokenUsdPriceHistoric {
-  tokenNetwork Network
-  tokenAddress String
-  token        Token    @relation("TokenUsdPriceHistoric", fields: [tokenNetwork, tokenAddress], references: [network, address])
-  at           DateTime
-  price        Decimal  @db.Decimal(65, 20)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  tokenId   String
+  token     Token    @relation("TokenUsdPriceHistoric", fields: [tokenId], references: [id])
+  at        DateTime
+  price     Decimal  @db.Decimal(65, 20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@id([tokenNetwork, tokenAddress, at])
+  @@id([tokenId, at])
 }

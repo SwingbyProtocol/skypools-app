@@ -1,16 +1,18 @@
 overwrite: true
 generates:
-  # src/generated/skypools-graphql.tsx:
-  #   schema: ./schema.graphql
-  #   documents: 'src/**/*.skypools.graphql'
-  #   plugins:
-  #     - 'typescript'
-  #     - 'typescript-operations'
-  #     - 'typescript-react-apollo'
-  #   config:
-  #     scalars:
-  #       DateTime: 'string'
-  #       Decimal: 'string'
+  src/generated/skypools-graphql.tsx:
+    schema: ./schema.graphql
+    documents: 'src/**/*.skypools.graphql'
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      scalars:
+        DateTime: 'string'
+        Decimal: 'string'
+      enumValues:
+        Network: '../modules/onboard#Network'
   src/generated/skybridge-graphql.tsx:
     schema: https://network.skybridge.exchange/api/v3/graphql
     documents: 'src/**/*.skybridge.graphql'

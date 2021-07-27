@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
 
-import { getPriceHistory } from '../../../../modules/para-inch';
+import { getPriceHistory } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({
@@ -28,7 +28,7 @@ export default createEndpoint({
 
     // We do this first to make sure that we rotate what tokens are processed each time.
     await prisma.token.updateMany({
-      where: { network, address: { in: tokens.map((it) => it.address) } },
+      where: { id: { in: tokens.map((it) => it.id) } },
       data: { priceHistoryUpdatedAt: DateTime.utc().toJSDate() },
     });
 
@@ -40,23 +40,18 @@ export default createEndpoint({
         logger.debug({ token }, 'Will save price history to DB');
         await prisma.$transaction(
           priceHistoric.map((it) => {
-            const tokenAddress = token.address;
-            const tokenNetwork = token.network;
+            const tokenId = token.id;
             const at = it.at.toJSDate();
 
             return prisma.tokenUsdPriceHistoric.upsert({
-              where: {
-                tokenNetwork_tokenAddress_at: { tokenAddress, tokenNetwork, at },
-              },
+              where: { tokenId_at: { tokenId, at } },
               create: {
-                tokenAddress,
-                tokenNetwork,
+                tokenId,
                 at,
                 price: new Prisma.Decimal(it.value.toFixed()),
               },
               update: {
-                tokenAddress,
-                tokenNetwork,
+                tokenId,
                 at,
                 price: new Prisma.Decimal(it.value.toFixed()),
               },
