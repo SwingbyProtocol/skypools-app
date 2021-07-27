@@ -1,21 +1,18 @@
 import { ParaSwap } from 'paraswap';
+import Web3 from 'web3';
 
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
 import { Network, getNetworkId, getNetwork } from '../onboard';
+import { ParaInchToken } from '../para-inch';
 
+import { buildTokenId } from './coin-details';
 import { ENDPOINT_1INCH_API } from './constants';
 import { isParaSwapApiError } from './isParaSwapApiError';
 
-export type ParaInchToken = {
-  symbol: string;
-  decimals: number;
-  address: string;
-  logoUri: string | null;
-  network: Network;
-};
-
 export const getTokens = async ({ network }: { network: Network }): Promise<ParaInchToken[]> => {
+  const web3 = new Web3();
+
   if (shouldUseParaSwap) {
     const paraSwap = new ParaSwap(getNetworkId(network));
     const tokens = await paraSwap.getTokens();
@@ -26,12 +23,14 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
     return (
       await Promise.all(
         tokens.map(async (it): Promise<ParaInchToken> => {
+          const network = getNetwork(it.network)!;
           return {
+            id: buildTokenId({ network, tokenAddress: it.address }),
             symbol: it.symbol ?? '',
             decimals: +it.decimals,
-            address: it.address,
+            address: web3.utils.toChecksumAddress(it.address),
             logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
-            network: getNetwork(it.network)!,
+            network,
           };
         }),
       )
@@ -48,9 +47,10 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
   return await Promise.all(
     Object.values(result.tokens).map(async (it): Promise<ParaInchToken> => {
       return {
+        id: buildTokenId({ network, tokenAddress: it.address }),
         symbol: it.symbol,
         decimals: +it.decimals,
-        address: it.address,
+        address: web3.utils.toChecksumAddress(it.address),
         logoUri: it.logoURI || null,
         network,
       };

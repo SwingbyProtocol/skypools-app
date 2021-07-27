@@ -4,7 +4,7 @@ import { stringifyUrl } from 'query-string';
 import { fetcher } from '../../fetch';
 import { getNetworkId } from '../../onboard';
 import { ENDPOINT_1INCH_API } from '../constants';
-import { NATIVE_TOKEN_ADDRESS } from '../isNativeToken';
+import { NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { getPriceUsd } from '../coin-details';
 
 import type { InteralGetSwapQuoteParams, SwapQuote, SwapQuoteRouteStep } from './types';

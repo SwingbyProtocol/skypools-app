@@ -1,10 +1,14 @@
-query Tokens {
-  tokens {
-    id
-    at
-    status
-    depositCurrency
-    receivingCurrency
-    receivingAmount
+query Tokens($where: TokenWhereInput) {
+  tokens(where: $where) {
+    edges {
+      node {
+        id
+        network
+        address
+        logoUri
+        decimals
+        symbol
+      }
+    }
   }
 }

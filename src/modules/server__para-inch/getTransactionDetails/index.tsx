@@ -9,7 +9,7 @@ import { Network } from '../../onboard';
 import { fetcher } from '../../fetch';
 import { getScanApiUrl } from '../../web3';
 import { logger as baseLogger } from '../../logger';
-import { isNativeToken } from '../isNativeToken';
+import { isNativeToken } from '../../para-inch';
 
 import oneInchAbi from './one-inch-abi.json';
 import paraSwapAbi from './paraswap-abi.json';

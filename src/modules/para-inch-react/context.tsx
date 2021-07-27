@@ -3,7 +3,8 @@ import { createContext, ReactNode, useState, useMemo, useCallback, useEffect } f
 import { Big } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
-import type { ParaInchToken, SwapQuote } from '../server__para-inch';
+import type { ParaInchToken } from '../para-inch';
+import type { SwapQuote } from '../server__para-inch';
 import { getSwapQuote } from '../server__para-inch';
 import { Network, useOnboard } from '../onboard';
 import { logger } from '../logger';

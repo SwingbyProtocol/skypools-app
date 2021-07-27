@@ -5,7 +5,7 @@ import ABI from 'human-standard-token-abi';
 import { Big } from 'big.js';
 
 import { useOnboard } from '../onboard';
-import { isNativeToken } from '../server__para-inch';
+import { isNativeToken } from '../para-inch';
 
 import { useParaInch } from './useParaInch';
 
