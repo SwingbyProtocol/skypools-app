@@ -1,0 +1,10 @@
+query Tokens {
+  tokens {
+    id
+    at
+    status
+    depositCurrency
+    receivingCurrency
+    receivingAmount
+  }
+}

@@ -33,6 +33,13 @@ input DecimalFilter {
   notIn: [Decimal]
 }
 
+type ForwardPaginationPageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String!
+}
+
 input IdFilter {
   equals: ID
   gt: ID
@@ -55,8 +62,47 @@ input IntFilter {
   notIn: [Int]
 }
 
+enum Network {
+  BSC
+  ETHEREUM
+  POLYGON
+}
+
+input NetworkEnumFilter {
+  equals: Network
+  in: [Network]
+  not: NetworkEnumFilter
+  notIn: [Network]
+}
+
 type Query {
-  ok: Boolean!
+  token(id: ID!): Token!
+  tokens(
+    """
+    Only items coming immediately after this will be returned. Can be combined with "first".
+    """
+    after: String
+
+    """
+    Only items coming immediately after this will be returned. Can be combined with "last".
+    """
+    before: String
+
+    """
+    Limits the number of items that are retuned. Can be combined with "after".
+    """
+    first: Int
+
+    """
+    Limits the number of items that are retuned. Can be combined with "before".
+    """
+    last: Int
+
+    """
+    Allows to filter results by several properties.
+    """
+    where: TokenWhereInput
+  ): TokensConnection!
 }
 
 input StringFilter {
@@ -77,4 +123,39 @@ input StringFilter {
 enum StringFilterMode {
   default
   insensitive
+}
+
+type Token {
+  address: String!
+  createdAt: DateTime!
+  decimals: Int!
+  id: String!
+  logoUri: String
+  network: Network!
+  symbol: String!
+  updatedAt: DateTime!
+}
+
+input TokenWhereInput {
+  AND: [TokenWhereInput]
+  NOT: [TokenWhereInput]
+  OR: [TokenWhereInput]
+  createdAt: DateTimeFilter
+  decimals: IntFilter
+  id: StringFilter
+  logoUri: StringFilter
+  network: NetworkEnumFilter
+  symbol: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+type TokensConnection {
+  edges: [TokensConnectionEdges!]!
+  pageInfo: ForwardPaginationPageInfo!
+  totalCount: Int!
+}
+
+type TokensConnectionEdges {
+  cursor: String!
+  node: Token!
 }
