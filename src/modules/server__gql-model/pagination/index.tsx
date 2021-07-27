@@ -1,6 +1,6 @@
 import { intArg, objectType, stringArg } from 'nexus';
 
-import { NexusGenObjectNames } from '../../../../nexus-typegen';
+import type { NexusGenObjectNames } from '../../../../nexus-typegen';
 
 export const buildCursor = (value: string) => `0x${Buffer.from(value, 'utf-8').toString('hex')}`;
 
