@@ -26,6 +26,7 @@ const TokenWhereInput = inputObjectType({
     t.list.field('OR', { type: 'TokenWhereInput' });
 
     t.field('id', { type: 'StringFilter' });
+    t.field('address', { type: 'StringFilter' });
     t.field('network', { type: 'NetworkEnumFilter' });
     t.field('decimals', { type: 'IntFilter' });
     t.field('logoUri', { type: 'StringFilter' });
