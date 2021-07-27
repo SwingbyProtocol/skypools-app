@@ -122,6 +122,11 @@ export interface NexusGenObjects {
     hasPreviousPage: boolean; // Boolean!
     startCursor: string; // String!
   };
+  PriceHistoricItem: {
+    // root type
+    at: NexusGenScalars['DateTime']; // DateTime!
+    price: NexusGenScalars['Decimal']; // Decimal!
+  };
   Query: {};
   Token: {
     // root type
@@ -163,8 +168,14 @@ export interface NexusGenFieldTypes {
     hasPreviousPage: boolean; // Boolean!
     startCursor: string; // String!
   };
+  PriceHistoricItem: {
+    // field return type
+    at: NexusGenScalars['DateTime']; // DateTime!
+    price: NexusGenScalars['Decimal']; // Decimal!
+  };
   Query: {
     // field return type
+    priceHistoric: NexusGenRootTypes['PriceHistoricItem'][]; // [PriceHistoricItem!]!
     token: NexusGenRootTypes['Token']; // Token!
     tokens: NexusGenRootTypes['TokensConnection']; // TokensConnection!
   };
@@ -200,8 +211,14 @@ export interface NexusGenFieldTypeNames {
     hasPreviousPage: 'Boolean';
     startCursor: 'String';
   };
+  PriceHistoricItem: {
+    // field return type name
+    at: 'DateTime';
+    price: 'Decimal';
+  };
   Query: {
     // field return type name
+    priceHistoric: 'PriceHistoricItem';
     token: 'Token';
     tokens: 'TokensConnection';
   };
@@ -231,6 +248,11 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Query: {
+    priceHistoric: {
+      // args
+      firstTokenId: string; // String!
+      secondTokenId?: string | null; // String
+    };
     token: {
       // args
       id: string; // ID!

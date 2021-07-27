@@ -6,12 +6,14 @@ import { nexusPrisma } from 'nexus-plugin-prisma';
 import * as scalars from './scalars';
 import * as filters from './filters';
 import * as tokens from './tokens';
+import * as priceHistoric from './price-historic';
 
 export const schema = makeSchema({
   types: {
     ...scalars,
     ...filters,
     ...tokens,
+    ...priceHistoric,
   },
   plugins: [nexusPrisma()],
   contextType: {

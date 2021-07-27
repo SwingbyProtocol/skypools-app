@@ -75,7 +75,23 @@ input NetworkEnumFilter {
   notIn: [Network]
 }
 
+type PriceHistoricItem {
+  at: DateTime!
+  price: Decimal!
+}
+
 type Query {
+  priceHistoric(
+    """
+    ID of the first token.
+    """
+    firstTokenId: String!
+
+    """
+    Optional ID of the second token. USD will be used if no token is provided.
+    """
+    secondTokenId: String
+  ): [PriceHistoricItem!]!
   token(id: ID!): Token!
   tokens(
     """
