@@ -17,6 +17,7 @@ const isTaskConfig = (value: any): value is TaskConfig =>
 const NETWORKS = Object.values(Network).map((it) => it.toLowerCase() as Lowercase<Network>);
 const NETWORK_TASKS: Task[] = [
   { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
+  'token-logos',
   'prices-historic',
 ];
 

@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import Web3 from 'web3';
 
-import { getTokens } from '../../../../modules/server__para-inch';
+import { buildTokenId, getTokens } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({
@@ -18,17 +18,19 @@ export default createEndpoint({
         await prisma.token.upsert({
           where: { network_address: { network, address } },
           create: {
+            id: buildTokenId({ network, tokenAddress: address }),
             network,
             address,
             decimals: token.decimals,
-            logoUri: token.logoUri,
+            logoUri: token.logoUri ?? undefined,
             symbol: token.symbol,
           },
           update: {
+            id: buildTokenId({ network, tokenAddress: address }),
             network,
             address,
             decimals: token.decimals,
-            logoUri: token.logoUri,
+            logoUri: token.logoUri ?? undefined,
             symbol: token.symbol,
           },
         });

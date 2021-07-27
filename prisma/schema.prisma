@@ -22,6 +22,7 @@ model Token {
   logoUri               String?
   usdPriceHistoric      TokenUsdPriceHistoric[] @relation("TokenUsdPriceHistoric")
   priceHistoryUpdatedAt DateTime                @default(now())
+  logoUpdatedAt         DateTime                @default(now())
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
 
