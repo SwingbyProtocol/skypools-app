@@ -1,5 +1,5 @@
 import { Big } from 'big.js';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { DateTime } from 'luxon';
 import Web3 from 'web3';
 import ABI from 'human-standard-token-abi';
@@ -9,11 +9,11 @@ import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
 import { isNativeToken } from '../../modules/para-inch';
-import { getPairPriceHistory, SwapQuoteRoute } from '../../modules/server__para-inch';
+import { SwapQuoteRoute } from '../../modules/server__para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
-import { logger } from '../../modules/logger';
 import { useSkybridgeSwap } from '../../modules/skybridge';
+import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
 
 import { History } from './History';
 import {
@@ -56,9 +56,18 @@ export const SwapScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInch();
   const { swapId } = useSkybridgeSwap();
-  const [priceHistory, setPriceHistory] = useState<
-    React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null
-  >(null);
+  const [getPriceHistory, { data: priceHistoryData }] = usePriceHistoryLazyQuery();
+
+  const priceHistory = useMemo(
+    () =>
+      priceHistoryData?.priceHistoric.map(
+        (it): React.ComponentPropsWithoutRef<typeof TradingView>['data'][number] => ({
+          time: it.at,
+          value: +it.price,
+        }),
+      ),
+    [priceHistoryData?.priceHistoric],
+  );
 
   useEffect(() => {
     if (!onboardNetwork) return;
@@ -66,39 +75,14 @@ export const SwapScene = () => {
   }, [onboardNetwork, network, setNetwork]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    const fromTokenAddress = fromToken?.address;
-    const toTokenAddress = toToken?.address;
-    if (!fromTokenAddress || !toTokenAddress) {
+    const firstTokenId = fromToken?.id;
+    const secondTokenId = toToken?.id;
+    if (!firstTokenId || !secondTokenId) {
       return;
     }
 
-    const loadPriceHistory = async () => {
-      try {
-        if (cancelled) return;
-
-        setPriceHistory(null);
-        const result = await getPairPriceHistory({
-          fromTokenAddress,
-          toTokenAddress,
-          network,
-        });
-
-        if (cancelled) return;
-        setPriceHistory(result.map((it) => ({ time: it.at.toISO(), value: it.value.toNumber() })));
-      } catch (err) {
-        logger.error({ err }, 'Failed to load price history');
-        setTimeout(loadPriceHistory, 2500);
-      }
-    };
-
-    loadPriceHistory();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [fromToken, toToken, network]);
+    getPriceHistory({ variables: { firstTokenId, secondTokenId } });
+  }, [fromToken, getPriceHistory, toToken]);
 
   useEffect(() => {
     const walletProvider = wallet?.provider;
@@ -136,7 +120,7 @@ export const SwapScene = () => {
       <Header css={headerContainer} />
 
       <Card css={priceAndPathCard}>
-        <div css={[chartContainer, priceHistory === null && loadingPulseAnimation]}>
+        <div css={[chartContainer, !priceHistory && loadingPulseAnimation]}>
           <TradingView data={priceHistory ?? FAKE_PRICE_HISTORY} />
         </div>
 
