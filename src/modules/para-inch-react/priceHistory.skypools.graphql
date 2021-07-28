@@ -1,0 +1,6 @@
+query PriceHistory($firstTokenId: String!, $secondTokenId: String) {
+  priceHistoric(firstTokenId: $firstTokenId, secondTokenId: $secondTokenId) {
+    at
+    price
+  }
+}

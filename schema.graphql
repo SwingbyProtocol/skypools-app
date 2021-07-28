@@ -156,6 +156,7 @@ input TokenWhereInput {
   AND: [TokenWhereInput]
   NOT: [TokenWhereInput]
   OR: [TokenWhereInput]
+  address: StringFilter
   createdAt: DateTimeFilter
   decimals: IntFilter
   id: StringFilter

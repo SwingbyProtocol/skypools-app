@@ -25,7 +25,24 @@ export const playground: Config['playground'] = {
               }
             }
           }
-      `),
+        `),
+      ),
+    },
+    {
+      name: 'ETH/WBTC price',
+      endpoint,
+      query: print(
+        parse(`
+          {
+            priceHistoric(
+              firstTokenId: "RVRIRVJFVU06OjB4RWVlZWVFZWVlRWVFZWVFZUVlRWVlRUVFZWVlZUVlZWVlZWVlRUVlRQ=="
+              secondTokenId: "RVRIRVJFVU06OjB4MjI2MGZhYzVlNTU0MmE3NzNhYTQ0ZmJjZmVkZjdjMTkzYmMyYzU5OQ=="
+            ) {
+              at
+              price
+            }
+          }
+        `),
       ),
     },
   ],

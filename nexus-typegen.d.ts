@@ -89,6 +89,7 @@ export interface NexusGenInputs {
     AND?: Array<NexusGenInputs['TokenWhereInput'] | null> | null; // [TokenWhereInput]
     NOT?: Array<NexusGenInputs['TokenWhereInput'] | null> | null; // [TokenWhereInput]
     OR?: Array<NexusGenInputs['TokenWhereInput'] | null> | null; // [TokenWhereInput]
+    address?: NexusGenInputs['StringFilter'] | null; // StringFilter
     createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     decimals?: NexusGenInputs['IntFilter'] | null; // IntFilter
     id?: NexusGenInputs['StringFilter'] | null; // StringFilter
