@@ -1,20 +1,12 @@
 import { StatusCodes } from 'http-status-codes';
 
-import { getShallowSwaps, getSwapDetails } from '../../../../modules/server__para-inch';
+import { getShallowSwaps } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({
   isSecret: true,
   logId: 'process/latest-swaps',
   fn: async ({ res, network, prisma, logger }) => {
-    // const swaps = await Promise.all(
-    //   (
-    //     await getShallowSwaps({ network })
-    //   ).map(async (it) => {
-    //     const details = await getSwapDetails({ network, hash: it.hash });
-    //     return { ...it, ...details };
-    //   }),
-    // );
     const swaps = await getShallowSwaps({ network });
     await prisma.$transaction(
       swaps.map((it) =>
