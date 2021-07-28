@@ -1,8 +1,8 @@
 import Web3 from 'web3';
 import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
-import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
+import { Prisma, SwapHistoric } from '@prisma/client';
 
 import { shouldUseParaSwap } from '../../env';
 import { Network } from '../../networks';
@@ -10,34 +10,29 @@ import { fetcher } from '../../fetch';
 import { getScanApiUrl } from '../../web3';
 import { logger as baseLogger } from '../../logger';
 import { isNativeToken } from '../../para-inch';
+import { buildWeb3Instance } from '../../server__web3';
+import { buildTokenId } from '../getTokens';
 
 import oneInchAbi from './one-inch-abi.json';
 import paraSwapAbi from './paraswap-abi.json';
 
-type TransactionDetails = {
-  fromTokenAddress: string | null;
-  toTokenAddress: string | null;
-  fromAmount: Big | null;
-  toAmount: Big | null;
-};
+type TransactionDetails = Pick<
+  SwapHistoric,
+  'srcAmount' | 'srcTokenId' | 'destAmount' | 'destTokenId'
+>;
 
 type Params = {
   network: Network;
   hash: string;
-  walletProvider: any;
 };
 
 const abi = shouldUseParaSwap ? paraSwapAbi : oneInchAbi;
 abiDecoder.addABI(abi);
 
-export const getTransactionDetails = async ({
-  network,
-  hash,
-  walletProvider,
-}: Params): Promise<TransactionDetails> => {
+export const getSwapDetails = async ({ network, hash }: Params): Promise<TransactionDetails> => {
   const logger = baseLogger.child({ hash });
 
-  const web3 = new Web3(walletProvider);
+  const web3 = buildWeb3Instance({ network });
   const receipt = await web3.eth.getTransactionReceipt(hash);
 
   const logs = abiDecoder.decodeLogs(receipt.logs);
@@ -46,47 +41,55 @@ export const getTransactionDetails = async ({
   if (events.length > 0) {
     logger.debug('Found "Swapped" event');
 
-    const fromTokenAddress = findLogValue(events, 'srcToken');
-    const toTokenAddress = findLogValue(events, shouldUseParaSwap ? 'destToken' : 'dstToken');
+    const srcTokenAddress = findLogValue(events, 'srcToken');
+    const destTokenAddress = findLogValue(events, shouldUseParaSwap ? 'destToken' : 'dstToken');
 
-    const fromAmount = await parseAmount({
-      amount: findLogValue(events, shouldUseParaSwap ? 'srcAmount' : 'spentAmount'),
-      tokenAddress: fromTokenAddress,
-      web3,
-      logger,
-    });
-    const toAmount = await parseAmount({
-      amount: findLogValue(events, shouldUseParaSwap ? 'receivedAmount' : 'returnAmount'),
-      tokenAddress: toTokenAddress,
-      web3,
-      logger,
-    });
-
-    return { fromTokenAddress, toTokenAddress, fromAmount, toAmount };
+    return {
+      srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
+      destTokenId: destTokenAddress
+        ? buildTokenId({ network, tokenAddress: destTokenAddress })
+        : null,
+      srcAmount: await parseAmount({
+        amount: findLogValue(events, shouldUseParaSwap ? 'srcAmount' : 'spentAmount'),
+        tokenAddress: srcTokenAddress,
+        web3,
+        logger,
+      }),
+      destAmount: await parseAmount({
+        amount: findLogValue(events, shouldUseParaSwap ? 'receivedAmount' : 'returnAmount'),
+        tokenAddress: destTokenAddress,
+        web3,
+        logger,
+      }),
+    };
   }
 
   logger.debug('Did not find "Swapped" event');
   const transaction = await web3.eth.getTransaction(hash);
   const input = await abiDecoder.decodeMethod(transaction.input);
 
-  const fromTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
-  const toTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
+  const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
+  const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
 
-  const fromAmount = await parseAmount({
-    amount: transaction.value,
-    tokenAddress: fromTokenAddress,
-    web3,
-    logger,
-  });
-  const toAmount = await getToAmountFromScan({
-    hash,
-    network,
-    toTokenAddress,
-    receivingAddress: transaction.from,
-    logger,
-  });
-
-  return { fromAmount, toAmount, fromTokenAddress, toTokenAddress };
+  return {
+    srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
+    destTokenId: destTokenAddress
+      ? buildTokenId({ network, tokenAddress: destTokenAddress })
+      : null,
+    srcAmount: await parseAmount({
+      amount: transaction.value,
+      tokenAddress: srcTokenAddress,
+      web3,
+      logger,
+    }),
+    destAmount: await getToAmountFromScan({
+      hash,
+      network,
+      toTokenAddress: destTokenAddress,
+      receivingAddress: transaction.from,
+      logger,
+    }),
+  };
 };
 
 const findLogValue = (logs: { name: string; type: string; value: string }[], name: string) => {
@@ -99,11 +102,11 @@ const parseAmount = async ({
   web3,
   logger,
 }: {
-  amount: BigSource | null;
+  amount: Prisma.Decimal.Value | null;
   tokenAddress: string | null;
   web3: Web3;
   logger: typeof baseLogger;
-}): Promise<Big | null> => {
+}): Promise<Prisma.Decimal | null> => {
   if (!tokenAddress) return null;
   if (!amount) return null;
 
@@ -115,7 +118,7 @@ const parseAmount = async ({
       return await contract.methods.decimals().call();
     })();
 
-    return new Big(amount).div(`1e${decimals}`);
+    return new Prisma.Decimal(amount).div(`1e${decimals}`);
   } catch (err) {
     logger.trace({ amount, tokenAddress, err }, 'Failed to parse amount');
     return null;
@@ -134,7 +137,7 @@ const getToAmountFromScan = async ({
   hash: string;
   receivingAddress: string;
   logger: typeof baseLogger;
-}): Promise<Big | null> => {
+}): Promise<Prisma.Decimal | null> => {
   try {
     const result = await fetcher<{
       result: Array<{ hash: string; value: string; tokenDecimal: string }>;
@@ -153,7 +156,7 @@ const getToAmountFromScan = async ({
     const tx = result.result.find((it) => it.hash === hash);
     if (!tx) return null;
 
-    return new Big(tx.value).div(`1e${tx.tokenDecimal}`);
+    return new Prisma.Decimal(tx.value).div(`1e${tx.tokenDecimal}`);
   } catch (err) {
     logger.trace({ err }, 'Failed to get "toAmount" from scan API');
     return null;

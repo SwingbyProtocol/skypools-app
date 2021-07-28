@@ -1,7 +1,8 @@
 export { getTokens } from './getTokens';
 export { getSwapQuote } from './getSwapQuote';
 export { getPriceHistoryFromCoingecko, getTokenLogoFromCoingecko } from './coin-details';
-export { getLatestTransactions } from './getLatestTransactions';
+export { getShallowSwaps } from './getShallowSwaps';
+export { getSwapDetails } from './getSwapDetails';
 export { getSpender } from './getSpender';
 
 export type { SwapQuoteRoute, SwapQuote } from './getSwapQuote';

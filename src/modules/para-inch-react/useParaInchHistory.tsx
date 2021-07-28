@@ -4,14 +4,14 @@ import type { PromiseValue } from 'type-fest';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getLatestTransactions } from '../server__para-inch';
+import { getShallowSwaps } from '../server__para-inch';
 import type { ParaInchToken } from '../para-inch';
 import { useSpenderQuery } from '../../generated/skypools-graphql';
 
 import { useParaInch } from './useParaInch';
 
 type TransactionItem = Omit<
-  PromiseValue<ReturnType<typeof getLatestTransactions>>[number],
+  PromiseValue<ReturnType<typeof getShallowSwaps>>[number],
   'fromTokenAddress' | 'toTokenAddress'
 > & {
   fromToken: ParaInchToken | null;
@@ -103,7 +103,7 @@ export const useParaInchHistory = () => {
         if (cancelled) return;
 
         const transactions = (
-          await getLatestTransactions({ address, network, spender, walletProvider })
+          await getShallowSwaps({ address, network, spender, walletProvider })
         ).map(
           (it): TransactionItem => ({
             ...it,

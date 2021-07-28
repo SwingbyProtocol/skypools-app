@@ -57,6 +57,15 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
   );
 };
 
-const buildTokenId = ({ network, tokenAddress }: { network: Network; tokenAddress: string }) => {
-  return Buffer.from(`${network}::${tokenAddress}`, 'utf-8').toString('base64');
+export const buildTokenId = ({
+  network,
+  tokenAddress,
+}: {
+  network: Network;
+  tokenAddress: string;
+}) => {
+  const web3 = new Web3();
+  return Buffer.from(`${network}::${web3.utils.toChecksumAddress(tokenAddress)}`, 'utf-8').toString(
+    'base64',
+  );
 };
