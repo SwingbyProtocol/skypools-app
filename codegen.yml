@@ -12,7 +12,7 @@ generates:
         DateTime: 'string'
         Decimal: 'string'
       enumValues:
-        Network: '../modules/onboard#Network'
+        Network: '../modules/networks#Network'
   src/generated/skybridge-graphql.tsx:
     schema: https://network.skybridge.exchange/api/v3/graphql
     documents: 'src/**/*.skybridge.graphql'

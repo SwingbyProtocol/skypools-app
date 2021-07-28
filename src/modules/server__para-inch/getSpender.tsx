@@ -2,7 +2,7 @@ import { ParaSwap } from 'paraswap';
 
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
-import { Network, getNetworkId } from '../onboard';
+import { Network, getNetworkId } from '../networks';
 
 import { isParaSwapApiError } from './isParaSwapApiError';
 
@@ -17,6 +17,8 @@ export const getSpender = async ({ network }: { network: Network }): Promise<str
   }
 
   return (
-    await fetcher<{ address: string }>(`https://api.1inch.exchange/v3.0/${network}/approve/spender`)
+    await fetcher<{ address: string }>(
+      `https://api.1inch.exchange/v3.0/${getNetworkId(network)}/approve/spender`,
+    )
   ).address;
 };

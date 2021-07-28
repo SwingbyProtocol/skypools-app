@@ -1,6 +1,6 @@
 import { useIntl } from 'react-intl';
 
-import { Network } from '../../modules/onboard';
+import { Network } from '../../modules/networks';
 
 import { container, bsc, eth } from './styled';
 

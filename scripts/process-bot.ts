@@ -1,6 +1,6 @@
 import { Duration } from 'luxon';
-import { Network } from '@prisma/client';
 
+import { Network } from '../src/modules/networks';
 import { fetcher } from '../src/modules/fetch';
 import { logger } from '../src/modules/logger';
 import { server__processTaskSecret } from '../src/modules/server__env';

@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { API as OnboardInstance } from 'bnc-onboard/dist/src/interfaces'; // eslint-disable-line import/no-internal-modules
 import { useMedia } from 'react-use';
 
-import { getNetwork, isValidNetworkId } from './networks';
+import { getNetwork, isValidNetworkId } from '../networks';
+
 import { initOnboard } from './initOnboard';
 
 export const useOnboardInstance = () => {

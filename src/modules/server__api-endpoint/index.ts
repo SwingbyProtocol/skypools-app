@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime, Duration } from 'luxon';
-import { Network } from '@prisma/client';
 
+import { Network } from '../networks';
 import { corsMiddleware } from '../server__cors';
 import { logger as loggerBase } from '../logger';
 import { prisma, server__processTaskSecret } from '../server__env';

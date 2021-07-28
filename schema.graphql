@@ -92,6 +92,7 @@ type Query {
     """
     secondTokenId: String
   ): [PriceHistoricItem!]!
+  spender(network: Network!): String!
   token(id: ID!): Token!
   tokens(
     """

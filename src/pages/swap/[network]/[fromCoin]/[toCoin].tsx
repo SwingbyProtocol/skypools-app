@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import { useMemo } from 'react';
 
-import { Network } from '../../../../modules/onboard';
+import { Network } from '../../../../modules/networks';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
 import { SwapScene } from '../../../../scenes/SwapScene';

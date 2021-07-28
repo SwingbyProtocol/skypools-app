@@ -4,8 +4,9 @@ import type { PromiseValue } from 'type-fest';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getLatestTransactions, getSpender } from '../server__para-inch';
+import { getLatestTransactions } from '../server__para-inch';
 import type { ParaInchToken } from '../para-inch';
+import { useSpenderQuery } from '../../generated/skypools-graphql';
 
 import { useParaInch } from './useParaInch';
 
@@ -28,33 +29,10 @@ export type ParaInchHistoryItem = TransactionItem | PendingItem;
 export const useParaInchHistory = () => {
   const { address, wallet } = useOnboard();
   const { network, tokens } = useParaInch();
-  const [spender, setSpender] = useState<string | null>(null);
   const [pendingTransactions, setPendingTransactions] = useState<PendingItem[]>([]);
   const [latestTransactions, setLatestTransactions] = useState<TransactionItem[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const check = async () => {
-      try {
-        if (cancelled) return;
-
-        const spender = await getSpender({ network });
-        if (cancelled) return;
-
-        setSpender(spender);
-      } catch (err) {
-        logger.warn({ err }, 'Failed to get spender');
-        setTimeout(check, 15000);
-      }
-    };
-
-    check();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [network]);
+  const { data } = useSpenderQuery({ variables: { network } });
+  const spender = data?.spender;
 
   useEffect(() => {
     const walletProvider = wallet?.provider;

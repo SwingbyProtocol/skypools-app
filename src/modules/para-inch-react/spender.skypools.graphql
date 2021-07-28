@@ -1,0 +1,3 @@
+query Spender($network: Network!) {
+  spender(network: $network)
+}

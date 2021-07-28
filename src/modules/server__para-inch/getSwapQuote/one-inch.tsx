@@ -2,7 +2,7 @@ import { Big } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
 import { fetcher } from '../../fetch';
-import { getNetworkId } from '../../onboard';
+import { getNetworkId } from '../../networks';
 import { ENDPOINT_1INCH_API } from '../constants';
 import { NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { getPriceUsd } from '../coin-details';

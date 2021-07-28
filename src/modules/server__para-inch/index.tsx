@@ -1,6 +1,6 @@
 export { getTokens } from './getTokens';
 export { getSwapQuote } from './getSwapQuote';
-export { getPairPriceHistory, getPriceHistory, getTokenLogoFromCoingecko } from './coin-details';
+export { getPriceHistoryFromCoingecko, getTokenLogoFromCoingecko } from './coin-details';
 export { getLatestTransactions } from './getLatestTransactions';
 export { getSpender } from './getSpender';
 

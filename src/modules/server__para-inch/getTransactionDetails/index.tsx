@@ -5,7 +5,7 @@ import { Big, BigSource } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
 import { shouldUseParaSwap } from '../../env';
-import { Network } from '../../onboard';
+import { Network } from '../../networks';
 import { fetcher } from '../../fetch';
 import { getScanApiUrl } from '../../web3';
 import { logger as baseLogger } from '../../logger';

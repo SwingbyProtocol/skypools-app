@@ -1,7 +1,7 @@
 import type { Big, BigSource } from 'big.js';
 import type { TransactionConfig } from 'web3-eth';
 
-import { Network } from '../../onboard';
+import { Network } from '../../networks';
 import { ParaInchToken } from '../../para-inch';
 
 export type SwapQuoteRouteStep = {

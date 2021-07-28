@@ -1,4 +1,4 @@
-import { Network } from '../onboard';
+import { Network } from '../networks';
 
 export const getScanApiUrl = ({ network }: { network: Network }) => {
   switch (network) {

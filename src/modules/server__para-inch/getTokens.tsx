@@ -3,7 +3,7 @@ import Web3 from 'web3';
 
 import { shouldUseParaSwap } from '../env';
 import { fetcher } from '../fetch';
-import { Network, getNetworkId, getNetwork } from '../onboard';
+import { Network, getNetworkId, getNetwork } from '../networks';
 import { ParaInchToken } from '../para-inch';
 
 import { ENDPOINT_1INCH_API } from './constants';

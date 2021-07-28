@@ -2,7 +2,7 @@ import { Big } from 'big.js';
 import { DateTime, Duration } from 'luxon';
 import { stringifyUrl } from 'query-string';
 
-import { Network } from '../onboard';
+import { Network } from '../networks';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { isNativeToken } from '../para-inch';
@@ -90,7 +90,7 @@ export const getTokenLogoFromCoingecko = async ({
   }
 };
 
-export const getPriceHistory = async ({
+export const getPriceHistoryFromCoingecko = async ({
   network,
   tokenAddress,
 }: {
@@ -118,34 +118,4 @@ export const getPriceHistory = async ({
       }),
     )
     .sort((a, b) => a.at.toMillis() - b.at.toMillis());
-};
-
-export const getPairPriceHistory = async ({
-  network,
-  fromTokenAddress,
-  toTokenAddress,
-}: {
-  network: Network;
-  fromTokenAddress: string;
-  toTokenAddress: string;
-}): Promise<PriceHistory> => {
-  const [fromTokenHistories, toTokenHistories] = await Promise.all(
-    [fromTokenAddress, toTokenAddress].map((tokenAddress) =>
-      getPriceHistory({ network, tokenAddress }),
-    ),
-  );
-
-  return fromTokenHistories
-    .map((fromToken) => {
-      const toToken = toTokenHistories.find(({ at }) => fromToken.at.toMillis() === at.toMillis());
-      if (!toToken) {
-        return null;
-      }
-
-      return {
-        at: fromToken.at,
-        value: fromToken.value.div(toToken.value),
-      };
-    })
-    .filter((it): it is PriceHistoryItem => !!it);
 };

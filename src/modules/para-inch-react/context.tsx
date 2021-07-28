@@ -6,7 +6,8 @@ import { stringifyUrl } from 'query-string';
 import type { ParaInchToken } from '../para-inch';
 import type { SwapQuote } from '../server__para-inch';
 import { getSwapQuote } from '../server__para-inch';
-import { Network, useOnboard } from '../onboard';
+import { Network } from '../networks';
+import { useOnboard } from '../onboard';
 import { logger } from '../logger';
 
 export type ParaInchContextValue = {

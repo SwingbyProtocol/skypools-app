@@ -1,5 +1,6 @@
-import { Network } from '@prisma/client';
 import { enumType, inputObjectType } from 'nexus';
+
+import { Network } from '../networks';
 
 export const StringFilterMode = enumType({
   name: 'StringFilterMode',

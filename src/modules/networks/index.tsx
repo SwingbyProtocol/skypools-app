@@ -1,5 +1,7 @@
 import { Network } from '@prisma/client';
 
+export { Network };
+
 export const getNetworkId = (network: Network) => {
   switch (network) {
     case Network.ETHEREUM:

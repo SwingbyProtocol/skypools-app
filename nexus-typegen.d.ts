@@ -177,6 +177,7 @@ export interface NexusGenFieldTypes {
   Query: {
     // field return type
     priceHistoric: NexusGenRootTypes['PriceHistoricItem'][]; // [PriceHistoricItem!]!
+    spender: string; // String!
     token: NexusGenRootTypes['Token']; // Token!
     tokens: NexusGenRootTypes['TokensConnection']; // TokensConnection!
   };
@@ -220,6 +221,7 @@ export interface NexusGenFieldTypeNames {
   Query: {
     // field return type name
     priceHistoric: 'PriceHistoricItem';
+    spender: 'String';
     token: 'Token';
     tokens: 'TokensConnection';
   };
@@ -253,6 +255,10 @@ export interface NexusGenArgTypes {
       // args
       firstTokenId: string; // String!
       secondTokenId?: string | null; // String
+    };
+    spender: {
+      // args
+      network: NexusGenEnums['Network']; // Network!
     };
     token: {
       // args

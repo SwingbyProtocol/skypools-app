@@ -3,7 +3,7 @@ import { ParaSwap } from 'paraswap';
 import Web3 from 'web3';
 
 import { logger } from '../../logger';
-import { getNetworkId } from '../../onboard';
+import { getNetworkId } from '../../networks';
 import { NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 import { getPriceUsd } from '../coin-details';

@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { stringifyUrl } from 'query-string';
 import { Big } from 'big.js';
 
-import { Network } from '../onboard';
+import { Network } from '../networks';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
 import { getScanApiUrl } from '../web3';

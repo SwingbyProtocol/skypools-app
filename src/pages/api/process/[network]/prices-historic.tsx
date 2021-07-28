@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
 
-import { getPriceHistory } from '../../../../modules/server__para-inch';
+import { getPriceHistoryFromCoingecko } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({
@@ -19,7 +19,10 @@ export default createEndpoint({
     const priceHistorics = await Promise.all(
       tokens.map(async (it) => {
         logger.debug({ token: it }, 'Will fetch price history');
-        const priceHistoric = await getPriceHistory({ network, tokenAddress: it.address });
+        const priceHistoric = await getPriceHistoryFromCoingecko({
+          network,
+          tokenAddress: it.address,
+        });
         logger.trace({ token: it, priceHistoric }, 'Got price history');
 
         return priceHistoric;
