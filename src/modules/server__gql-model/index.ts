@@ -8,6 +8,7 @@ import * as filters from './filters';
 import * as tokens from './tokens';
 import * as priceHistoric from './price-historic';
 import * as spender from './spender';
+import * as swaps from './swaps';
 
 export const schema = makeSchema({
   types: {
@@ -16,6 +17,7 @@ export const schema = makeSchema({
     ...tokens,
     ...priceHistoric,
     ...spender,
+    ...swaps,
   },
   plugins: [nexusPrisma()],
   contextType: {

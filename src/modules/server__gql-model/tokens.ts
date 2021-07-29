@@ -1,7 +1,6 @@
 import { extendType, objectType, arg, inputObjectType, idArg, nonNull } from 'nexus';
 
 import { paginate, paginatedType, paginationArgs } from './pagination';
-import { fromGraphWhereArgToPrisma } from './fromGraphWhereArgToPrisma';
 
 export const Token = objectType({
   name: 'Token',
@@ -68,7 +67,7 @@ export const TokensQuery = extendType({
         return paginate({
           ...args,
           allEdges: await ctx.prisma.token.findMany({
-            where: fromGraphWhereArgToPrisma(args.where),
+            where: args.where as any,
             orderBy: [{ symbol: 'asc' }, { address: 'asc' }],
           }),
         });

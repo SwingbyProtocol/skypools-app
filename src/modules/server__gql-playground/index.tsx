@@ -45,5 +45,53 @@ export const playground: Config['playground'] = {
         `),
       ),
     },
+    {
+      name: 'Swap history',
+      endpoint,
+      query: print(
+        parse(`
+          {
+            swaps(
+              where: {
+                AND: [
+                  {
+                    initiatorAddress: {
+                      equals: "0xb680c8F33f058163185AB6121F7582BAb57Ef8a7"
+                      mode: insensitive
+                    }
+                  }
+                  {
+                    NOT: {
+                      OR: [
+                        { srcToken: null }
+                        { destToken: null }
+                        { destAmount: null }
+                        { srcAmount: null }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ) {
+              totalCount
+              edges {
+                node {
+                  hash
+                  at
+                  srcToken {
+                    symbol
+                  }
+                  srcAmount
+                  destToken {
+                    symbol
+                  }
+                  destAmount
+                }
+              }
+            }
+          }
+       `),
+      ),
+    },
   ],
 };
