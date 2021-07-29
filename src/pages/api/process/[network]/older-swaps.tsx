@@ -5,7 +5,7 @@ import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({
   isSecret: true,
-  logId: 'process/latest-swaps',
+  logId: 'process/older-swaps',
   fn: async ({ res, network, prisma, logger }) => {
     const endBlockNumber = (
       await prisma.swapHistoric.aggregate({ where: { network }, _min: { blockNumber: true } })
