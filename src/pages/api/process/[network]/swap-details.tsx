@@ -9,8 +9,17 @@ export default createEndpoint({
   fn: async ({ res, network, prisma, logger }) => {
     const failed: typeof swaps = [];
     const swaps = await prisma.swapHistoric.findMany({
-      where: { srcTokenId: { equals: null } },
-      orderBy: { updatedAt: 'desc' },
+      where: {
+        OR: [
+          { srcTokenId: { equals: null } },
+          { destTokenId: { equals: null } },
+          { srcAmount: { equals: null } },
+          { destAmount: { equals: null } },
+          { srcAmount: { equals: 0 } },
+          { destAmount: { equals: 0 } },
+        ],
+      },
+      orderBy: { updatedAt: 'asc' },
       take: 100,
     });
 
