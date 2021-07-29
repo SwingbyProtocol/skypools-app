@@ -26,6 +26,34 @@ type Params = {
   hash: string;
 };
 
+interface IScanTxHistory {
+  status: string;
+  message: string;
+  result: ITxHistory[];
+}
+
+interface ITxHistory {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  from: string;
+  contractAddress: string;
+  to: string;
+  value: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenDecimal: string;
+  transactionIndex: string;
+  gas: string;
+  gasPrice: string;
+  gasUsed: string;
+  cumulativeGasUsed: string;
+  input: string;
+  confirmations: string;
+}
+
 const abi = shouldUseParaSwap ? paraSwapAbi : oneInchAbi;
 abiDecoder.addABI(abi);
 
@@ -71,13 +99,16 @@ export const getSwapDetails = async ({ network, hash }: Params): Promise<Transac
   const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
   const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
 
+  const amountSendOut = input.params.find((it: any) => it.name === 'amountIn').value;
+  const receivingAddress = transaction.from.toLowerCase();
+
   return {
     srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
     destTokenId: destTokenAddress
       ? buildTokenId({ network, tokenAddress: destTokenAddress })
       : null,
     srcAmount: await parseAmount({
-      amount: transaction.value,
+      amount: amountSendOut,
       tokenAddress: srcTokenAddress,
       web3,
       logger,
@@ -86,7 +117,7 @@ export const getSwapDetails = async ({ network, hash }: Params): Promise<Transac
       hash,
       network,
       toTokenAddress: destTokenAddress,
-      receivingAddress: transaction.from,
+      receivingAddress,
       logger,
     }),
   };
@@ -138,25 +169,52 @@ const getToAmountFromScan = async ({
   receivingAddress: string;
   logger: typeof baseLogger;
 }): Promise<Prisma.Decimal | null> => {
+  const etherscanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API;
+  const bscscanApiKey = process.env.NEXT_PUBLIC_BSCSCAN_API;
+  const nativeToken = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+  const apikey =
+    network === 'BSC' ? bscscanApiKey : network === 'ETHEREUM' ? etherscanApiKey : null;
+
   try {
-    const result = await fetcher<{
-      result: Array<{ hash: string; value: string; tokenDecimal: string }>;
-    }>(
-      stringifyUrl({
-        url: getScanApiUrl({ network }),
-        query: {
-          module: 'account',
-          action: 'tokentx',
-          contractaddress: toTokenAddress,
-          address: receivingAddress,
-        },
-      }),
-    );
+    if (toTokenAddress === nativeToken) {
+      // Memo: swap contract sent the native token to user. (doesn't record in 'logs')
 
-    const tx = result.result.find((it) => it.hash === hash);
-    if (!tx) return null;
+      const resultInternalTx = await fetcher<IScanTxHistory>(
+        stringifyUrl({
+          url: getScanApiUrl({ network }),
+          query: {
+            module: 'account',
+            action: 'txlistinternal',
+            txhash: hash,
+            apikey,
+          },
+        }),
+      );
 
-    return new Prisma.Decimal(tx.value).div(`1e${tx.tokenDecimal}`);
+      const tx = resultInternalTx.result.find(
+        (it: ITxHistory) => it.to.toLowerCase() === receivingAddress,
+      );
+      const decimals = 18;
+      if (!tx) return null;
+      return new Prisma.Decimal(tx.value).div(`1e${decimals}`);
+    } else {
+      const result = await fetcher<IScanTxHistory>(
+        stringifyUrl({
+          url: getScanApiUrl({ network }),
+          query: {
+            module: 'account',
+            action: 'tokentx',
+            contractaddress: toTokenAddress,
+            address: receivingAddress,
+            apikey,
+          },
+        }),
+      );
+
+      const tx = result.result.find((it: ITxHistory) => it.hash === hash);
+      if (!tx) return null;
+      return new Prisma.Decimal(tx.value).div(`1e${tx.tokenDecimal}`);
+    }
   } catch (err) {
     logger.trace({ err }, 'Failed to get "toAmount" from scan API');
     return null;
