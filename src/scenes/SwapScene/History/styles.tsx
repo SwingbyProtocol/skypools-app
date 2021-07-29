@@ -67,12 +67,6 @@ export const iconSent = css`
   ${pulseAnimation};
 `;
 
-export const iconPending = css`
-  background: hsl(var(--sp-color-warning-normal));
-  color: hsl(var(--sp-color-warning-text));
-  ${pulseAnimation};
-`;
-
 export const iconFailed = css`
   background: hsl(var(--sp-color-danger-normal));
   color: hsl(var(--sp-color-danger-text));

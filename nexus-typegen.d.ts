@@ -105,7 +105,7 @@ export interface NexusGenInputs {
   SwapWhereInput: {
     // input type
     AND?: Array<NexusGenInputs['SwapWhereInput'] | null> | null; // [SwapWhereInput]
-    NOT?: Array<NexusGenInputs['SwapWhereInput'] | null> | null; // [SwapWhereInput]
+    NOT?: NexusGenInputs['SwapWhereInput'] | null; // SwapWhereInput
     OR?: Array<NexusGenInputs['SwapWhereInput'] | null> | null; // [SwapWhereInput]
     at?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     blockNumber?: NexusGenInputs['BigIntFilter'] | null; // BigIntFilter
@@ -125,7 +125,7 @@ export interface NexusGenInputs {
   TokenWhereInput: {
     // input type
     AND?: Array<NexusGenInputs['TokenWhereInput'] | null> | null; // [TokenWhereInput]
-    NOT?: Array<NexusGenInputs['TokenWhereInput'] | null> | null; // [TokenWhereInput]
+    NOT?: NexusGenInputs['TokenWhereInput'] | null; // TokenWhereInput
     OR?: Array<NexusGenInputs['TokenWhereInput'] | null> | null; // [TokenWhereInput]
     address?: NexusGenInputs['StringFilter'] | null; // StringFilter
     createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter

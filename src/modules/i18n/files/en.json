@@ -26,9 +26,8 @@
   "widget.skybridge.waiting": "Waiting for Skybridge swap {swap}. Current status: {status}.",
   "widget.skybridge.failed": "Linked Skybridge swap {swap} has failed (status: {status}).",
   "widget.skybridge.completed": "Linked to Skybridge swap {swap}.",
-  "history.status.confirmed": "Confirmed",
-  "history.status.sent": "Sent",
-  "history.status.pending": "Pending",
-  "history.status.failed": "Failed",
+  "history.status.CONFIRMED": "Confirmed",
+  "history.status.SENT": "Sent",
+  "history.status.FAILED": "Failed",
   "comparison.match": "MATCH"
 }

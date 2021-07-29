@@ -21,7 +21,7 @@ const TokenWhereInput = inputObjectType({
   name: 'TokenWhereInput',
   definition(t) {
     t.list.field('AND', { type: 'TokenWhereInput' });
-    t.list.field('NOT', { type: 'TokenWhereInput' });
+    t.field('NOT', { type: 'TokenWhereInput' });
     t.list.field('OR', { type: 'TokenWhereInput' });
 
     t.field('id', { type: 'StringFilter' });

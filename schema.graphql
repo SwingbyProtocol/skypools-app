@@ -214,7 +214,7 @@ input SwapStatusEnumFilter {
 
 input SwapWhereInput {
   AND: [SwapWhereInput]
-  NOT: [SwapWhereInput]
+  NOT: SwapWhereInput
   OR: [SwapWhereInput]
   at: DateTimeFilter
   blockNumber: BigIntFilter
@@ -256,7 +256,7 @@ type Token {
 
 input TokenWhereInput {
   AND: [TokenWhereInput]
-  NOT: [TokenWhereInput]
+  NOT: TokenWhereInput
   OR: [TokenWhereInput]
   address: StringFilter
   createdAt: DateTimeFilter

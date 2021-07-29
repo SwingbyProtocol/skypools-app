@@ -28,7 +28,7 @@ const SwapWhereInput = inputObjectType({
   name: 'SwapWhereInput',
   definition(t) {
     t.list.field('AND', { type: 'SwapWhereInput' });
-    t.list.field('NOT', { type: 'SwapWhereInput' });
+    t.field('NOT', { type: 'SwapWhereInput' });
     t.list.field('OR', { type: 'SwapWhereInput' });
 
     t.field('id', { type: 'StringFilter' });

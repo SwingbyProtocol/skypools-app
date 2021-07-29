@@ -1,0 +1,23 @@
+query Swaps($where: SwapWhereInput) {
+  swaps(where: $where) {
+    edges {
+      node {
+        id
+        network
+        hash
+        at
+        status
+        srcToken {
+          symbol
+          logoUri
+        }
+        srcAmount
+        destToken {
+          symbol
+          logoUri
+        }
+        destAmount
+      }
+    }
+  }
+}

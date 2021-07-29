@@ -3,6 +3,8 @@ import { VariableSizeList as List, ListChildComponentProps } from 'react-window'
 import { FormattedDate, FormattedNumber, useIntl, FormattedMessage } from 'react-intl';
 import { useRef, useEffect, useCallback, useState, createContext, useContext } from 'react';
 import { stripUnit } from 'polished';
+import { Big } from 'big.js';
+import { DateTime } from 'luxon';
 
 import { size } from '../../../modules/styles';
 import {
@@ -13,6 +15,7 @@ import {
 import { shortenAddress } from '../../../modules/short-address';
 import { buildLinkToTransaction } from '../../../modules/web3';
 import { Coin } from '../../../components/Coin';
+import { SwapStatus } from '../../../generated/skypools-graphql';
 
 import {
   amountIn,
@@ -27,7 +30,6 @@ import {
   lastRow,
   sizeCalc,
   iconConfirmed,
-  iconPending,
   iconFailed,
   iconSent,
   coinIn,
@@ -69,10 +71,9 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       <div
         css={[
           icon,
-          item.status === 'confirmed' && iconConfirmed,
-          item.status === 'pending' && iconPending,
-          item.status === 'sent' && iconSent,
-          item.status === 'failed' && iconFailed,
+          item.status === SwapStatus.Confirmed && iconConfirmed,
+          item.status === SwapStatus.Sent && iconSent,
+          item.status === SwapStatus.Failed && iconFailed,
         ]}
       >
         <SwapIcon />
@@ -84,7 +85,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       <div css={time}>
         {!!item.at && (
           <FormattedDate
-            value={item.at.toJSDate()}
+            value={DateTime.fromISO(item.at).toJSDate()}
             dateStyle="short"
             timeStyle="short"
             hour12={false}
@@ -92,20 +93,20 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         )}
       </div>
 
-      {!!item.fromAmount?.gt(0) && (
+      {!!item.srcAmount && new Big(item.srcAmount).gt(0) && (
         <>
-          <Coin src={item.fromToken?.logoUri} css={coinIn} />
-          <div css={amountIn} title={formatNumber(+item.fromAmount, NUMBER_FORMAT_FULL)}>
-            {formatNumber(+item.fromAmount, NUMBER_FORMAT_SHORT)}
+          <Coin src={item.srcToken?.logoUri} css={coinIn} />
+          <div css={amountIn} title={formatNumber(+item.srcAmount, NUMBER_FORMAT_FULL)}>
+            {formatNumber(+item.srcAmount, NUMBER_FORMAT_SHORT)}
           </div>
         </>
       )}
 
-      {!!item.toAmount?.gt(0) && (
+      {!!item.destAmount && new Big(item.destAmount).gt(0) && (
         <>
-          <Coin src={item.toToken?.logoUri} css={coinOut} />
-          <div css={amountOut} title={formatNumber(+item.toAmount, NUMBER_FORMAT_FULL)}>
-            {formatNumber(+item.toAmount, NUMBER_FORMAT_SHORT)}
+          <Coin src={item.destToken?.logoUri} css={coinOut} />
+          <div css={amountOut} title={formatNumber(+item.destAmount, NUMBER_FORMAT_FULL)}>
+            {formatNumber(+item.destAmount, NUMBER_FORMAT_SHORT)}
           </div>
         </>
       )}
@@ -132,17 +133,18 @@ export const History = ({ className }: Props) => {
   const [itemHeightOther, setItemHeightOther] = useState<number>(size.city);
   const [direction, setDirection] = useState<'rtl' | 'ltr'>('ltr');
 
-  const { allTransactions } = useParaInchHistory();
+  const { data: swapHistory } = useParaInchHistory();
+  const swaps = swapHistory?.swaps.edges.map((it) => it.node) ?? [];
 
   const itemSize = useCallback(
     (index: number) => {
       return index === 0
         ? itemHeightFirst
-        : index === allTransactions.length - 1
+        : index === swaps.length - 1
         ? itemHeightLast
         : itemHeightOther;
     },
-    [itemHeightFirst, itemHeightLast, itemHeightOther, allTransactions.length],
+    [itemHeightFirst, itemHeightLast, itemHeightOther, swaps.length],
   );
 
   useEffect(() => {
@@ -172,12 +174,12 @@ export const History = ({ className }: Props) => {
   return (
     <div css={container} className={className} ref={ref as any}>
       <div css={sizeCalc} ref={stylesRef} />
-      <Context.Provider value={allTransactions}>
+      <Context.Provider value={swaps}>
         <List
           width={width}
           height={height}
           itemSize={itemSize}
-          itemCount={allTransactions.length}
+          itemCount={swaps.length}
           ref={listRef}
           direction={direction}
         >
