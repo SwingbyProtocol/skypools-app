@@ -70,6 +70,8 @@ export const getSwapDetails = async ({ network, hash }: Params): Promise<Transac
 
   const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
   const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
+  const srcAmount = input.params.find((it: any) => it.name === 'amountIn').value;
+  const receivingAddress = transaction.from.toLowerCase();
 
   return {
     srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
@@ -77,7 +79,7 @@ export const getSwapDetails = async ({ network, hash }: Params): Promise<Transac
       ? buildTokenId({ network, tokenAddress: destTokenAddress })
       : null,
     srcAmount: await parseAmount({
-      amount: transaction.value,
+      amount: srcAmount,
       tokenAddress: srcTokenAddress,
       web3,
       logger,
@@ -86,7 +88,7 @@ export const getSwapDetails = async ({ network, hash }: Params): Promise<Transac
       hash,
       network,
       toTokenAddress: destTokenAddress,
-      receivingAddress: transaction.from,
+      receivingAddress,
       logger,
     }),
   };
@@ -139,9 +141,25 @@ const getToAmountFromScan = async ({
   logger: typeof baseLogger;
 }): Promise<Prisma.Decimal | null> => {
   try {
-    const result = await fetcher<{
-      result: Array<{ hash: string; value: string; tokenDecimal: string }>;
-    }>(
+    if (isNativeToken(toTokenAddress)) {
+      const resultInternalTx = await fetcher<ApiResult>(
+        stringifyUrl({
+          url: getScanApiUrl({ network }),
+          query: {
+            module: 'account',
+            action: 'txlistinternal',
+            txhash: hash,
+          },
+        }),
+      );
+
+      const tx = resultInternalTx.result.find((it) => it.to.toLowerCase() === receivingAddress);
+
+      if (!tx) return null;
+      return new Prisma.Decimal(tx.value).div('1e18');
+    }
+
+    const result = await fetcher<ApiResult>(
       stringifyUrl({
         url: getScanApiUrl({ network }),
         query: {
@@ -161,4 +179,13 @@ const getToAmountFromScan = async ({
     logger.trace({ err }, 'Failed to get "toAmount" from scan API');
     return null;
   }
+
+  type ApiResult = {
+    result: Array<{
+      hash: string;
+      to: string;
+      value: string;
+      tokenDecimal: string;
+    }>;
+  };
 };
