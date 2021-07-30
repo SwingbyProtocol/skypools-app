@@ -30,14 +30,6 @@ import {
 import { Widget } from './Widget';
 import { OtherExchanges } from './OtherExchanges';
 
-const FAKE_PRICE_HISTORY = new Array(150)
-  .fill(null)
-  .map((_, index) => ({
-    time: DateTime.utc().minus({ months: index }).toISO(),
-    value: 1,
-  }))
-  .reverse();
-
 const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value'] = {
   path: [[{ exchange: '…', fraction: '1' }]],
 };
@@ -110,9 +102,11 @@ export const SwapScene = () => {
       <Header css={headerContainer} />
 
       <Card css={priceAndPathCard}>
-        <div css={[chartContainer, !priceHistory && loadingPulseAnimation]}>
-          <TradingView data={priceHistory ?? FAKE_PRICE_HISTORY} />
-        </div>
+        {!!priceHistory && priceHistory.length > 0 && (
+          <div css={chartContainer}>
+            <TradingView data={priceHistory} />
+          </div>
+        )}
 
         <div css={swapPathContainer}>
           <SwapPath
