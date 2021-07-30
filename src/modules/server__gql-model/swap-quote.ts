@@ -37,8 +37,6 @@ const TransactionData = objectType({
     t.nonNull.field('to', { type: 'String' });
     t.nonNull.field('data', { type: 'String' });
     t.nonNull.field('value', { type: 'String' });
-    t.nonNull.field('gas', { type: 'String' });
-    t.nonNull.field('gasPrice', { type: 'String' });
     t.nonNull.field('chainId', { type: 'Int' });
   },
 });

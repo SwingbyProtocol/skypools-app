@@ -261,8 +261,6 @@ export interface NexusGenObjects {
     chainId: number; // Int!
     data: string; // String!
     from: string; // String!
-    gas: string; // String!
-    gasPrice: string; // String!
     to: string; // String!
     value: string; // String!
   };
@@ -393,8 +391,6 @@ export interface NexusGenFieldTypes {
     chainId: number; // Int!
     data: string; // String!
     from: string; // String!
-    gas: string; // String!
-    gasPrice: string; // String!
     to: string; // String!
     value: string; // String!
   };
@@ -517,8 +513,6 @@ export interface NexusGenFieldTypeNames {
     chainId: 'Int';
     data: 'String';
     from: 'String';
-    gas: 'String';
-    gasPrice: 'String';
     to: 'String';
     value: 'String';
   };

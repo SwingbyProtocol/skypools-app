@@ -97,7 +97,6 @@ export const getOneInchSwapQuote = async ({
 
   const transaction: SwapQuote['bestRoute']['transaction'] = {
     ...result.tx,
-    gas: `${result.tx.gas}`,
     chainId: getNetworkId(network),
   };
 

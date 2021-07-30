@@ -8,6 +8,7 @@ import { isParaSwapApiError } from '../isParaSwapApiError';
 import { getPriceUsd } from '../coin-details';
 import { prisma } from '../../server__env';
 import { buildWeb3Instance } from '../../server__web3';
+import { logger } from '../../logger';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
 
@@ -52,9 +53,10 @@ export const getParaSwapSwapQuote = async ({
   const result = await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
-    srcTokenAmountParam.toFixed(),
+    srcTokenAmountParam.times(`1e${srcToken.decimals}`).toFixed(0),
   );
   if (isParaSwapApiError(result)) {
+    logger.error({ err: result }, 'Failed to get rate from ParaSwap');
     throw result;
   }
 
@@ -83,18 +85,15 @@ export const getParaSwapSwapQuote = async ({
       initiatorAddress,
       'skypools',
       beneficiaryAddress ?? initiatorAddress,
+      { ignoreChecks: true, onlyParams: true },
     );
 
     if (isParaSwapApiError(tx)) {
+      logger.error({ err: tx }, 'Failed to build ParaSwap transaction');
       throw tx;
     }
 
-    const web3 = buildWeb3Instance({ network });
-    const gasPrice = await web3.eth.getGasPrice();
-
-    const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
-
-    return { ...tx, gasPrice, gas: `${gas}` };
+    return tx;
   })();
 
   const bestRoute: SwapQuote['bestRoute'] = {
