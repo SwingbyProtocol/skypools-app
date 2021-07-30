@@ -7,7 +7,7 @@ import { createEndpoint } from '../../../../modules/server__api-endpoint';
 
 export default createEndpoint({
   isSecret: true,
-  logId: 'process/tokens',
+  logId: 'process/prices-historic',
   fn: async ({ res, network, prisma, logger }) => {
     const failed: typeof tokens = [];
     const tokens = await prisma.token.findMany({
