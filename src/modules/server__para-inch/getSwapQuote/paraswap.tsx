@@ -1,237 +1,175 @@
-import { Big } from 'big.js';
+import { Prisma } from '@prisma/client';
 import { ParaSwap } from 'paraswap';
 import Web3 from 'web3';
 
-import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
 import { NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 import { getPriceUsd } from '../coin-details';
+import { prisma } from '../../server__env';
+import { buildWeb3Instance } from '../../server__web3';
 
-import type {
-  InteralGetSwapQuoteParams,
-  OtherSwapQuoteRoute,
-  SwapQuote,
-  SwapQuoteRouteStep,
-} from './types';
+import type { GetSwapQuoteParams, SwapQuote } from './types';
 
 export const getParaSwapSwapQuote = async ({
-  amount,
-  isAmountValid,
+  beneficiaryAddress,
+  destTokenAddress,
+  initiatorAddress,
   network,
-  fromToken,
-  toToken,
-  slippageFraction,
-  sourceAddress,
-  walletProvider,
-}: InteralGetSwapQuoteParams): Promise<SwapQuote> => {
-  const [nativeTokenPriceUsd, fromTokenPriceUsd, toTokenPriceUsd] = await Promise.all(
-    [NATIVE_TOKEN_ADDRESS, fromToken.address, toToken.address].map((tokenAddress) =>
+  srcTokenAddress,
+  srcTokenAmount: srcTokenAmountParam,
+}: GetSwapQuoteParams): Promise<SwapQuote> => {
+  const { srcToken, destToken } = await (async () => {
+    const web3 = new Web3();
+    const srcToken = await prisma.token.findUnique({
+      where: {
+        network_address: { network, address: web3.utils.toChecksumAddress(srcTokenAddress) },
+      },
+    });
+    if (!srcToken) {
+      throw new Error(`Could not find token "${srcTokenAddress}" on network ${network}`);
+    }
+
+    const destToken = await prisma.token.findUnique({
+      where: {
+        network_address: { network, address: web3.utils.toChecksumAddress(destTokenAddress) },
+      },
+    });
+    if (!destToken) {
+      throw new Error(`Could not find token "${destTokenAddress}" on network ${network}`);
+    }
+
+    return { srcToken, destToken };
+  })();
+
+  const [nativeTokenPriceUsd, srcTokenPriceUsd, destTokenPriceUsd] = await Promise.all(
+    [NATIVE_TOKEN_ADDRESS, srcTokenAddress, destTokenAddress].map((tokenAddress) =>
       getPriceUsd({ network, tokenAddress }),
     ),
   );
 
   const paraSwap = new ParaSwap(getNetworkId(network));
-  const result = await paraSwap.getRate(fromToken.address, toToken.address, amount.toFixed());
+  const result = await paraSwap.getRate(
+    srcTokenAddress,
+    destTokenAddress,
+    srcTokenAmountParam.toFixed(),
+  );
   if (isParaSwapApiError(result)) {
     throw result;
   }
 
-  const fromTokenAmount = (() => {
-    try {
-      if (!isAmountValid) return new Big(0);
-      return new Big(result.srcAmount).div(`1e${fromToken.decimals}`);
-    } catch (e) {
-      return Big(0);
-    }
-  })();
+  if (!result.bestRouteGas || !result.bestRouteGasCostUSD) {
+    throw new Error(`Did not get "bestRouteGas" or "bestRouteGasCostUSD" from ParaSwap`);
+  }
+
+  const srcTokenAmount = new Prisma.Decimal(result.srcAmount).div(`1e${srcToken.decimals}`);
 
   const spender = await (async () => {
-    try {
-      if (!walletProvider) return null;
-
-      const result = await paraSwap.getSpender(new Web3(walletProvider));
-      if (typeof result === 'string') {
-        return result;
-      }
-
-      return null;
-    } catch (err) {
-      logger.warn({ err }, 'Failed to get ParaSwap spender address');
-      return null;
+    const result = await paraSwap.getSpender(buildWeb3Instance({ network }));
+    if (typeof result !== 'string') {
+      throw new Error(`Could not get spender address for network "${network}"`);
     }
+
+    return result;
   })();
 
   const transaction = await (async (): Promise<SwapQuote['bestRoute']['transaction']> => {
-    try {
-      if (!sourceAddress || !walletProvider || !isAmountValid) return null;
+    const tx = await paraSwap.buildTx(
+      srcToken.address,
+      destToken.address,
+      result.srcAmount,
+      result.destAmount,
+      result,
+      initiatorAddress,
+      'skypools',
+      beneficiaryAddress ?? initiatorAddress,
+    );
 
-      const tx = await paraSwap.buildTx(
-        fromToken.address,
-        toToken.address,
-        result.srcAmount,
-        result.destAmount,
-        result,
-        sourceAddress,
-        'skypools',
-        undefined,
-      );
-
-      if (isParaSwapApiError(tx)) {
-        throw tx;
-      }
-
-      const web3 = new Web3(walletProvider);
-      const gasPrice = await web3.eth.getGasPrice();
-
-      const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
-
-      return { ...tx, gasPrice, gas };
-    } catch (err) {
-      logger.error({ err }, 'Could not build swap transaction');
-      return null;
+    if (isParaSwapApiError(tx)) {
+      throw tx;
     }
+
+    const web3 = buildWeb3Instance({ network });
+    const gasPrice = await web3.eth.getGasPrice();
+
+    const gas = await web3.eth.estimateGas({ ...tx, gasPrice });
+
+    return { ...tx, gasPrice, gas: `${gas}` };
   })();
 
-  const bestRoute = {
-    fractionOfBest: new Big(1),
+  const bestRoute: SwapQuote['bestRoute'] = {
+    fractionOfBest: new Prisma.Decimal(1),
     transaction,
     spender,
-    path: result.bestRoute.map((it): SwapQuoteRouteStep[] => [
+    path: result.bestRoute.map((it): SwapQuote['bestRoute']['path'][number] => [
       {
         exchange: it.exchange,
         fraction: (() => {
           try {
-            return new Big(it.percent).div(100);
+            return new Prisma.Decimal(it.percent).div(100);
           } catch (e) {
-            return new Big(0);
+            return new Prisma.Decimal(0);
           }
         })(),
-        fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
-        toTokenAddress: it.data?.tokenTo ?? toToken.address,
+        srcTokenAddress: it.data?.tokenFrom ?? srcTokenAddress,
+        destTokenAddress: it.data?.tokenTo ?? destTokenAddress,
       },
     ]),
-    estimatedGas: (() => {
-      try {
-        return result.bestRouteGas ? new Big(result.bestRouteGas) : null;
-      } catch (e) {
-        return null;
-      }
-    })(),
-    estimatedGasUsd: (() => {
-      try {
-        return result.bestRouteGasCostUSD ? new Big(result.bestRouteGasCostUSD) : null;
-      } catch (e) {
-        return null;
-      }
-    })(),
+    estimatedGas: new Prisma.Decimal(result.bestRouteGas),
+    estimatedGasUsd: new Prisma.Decimal(result.bestRouteGasCostUSD),
     ...(() => {
-      const toTokenAmount = (() => {
-        try {
-          if (!isAmountValid) return new Big(0);
-          return new Big(result.destAmount).div(`1e${toToken.decimals}`);
-        } catch (e) {
-          return Big(0);
-        }
-      })();
+      const destTokenAmount = new Prisma.Decimal(result.destAmount).div(`1e${destToken.decimals}`);
 
       return {
-        toTokenAmount,
-        toTokenAmountUsd: (() => {
-          try {
-            return new Big(toTokenAmount).times(toTokenPriceUsd);
-          } catch (e) {
-            return Big(0);
-          }
-        })(),
+        destTokenAmount,
+        destTokenAmountUsd: new Prisma.Decimal(destTokenAmount).times(destTokenPriceUsd),
       };
     })(),
   };
 
   return {
-    fromTokenPriceUsd,
-    toTokenPriceUsd,
-    fromTokenAmount,
-    fromTokenAmountUsd: (() => {
-      try {
-        return new Big(fromTokenAmount).times(fromTokenPriceUsd);
-      } catch (e) {
-        return Big(0);
-      }
-    })(),
+    srcTokenPriceUsd,
+    destTokenPriceUsd,
+    srcTokenAmount,
+    srcTokenAmountUsd: new Prisma.Decimal(srcTokenAmount).times(srcTokenPriceUsd),
 
     bestRoute,
 
-    otherRoutes: result.others
-      .map((it): OtherSwapQuoteRoute => {
-        const estimatedGasUsd = (() => {
-          try {
-            return it.data?.gasUSD ? new Big(it.data?.gasUSD) : null;
-          } catch (e) {
-            return null;
-          }
-        })();
+    otherExchanges: result.others
+      .map((it): SwapQuote['otherExchanges'][number] => {
+        const estimatedGasUsd = new Prisma.Decimal(it.data?.gasUSD);
+        const estimatedGas = estimatedGasUsd.times(nativeTokenPriceUsd);
 
-        const estimatedGas = (() => {
-          try {
-            return estimatedGasUsd?.times(nativeTokenPriceUsd) ?? null;
-          } catch (e) {
-            return null;
-          }
-        })();
-
-        const toTokenAmount = (() => {
-          try {
-            if (!isAmountValid) return new Big(0);
-            return new Big(it.rate).div(`1e${toToken.decimals}`);
-          } catch (e) {
-            return Big(0);
-          }
-        })();
-
-        const toTokenAmountUsd = (() => {
-          try {
-            return new Big(toTokenAmount).times(toTokenPriceUsd);
-          } catch (e) {
-            return Big(0);
-          }
-        })();
+        const destTokenAmount = new Prisma.Decimal(it.rate).div(`1e${destToken.decimals}`);
+        const destTokenAmountUsd = new Prisma.Decimal(destTokenAmount).times(destTokenPriceUsd);
 
         return {
-          spender: null,
-          transaction: null,
-          path: [
-            [
-              ((): SwapQuoteRouteStep => ({
-                exchange: it.exchange,
-                fraction: new Big(100),
-                fromTokenAddress: it.data?.tokenFrom ?? fromToken.address,
-                toTokenAddress: it.data?.tokenTo ?? fromToken.address,
-              }))(),
-            ],
-          ],
+          exchange: it.exchange,
+          fraction: new Prisma.Decimal(1),
+          srcTokenAddress: it.data?.tokenFrom ?? srcToken.address,
+          destTokenAddress: it.data?.tokenTo ?? destToken.address,
           estimatedGas,
           estimatedGasUsd,
-          toTokenAmountUsd,
-          toTokenAmount,
-          fractionOfBest: toTokenAmountUsd.div(bestRoute.toTokenAmountUsd),
+          destTokenAmountUsd,
+          destTokenAmount,
+          fractionOfBest: destTokenAmountUsd.div(bestRoute.destTokenAmountUsd),
         };
       })
       .sort((a, b) => {
         try {
           const aValue = !a.fractionOfBest.eq(1)
             ? a.fractionOfBest
-            : a.path[0]?.[0]?.exchange === bestRoute.path[0]?.[0]?.exchange
-            ? new Big(Number.MAX_SAFE_INTEGER)
-            : new Big(Number.MAX_SAFE_INTEGER).sub(1);
+            : a.exchange === bestRoute.path[0]?.[0]?.exchange
+            ? new Prisma.Decimal(Number.MAX_SAFE_INTEGER)
+            : new Prisma.Decimal(Number.MAX_SAFE_INTEGER).sub(1);
 
           const bValue = !b.fractionOfBest.eq(1)
             ? b.fractionOfBest
-            : b.path[0]?.[0]?.exchange === bestRoute.path[0]?.[0]?.exchange
-            ? new Big(Number.MAX_SAFE_INTEGER)
-            : new Big(Number.MAX_SAFE_INTEGER).sub(1);
+            : b.exchange === bestRoute.path[0]?.[0]?.exchange
+            ? new Prisma.Decimal(Number.MAX_SAFE_INTEGER)
+            : new Prisma.Decimal(Number.MAX_SAFE_INTEGER).sub(1);
 
-          return bValue.cmp(aValue) || a.path[0][0].exchange.localeCompare(b.path[0][0].exchange);
+          return bValue.cmp(aValue) || a.exchange.localeCompare(b.exchange);
         } catch (e) {
           return 0;
         }

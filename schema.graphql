@@ -107,6 +107,18 @@ type Query {
   ): [PriceHistoricItem!]!
   spender(network: Network!): String!
   swap(id: ID!): Swap!
+  swapQuote(
+    beneficiaryAddress: String
+    destTokenAddress: String!
+    initiatorAddress: String!
+    network: Network!
+    srcTokenAddress: String!
+
+    """
+    In human units. For example, of swapping USDT, "1" would represent 1 USDT.
+    """
+    srcTokenAmount: Decimal!
+  ): SwapQuote!
   swaps(
     """
     Only items coming immediately after this will be returned. Can be combined with "first".
@@ -199,6 +211,45 @@ type Swap {
   updatedAt: DateTime!
 }
 
+type SwapQuote {
+  bestRoute: SwapQuoteBestRoute!
+  destTokenPriceUsd: Decimal!
+  otherExchanges: [SwapQuoteOtherExchange!]!
+  srcTokenAmount: Decimal!
+  srcTokenAmountUsd: Decimal!
+  srcTokenPriceUsd: Decimal!
+}
+
+type SwapQuoteBestRoute {
+  destTokenAmount: Decimal!
+  destTokenAmountUsd: Decimal!
+  estimatedGas: Decimal!
+  estimatedGasUsd: Decimal!
+  fractionOfBest: Decimal!
+  path: [[SwapQuotePathItem!]!]!
+  spender: String!
+  transaction: TransactionData!
+}
+
+type SwapQuoteOtherExchange {
+  destTokenAddress: String!
+  destTokenAmount: Decimal!
+  destTokenAmountUsd: Decimal!
+  estimatedGas: Decimal!
+  estimatedGasUsd: Decimal!
+  exchange: String!
+  fraction: Decimal!
+  fractionOfBest: Decimal!
+  srcTokenAddress: String!
+}
+
+type SwapQuotePathItem {
+  destTokenAddress: String!
+  exchange: String!
+  fraction: Decimal!
+  srcTokenAddress: String!
+}
+
 enum SwapStatus {
   CONFIRMED
   FAILED
@@ -277,4 +328,14 @@ type TokensConnection {
 type TokensConnectionEdges {
   cursor: String!
   node: Token!
+}
+
+type TransactionData {
+  chainId: Int!
+  data: String!
+  from: String!
+  gas: String!
+  gasPrice: String!
+  to: String!
+  value: String!
 }

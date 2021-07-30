@@ -1,25 +1,49 @@
-import { Big } from 'big.js';
+import { Prisma } from '@prisma/client';
 import { stringifyUrl } from 'query-string';
+import Web3 from 'web3';
 
 import { fetcher } from '../../fetch';
 import { getNetworkId } from '../../networks';
 import { ENDPOINT_1INCH_API } from '../constants';
 import { NATIVE_TOKEN_ADDRESS } from '../../para-inch';
+import { prisma } from '../../server__env';
 import { getPriceUsd } from '../coin-details';
 
-import type { InteralGetSwapQuoteParams, SwapQuote, SwapQuoteRouteStep } from './types';
+import type { SwapQuote, GetSwapQuoteParams } from './types';
 
 export const getOneInchSwapQuote = async ({
-  amount,
-  isAmountValid,
+  beneficiaryAddress,
+  destTokenAddress,
+  initiatorAddress,
   network,
-  fromToken,
-  toToken,
-  slippageFraction,
-  sourceAddress,
-}: InteralGetSwapQuoteParams): Promise<SwapQuote> => {
-  const [nativeTokenPriceUsd, fromTokenPriceUsd, toTokenPriceUsd] = await Promise.all(
-    [NATIVE_TOKEN_ADDRESS, fromToken.address, toToken.address].map((tokenAddress) =>
+  srcTokenAddress,
+  srcTokenAmount: srcTokenAmountParam,
+}: GetSwapQuoteParams): Promise<SwapQuote> => {
+  const { srcToken, destToken } = await (async () => {
+    const web3 = new Web3();
+    const srcToken = await prisma.token.findUnique({
+      where: {
+        network_address: { network, address: web3.utils.toChecksumAddress(srcTokenAddress) },
+      },
+    });
+    if (!srcToken) {
+      throw new Error(`Could not find token "${srcTokenAddress}" on network ${network}`);
+    }
+
+    const destToken = await prisma.token.findUnique({
+      where: {
+        network_address: { network, address: web3.utils.toChecksumAddress(destTokenAddress) },
+      },
+    });
+    if (!destToken) {
+      throw new Error(`Could not find token "${destTokenAddress}" on network ${network}`);
+    }
+
+    return { srcToken, destToken };
+  })();
+
+  const [nativeTokenPriceUsd, srcTokenPriceUsd, destTokenPriceUsd] = await Promise.all(
+    [NATIVE_TOKEN_ADDRESS, srcTokenAddress, destTokenAddress].map((tokenAddress) =>
       getPriceUsd({ network, tokenAddress }),
     ),
   );
@@ -48,105 +72,62 @@ export const getOneInchSwapQuote = async ({
     };
   }>(
     stringifyUrl({
-      url: `${ENDPOINT_1INCH_API}/${network}/${sourceAddress ? 'swap' : 'quote'}`,
+      url: `${ENDPOINT_1INCH_API}/${network}/swap`,
       query: {
-        fromTokenAddress: fromToken.address,
-        toTokenAddress: toToken.address,
-        amount: amount.toFixed(),
-        fromAddress: sourceAddress || undefined,
-        slippage: slippageFraction.toNumber(),
+        fromTokenAddress: srcToken.address,
+        toTokenAddress: destToken.address,
+        amount: srcTokenAmountParam.toFixed(),
+        fromAddress: initiatorAddress,
+        slippage: '0.05',
+        destReceiver: beneficiaryAddress || undefined,
       },
     }),
   );
 
-  const estimatedGas = (() => {
-    try {
-      return result.estimatedGas ? new Big(result.estimatedGas) : null;
-    } catch (e) {
-      return null;
-    }
-  })();
+  if (!result.tx) {
+    throw new Error('Did not get a "tx" object from 1inch');
+  }
 
-  const estimatedGasUsd = (() => {
-    if (estimatedGas === null) {
-      return null;
-    }
+  const estimatedGas = new Prisma.Decimal(result.estimatedGas);
+  const estimatedGasUsd = new Prisma.Decimal(estimatedGas).times(nativeTokenPriceUsd);
+  const srcTokenAmount = new Prisma.Decimal(result.fromTokenAmount).div(`1e${srcToken.decimals}`);
+  const srcTokenAmountUsd = new Prisma.Decimal(srcTokenAmount).times(srcTokenPriceUsd);
+  const destTokenAmount = new Prisma.Decimal(result.toTokenAmount).div(`1e${destToken.decimals}`);
+  const destTokenAmountUsd = new Prisma.Decimal(destTokenAmount).times(destTokenPriceUsd);
 
-    try {
-      return new Big(estimatedGas).times(nativeTokenPriceUsd);
-    } catch (e) {
-      return Big(0);
-    }
-  })();
-
-  const fromTokenAmount = (() => {
-    try {
-      if (!isAmountValid) return new Big(0);
-      return new Big(result.fromTokenAmount).div(`1e${fromToken.decimals}`);
-    } catch (e) {
-      return Big(0);
-    }
-  })();
-
-  const fromTokenAmountUsd = (() => {
-    try {
-      return new Big(fromTokenAmount).times(fromTokenPriceUsd);
-    } catch (e) {
-      return Big(0);
-    }
-  })();
-
-  const toTokenAmount = (() => {
-    try {
-      if (!isAmountValid) return new Big(0);
-      return new Big(result.toTokenAmount).div(`1e${toToken.decimals}`);
-    } catch (e) {
-      return Big(0);
-    }
-  })();
-
-  const toTokenAmountUsd = (() => {
-    try {
-      return new Big(toTokenAmount).times(toTokenPriceUsd);
-    } catch (e) {
-      return Big(0);
-    }
-  })();
-
-  const transaction = await (async (): Promise<SwapQuote['bestRoute']['transaction']> => {
-    if (!result.tx || !isAmountValid) return null;
-    return { ...result.tx, chainId: getNetworkId(network) };
-  })();
+  const transaction: SwapQuote['bestRoute']['transaction'] = {
+    ...result.tx,
+    gas: `${result.tx.gas}`,
+    chainId: getNetworkId(network),
+  };
 
   return {
-    fromTokenPriceUsd,
-    toTokenPriceUsd,
-    fromTokenAmount,
-    fromTokenAmountUsd,
-    otherRoutes: [],
+    srcTokenPriceUsd,
+    destTokenPriceUsd,
+    srcTokenAmount,
+    srcTokenAmountUsd,
+    otherExchanges: [],
     bestRoute: {
-      fractionOfBest: new Big(1),
-      spender: result.tx?.to || null,
+      fractionOfBest: new Prisma.Decimal(1),
+      spender: transaction.to,
       transaction,
       estimatedGas,
-      toTokenAmountUsd,
+      destTokenAmountUsd,
       estimatedGasUsd,
-      toTokenAmount,
+      destTokenAmount,
       path: result.protocols[0].map((it) =>
-        it.map(
-          (it): SwapQuoteRouteStep => ({
-            exchange: it.name,
-            fraction: (() => {
-              try {
-                return new Big(it.part).div(100);
-              } catch (e) {
-                return new Big(0);
-              }
-            })(),
-            fromTokenAddress: it.fromTokenAddress,
-            toTokenAddress: it.toTokenAddress,
-          }),
-        ),
+        it.map((it): SwapQuote['bestRoute']['path'][number][number] => ({
+          exchange: it.name,
+          fraction: (() => {
+            try {
+              return new Prisma.Decimal(it.part).div(100);
+            } catch (e) {
+              return new Prisma.Decimal(0);
+            }
+          })(),
+          srcTokenAddress: it.fromTokenAddress,
+          destTokenAddress: it.toTokenAddress,
+        })),
       ),
     },
   };

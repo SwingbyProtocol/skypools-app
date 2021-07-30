@@ -1,91 +1,97 @@
-import { extendType, objectType, arg, inputObjectType, idArg, nonNull } from 'nexus';
+import { extendType, objectType, arg, nonNull, nullable, list } from 'nexus';
 
-import { paginate, paginatedType, paginationArgs } from './pagination';
+import { getSwapQuote } from '../server__para-inch';
 
-export const Swap = objectType({
-  name: 'Swap',
+const SwapQuotePathItem = objectType({
+  name: 'SwapQuotePathItem',
   definition(t) {
-    t.model('SwapHistoric').id();
-    t.model('SwapHistoric').network();
-    t.model('SwapHistoric').hash();
-    t.model('SwapHistoric').at();
-    t.model('SwapHistoric').status();
-    t.model('SwapHistoric').blockNumber();
-    t.model('SwapHistoric').contractAddress();
-    t.model('SwapHistoric').initiatorAddress();
-
-    t.model('SwapHistoric').srcToken();
-    t.model('SwapHistoric').srcAmount();
-    t.model('SwapHistoric').destToken();
-    t.model('SwapHistoric').destAmount();
-
-    t.model('SwapHistoric').createdAt();
-    t.model('SwapHistoric').updatedAt();
+    t.nonNull.field('exchange', { type: 'String' });
+    t.nonNull.field('fraction', { type: 'Decimal' });
+    t.nonNull.field('srcTokenAddress', { type: 'String' });
+    t.nonNull.field('destTokenAddress', { type: 'String' });
   },
 });
 
-const SwapWhereInput = inputObjectType({
-  name: 'SwapWhereInput',
+const SwapQuotePath = list(nonNull(list(nonNull(SwapQuotePathItem))));
+
+const SwapQuoteOtherExchange = objectType({
+  name: 'SwapQuoteOtherExchange',
   definition(t) {
-    t.list.field('AND', { type: 'SwapWhereInput' });
-    t.field('NOT', { type: 'SwapWhereInput' });
-    t.list.field('OR', { type: 'SwapWhereInput' });
+    t.nonNull.field('exchange', { type: 'String' });
+    t.nonNull.field('fraction', { type: 'Decimal' });
+    t.nonNull.field('srcTokenAddress', { type: 'String' });
+    t.nonNull.field('destTokenAddress', { type: 'String' });
 
-    t.field('id', { type: 'StringFilter' });
-    t.field('network', { type: 'NetworkEnumFilter' });
-    t.field('hash', { type: 'StringFilter' });
-    t.field('at', { type: 'DateTimeFilter' });
-    t.field('status', { type: 'SwapStatusEnumFilter' });
-    t.field('blockNumber', { type: 'BigIntFilter' });
-    t.field('contractAddress', { type: 'StringFilter' });
-    t.field('initiatorAddress', { type: 'StringFilter' });
-
-    t.field('srcAmount', { type: 'DecimalFilter' });
-    t.field('srcToken', { type: 'TokenWhereInput' });
-    t.field('destAmount', { type: 'DecimalFilter' });
-    t.field('destToken', { type: 'TokenWhereInput' });
-
-    t.field('createdAt', { type: 'DateTimeFilter' });
-    t.field('updatedAt', { type: 'DateTimeFilter' });
+    t.nonNull.field('destTokenAmount', { type: 'Decimal' });
+    t.nonNull.field('destTokenAmountUsd', { type: 'Decimal' });
+    t.nonNull.field('estimatedGas', { type: 'Decimal' });
+    t.nonNull.field('estimatedGasUsd', { type: 'Decimal' });
+    t.nonNull.field('fractionOfBest', { type: 'Decimal' });
   },
 });
 
-export const SwapQuery = extendType({
+const TransactionData = objectType({
+  name: 'TransactionData',
+  definition(t) {
+    t.nonNull.field('from', { type: 'String' });
+    t.nonNull.field('to', { type: 'String' });
+    t.nonNull.field('data', { type: 'String' });
+    t.nonNull.field('value', { type: 'String' });
+    t.nonNull.field('gas', { type: 'String' });
+    t.nonNull.field('gasPrice', { type: 'String' });
+    t.nonNull.field('chainId', { type: 'Int' });
+  },
+});
+
+const SwapQuoteBestRoute = objectType({
+  name: 'SwapQuoteBestRoute',
+  definition(t) {
+    t.nonNull.field('path', { type: SwapQuotePath });
+
+    t.nonNull.field('destTokenAmount', { type: 'Decimal' });
+    t.nonNull.field('destTokenAmountUsd', { type: 'Decimal' });
+    t.nonNull.field('estimatedGas', { type: 'Decimal' });
+    t.nonNull.field('estimatedGasUsd', { type: 'Decimal' });
+    t.nonNull.field('fractionOfBest', { type: 'Decimal' });
+
+    t.nonNull.field('spender', { type: 'String' });
+    t.nonNull.field('transaction', { type: TransactionData });
+  },
+});
+
+const SwapQuote = objectType({
+  name: 'SwapQuote',
+  definition(t) {
+    t.nonNull.field('srcTokenPriceUsd', { type: 'Decimal' });
+    t.nonNull.field('srcTokenAmount', { type: 'Decimal' });
+    t.nonNull.field('srcTokenAmountUsd', { type: 'Decimal' });
+    t.nonNull.field('destTokenPriceUsd', { type: 'Decimal' });
+    t.nonNull.field('bestRoute', { type: SwapQuoteBestRoute });
+    t.nonNull.list.nonNull.field('otherExchanges', { type: SwapQuoteOtherExchange });
+  },
+});
+
+export const SwapQuoteQuery = extendType({
   type: 'Query',
   definition(t) {
-    t.nonNull.field('swap', {
-      type: 'Swap',
-      args: { id: nonNull(idArg()) },
-      async resolve(source, args, ctx, info) {
-        return ctx.prisma.swapHistoric.findUnique({
-          where: { id: args.id },
-          rejectOnNotFound: true,
-        });
-      },
-    });
-  },
-});
-
-export const SwapsQuery = extendType({
-  type: 'Query',
-  definition(t) {
-    t.nonNull.field('swaps', {
-      type: paginatedType({ nodeType: 'Swap', alias: 'Swaps' }),
+    t.nonNull.field('swapQuote', {
+      type: SwapQuote,
       args: {
-        where: arg({
-          type: SwapWhereInput,
-          description: 'Allows to filter results by several properties.',
-        }),
-        ...paginationArgs,
+        initiatorAddress: nonNull(arg({ type: 'String' })),
+        beneficiaryAddress: nullable(arg({ type: 'String' })),
+        srcTokenAmount: nonNull(
+          arg({
+            type: 'Decimal',
+            description:
+              'In human units. For example, of swapping USDT, "1" would represent 1 USDT.',
+          }),
+        ),
+        srcTokenAddress: nonNull(arg({ type: 'String' })),
+        destTokenAddress: nonNull(arg({ type: 'String' })),
+        network: nonNull(arg({ type: 'Network' })),
       },
       async resolve(source, args, ctx, info) {
-        return paginate({
-          ...args,
-          allEdges: await ctx.prisma.swapHistoric.findMany({
-            where: args.where as any,
-            orderBy: [{ at: 'desc' }, { blockNumber: 'desc' }, { hash: 'asc' }],
-          }),
-        });
+        return getSwapQuote(args);
       },
     });
   },

@@ -1,6 +1,6 @@
-import { Big } from 'big.js';
 import { DateTime, Duration } from 'luxon';
 import { stringifyUrl } from 'query-string';
+import { Prisma } from '@prisma/client';
 
 import { Network } from '../networks';
 import { fetcher } from '../fetch';
@@ -15,7 +15,7 @@ const HISTORY_LENGTH = Duration.fromObject({ months: 6 });
 
 type PriceHistoryItem = {
   at: DateTime;
-  value: Big;
+  value: Prisma.Decimal;
 };
 
 export type PriceHistory = PriceHistoryItem[];
@@ -49,7 +49,7 @@ export const getPriceUsd = async ({
 }: {
   network: Network;
   tokenAddress: string;
-}): Promise<Big> => {
+}): Promise<Prisma.Decimal> => {
   const address = getContractAddress({ address: tokenAddress, network });
 
   const result = await fetcher<{
@@ -61,7 +61,7 @@ export const getPriceUsd = async ({
     }),
   );
 
-  return new Big(result[address.toLowerCase()].usd);
+  return new Prisma.Decimal(result[address.toLowerCase()].usd);
 };
 
 export const getTokenLogoFromCoingecko = async ({
@@ -114,7 +114,7 @@ export const getPriceHistoryFromCoingecko = async ({
     .map(
       ([at, value]): PriceHistoryItem => ({
         at: DateTime.fromMillis(at, { zone: 'utc' }),
-        value: new Big(value),
+        value: new Prisma.Decimal(value),
       }),
     )
     .sort((a, b) => a.at.toMillis() - b.at.toMillis());
