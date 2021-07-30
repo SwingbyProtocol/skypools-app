@@ -18,10 +18,6 @@ const SwapQuoteOtherExchange = objectType({
   name: 'SwapQuoteOtherExchange',
   definition(t) {
     t.nonNull.field('exchange', { type: 'String' });
-    t.nonNull.field('fraction', { type: 'Decimal' });
-    t.nonNull.field('srcTokenAddress', { type: 'String' });
-    t.nonNull.field('destTokenAddress', { type: 'String' });
-
     t.nonNull.field('destTokenAmount', { type: 'Decimal' });
     t.nonNull.field('destTokenAmountUsd', { type: 'Decimal' });
     t.nonNull.field('estimatedGas', { type: 'Decimal' });
@@ -60,6 +56,8 @@ const SwapQuoteBestRoute = objectType({
 const SwapQuote = objectType({
   name: 'SwapQuote',
   definition(t) {
+    t.nonNull.field('srcToken', { type: 'Token' });
+    t.nonNull.field('destToken', { type: 'Token' });
     t.nonNull.field('srcTokenPriceUsd', { type: 'Decimal' });
     t.nonNull.field('srcTokenAmount', { type: 'Decimal' });
     t.nonNull.field('srcTokenAmountUsd', { type: 'Decimal' });

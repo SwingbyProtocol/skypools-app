@@ -127,6 +127,8 @@ export const getParaSwapSwapQuote = async ({
   };
 
   return {
+    srcToken,
+    destToken,
     srcTokenPriceUsd,
     destTokenPriceUsd,
     srcTokenAmount,
@@ -144,9 +146,6 @@ export const getParaSwapSwapQuote = async ({
 
         return {
           exchange: it.exchange,
-          fraction: new Prisma.Decimal(1),
-          srcTokenAddress: it.data?.tokenFrom ?? srcToken.address,
-          destTokenAddress: it.data?.tokenTo ?? destToken.address,
           estimatedGas,
           estimatedGasUsd,
           destTokenAmountUsd,

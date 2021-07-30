@@ -101,6 +101,8 @@ export const getOneInchSwapQuote = async ({
   };
 
   return {
+    srcToken,
+    destToken,
     srcTokenPriceUsd,
     destTokenPriceUsd,
     srcTokenAmount,

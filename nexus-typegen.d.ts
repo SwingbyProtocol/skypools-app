@@ -187,8 +187,10 @@ export interface NexusGenObjects {
   SwapQuote: {
     // root type
     bestRoute: NexusGenRootTypes['SwapQuoteBestRoute']; // SwapQuoteBestRoute!
+    destToken: NexusGenRootTypes['Token']; // Token!
     destTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     otherExchanges: NexusGenRootTypes['SwapQuoteOtherExchange'][]; // [SwapQuoteOtherExchange!]!
+    srcToken: NexusGenRootTypes['Token']; // Token!
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     srcTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     srcTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
@@ -206,15 +208,12 @@ export interface NexusGenObjects {
   };
   SwapQuoteOtherExchange: {
     // root type
-    destTokenAddress: string; // String!
     destTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     destTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     estimatedGas: NexusGenScalars['Decimal']; // Decimal!
     estimatedGasUsd: NexusGenScalars['Decimal']; // Decimal!
     exchange: string; // String!
-    fraction: NexusGenScalars['Decimal']; // Decimal!
     fractionOfBest: NexusGenScalars['Decimal']; // Decimal!
-    srcTokenAddress: string; // String!
   };
   SwapQuotePathItem: {
     // root type
@@ -317,8 +316,10 @@ export interface NexusGenFieldTypes {
   SwapQuote: {
     // field return type
     bestRoute: NexusGenRootTypes['SwapQuoteBestRoute']; // SwapQuoteBestRoute!
+    destToken: NexusGenRootTypes['Token']; // Token!
     destTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     otherExchanges: NexusGenRootTypes['SwapQuoteOtherExchange'][]; // [SwapQuoteOtherExchange!]!
+    srcToken: NexusGenRootTypes['Token']; // Token!
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     srcTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     srcTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
@@ -336,15 +337,12 @@ export interface NexusGenFieldTypes {
   };
   SwapQuoteOtherExchange: {
     // field return type
-    destTokenAddress: string; // String!
     destTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     destTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     estimatedGas: NexusGenScalars['Decimal']; // Decimal!
     estimatedGasUsd: NexusGenScalars['Decimal']; // Decimal!
     exchange: string; // String!
-    fraction: NexusGenScalars['Decimal']; // Decimal!
     fractionOfBest: NexusGenScalars['Decimal']; // Decimal!
-    srcTokenAddress: string; // String!
   };
   SwapQuotePathItem: {
     // field return type
@@ -439,8 +437,10 @@ export interface NexusGenFieldTypeNames {
   SwapQuote: {
     // field return type name
     bestRoute: 'SwapQuoteBestRoute';
+    destToken: 'Token';
     destTokenPriceUsd: 'Decimal';
     otherExchanges: 'SwapQuoteOtherExchange';
+    srcToken: 'Token';
     srcTokenAmount: 'Decimal';
     srcTokenAmountUsd: 'Decimal';
     srcTokenPriceUsd: 'Decimal';
@@ -458,15 +458,12 @@ export interface NexusGenFieldTypeNames {
   };
   SwapQuoteOtherExchange: {
     // field return type name
-    destTokenAddress: 'String';
     destTokenAmount: 'Decimal';
     destTokenAmountUsd: 'Decimal';
     estimatedGas: 'Decimal';
     estimatedGasUsd: 'Decimal';
     exchange: 'String';
-    fraction: 'Decimal';
     fractionOfBest: 'Decimal';
-    srcTokenAddress: 'String';
   };
   SwapQuotePathItem: {
     // field return type name
