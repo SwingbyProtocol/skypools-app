@@ -10,7 +10,7 @@ import { PlatformBox } from './PlatformBox';
 
 type Props = {
   className?: string;
-  value: NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute'];
+  value: Pick<NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute'], 'path'>;
 };
 
 export const SwapPath = ({ value, className }: Props) => {

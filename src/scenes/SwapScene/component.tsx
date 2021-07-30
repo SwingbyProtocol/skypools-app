@@ -12,10 +12,7 @@ import { isNativeToken } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { useSkybridgeSwap } from '../../modules/skybridge';
-import {
-  SwapQuoteMutationResult,
-  usePriceHistoryLazyQuery,
-} from '../../generated/skypools-graphql';
+import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
 
 import { History } from './History';
 import {
@@ -41,14 +38,8 @@ const FAKE_PRICE_HISTORY = new Array(150)
   }))
   .reverse();
 
-const FAKE_QUOTE_ROUTE: Omit<
-  NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute'],
-  'transaction'
-> = {
+const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value'] = {
   path: [[{ exchange: '…', fraction: '1' }]],
-  estimatedGasUsd: '0',
-  destTokenAmount: '0',
-  destTokenAmountUsd: '0',
 };
 
 export const SwapScene = () => {
