@@ -85,7 +85,7 @@ export const getParaSwapSwapQuote = async ({
       initiatorAddress,
       'skypools',
       beneficiaryAddress ?? initiatorAddress,
-      { ignoreChecks: true, onlyParams: true },
+      { ignoreChecks: true },
     );
 
     if (isParaSwapApiError(tx)) {
