@@ -1,6 +1,7 @@
-import { Big, BigSource } from 'big.js';
+import { Big } from 'big.js';
 import { FormattedNumber, useIntl } from 'react-intl';
 
+import { SwapQuoteMutationResult } from '../../../generated/skypools-graphql';
 import { PlatformLogo } from '../../PlatformLogo';
 
 import {
@@ -17,7 +18,7 @@ type Props = {
   className?: string;
   withFractions: boolean;
   withNames: boolean;
-  value: Array<{ platform: string; fraction: BigSource }>;
+  value: NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute']['path'][number];
 };
 
 export const PlatformBox = ({ withFractions, withNames, className, value }: Props) => {
@@ -37,15 +38,15 @@ export const PlatformBox = ({ withFractions, withNames, className, value }: Prop
         })();
 
         return (
-          <div key={it.platform} css={item}>
-            <PlatformLogo css={itemLogo} name={it.platform} />
+          <div key={it.exchange} css={item}>
+            <PlatformLogo css={itemLogo} name={it.exchange} />
             {!!withNames && (
               <span css={itemName}>
                 {(() => {
-                  const id = `generic.platform.${it.platform}`;
+                  const id = `generic.platform.${it.exchange}`;
                   const result = formatMessage({ id });
                   if (result === id) {
-                    return it.platform;
+                    return it.exchange;
                   }
 
                   return result;

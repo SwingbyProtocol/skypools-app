@@ -144,7 +144,7 @@ export const getParaSwapSwapQuote = async ({
     })(),
   };
 
-  return {
+  const swapQuote = {
     srcToken,
     destToken,
     srcTokenPriceUsd,
@@ -191,4 +191,7 @@ export const getParaSwapSwapQuote = async ({
         }
       }),
   };
+
+  logger.debug({ swapQuote }, 'Finished building swap quote object');
+  return swapQuote;
 };

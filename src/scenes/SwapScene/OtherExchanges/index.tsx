@@ -20,27 +20,27 @@ import {
 export const OtherExchanges = ({ className }: { className?: string }) => {
   const { swapQuote, isAmountValid } = useParaInch();
 
-  if (!swapQuote || swapQuote.otherRoutes.length < 1) {
+  if (!swapQuote || swapQuote.otherExchanges.length < 1) {
     return <></>;
   }
 
   return (
     <div css={container} className={className}>
-      {swapQuote.otherRoutes.map((it, index) => {
-        const isMatch = it.fractionOfBest.eq(1);
-        const isWorse = it.fractionOfBest.lt(1);
-        const isBetter = it.fractionOfBest.gt(1);
+      {swapQuote.otherExchanges.map((it, index) => {
+        const isMatch = new Big(it.fractionOfBest).eq(1);
+        const isWorse = new Big(it.fractionOfBest).lt(1);
+        const isBetter = new Big(it.fractionOfBest).gt(1);
         return (
           <Fragment key={index}>
             <div css={exchange}>
-              <PlatformLogo css={exchangeLogo} name={it.path?.[0]?.[0]?.exchange} />
-              <span css={exchangeName}>{it.path?.[0]?.[0]?.exchange}</span>
+              <PlatformLogo css={exchangeLogo} name={it.exchange} />
+              <span css={exchangeName}>{it.exchange}</span>
             </div>
 
             <div css={amount}>
               {isAmountValid && (
                 <FormattedNumber
-                  value={it.toTokenAmountUsd.toNumber()}
+                  value={+it.destTokenAmountUsd}
                   style="currency" // eslint-disable-line react/style-prop-object
                   currency="USD"
                 />

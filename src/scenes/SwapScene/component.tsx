@@ -9,11 +9,13 @@ import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
 import { isNativeToken } from '../../modules/para-inch';
-import { SwapQuoteRoute } from '../../modules/server__para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { useSkybridgeSwap } from '../../modules/skybridge';
-import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
+import {
+  SwapQuoteMutationResult,
+  usePriceHistoryLazyQuery,
+} from '../../generated/skypools-graphql';
 
 import { History } from './History';
 import {
@@ -39,17 +41,14 @@ const FAKE_PRICE_HISTORY = new Array(150)
   }))
   .reverse();
 
-const FAKE_QUOTE_ROUTE: SwapQuoteRoute = {
-  path: [
-    [{ exchange: '…', fraction: new Big(1), fromTokenAddress: '0xaa', toTokenAddress: '0xaa' }],
-  ],
-  estimatedGas: new Big(0),
-  estimatedGasUsd: new Big(0),
-  toTokenAmount: new Big(0),
-  toTokenAmountUsd: new Big(0),
-  transaction: null,
-  spender: null,
-  fractionOfBest: new Big(1),
+const FAKE_QUOTE_ROUTE: Omit<
+  NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute'],
+  'transaction'
+> = {
+  path: [[{ exchange: '…', fraction: '1' }]],
+  estimatedGasUsd: '0',
+  destTokenAmount: '0',
+  destTokenAmountUsd: '0',
 };
 
 export const SwapScene = () => {
