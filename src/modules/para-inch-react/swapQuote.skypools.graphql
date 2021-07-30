@@ -22,9 +22,16 @@ mutation SwapQuote(
     destTokenPriceUsd
     srcTokenAmountUsd
     bestRoute {
+      spender
       destTokenAmount
       destTokenAmountUsd
       estimatedGasUsd
+      transaction {
+        from
+        to
+        data
+        value
+      }
       path {
         exchange
         fraction

@@ -100,9 +100,11 @@ export const useParaInchSwap = () => {
       return null;
     }
 
-    return () => {
+    return async () => {
       const web3 = new Web3(provider);
-      return web3.eth.sendTransaction(transaction);
+      const gasPrice = await web3.eth.getGasPrice();
+      const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
+      return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
     };
   }, [
     isApprovalNeeded,
