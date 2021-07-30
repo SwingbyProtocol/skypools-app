@@ -75,6 +75,21 @@ input IntFilter {
   notIn: [Int]
 }
 
+type Mutation {
+  swapQuote(
+    beneficiaryAddress: String
+    destTokenAddress: String!
+    initiatorAddress: String!
+    network: Network!
+    srcTokenAddress: String!
+
+    """
+    In human units. For example, of swapping USDT, "1" would represent 1 USDT.
+    """
+    srcTokenAmount: Decimal!
+  ): SwapQuote!
+}
+
 enum Network {
   BSC
   ETHEREUM
@@ -107,18 +122,6 @@ type Query {
   ): [PriceHistoricItem!]!
   spender(network: Network!): String!
   swap(id: ID!): Swap!
-  swapQuote(
-    beneficiaryAddress: String
-    destTokenAddress: String!
-    initiatorAddress: String!
-    network: Network!
-    srcTokenAddress: String!
-
-    """
-    In human units. For example, of swapping USDT, "1" would represent 1 USDT.
-    """
-    srcTokenAmount: Decimal!
-  ): SwapQuote!
   swaps(
     """
     Only items coming immediately after this will be returned. Can be combined with "first".

@@ -163,6 +163,7 @@ export interface NexusGenObjects {
     hasPreviousPage: boolean; // Boolean!
     startCursor: string; // String!
   };
+  Mutation: {};
   PriceHistoricItem: {
     // root type
     at: NexusGenScalars['DateTime']; // DateTime!
@@ -281,6 +282,10 @@ export interface NexusGenFieldTypes {
     hasPreviousPage: boolean; // Boolean!
     startCursor: string; // String!
   };
+  Mutation: {
+    // field return type
+    swapQuote: NexusGenRootTypes['SwapQuote']; // SwapQuote!
+  };
   PriceHistoricItem: {
     // field return type
     at: NexusGenScalars['DateTime']; // DateTime!
@@ -291,7 +296,6 @@ export interface NexusGenFieldTypes {
     priceHistoric: NexusGenRootTypes['PriceHistoricItem'][]; // [PriceHistoricItem!]!
     spender: string; // String!
     swap: NexusGenRootTypes['Swap']; // Swap!
-    swapQuote: NexusGenRootTypes['SwapQuote']; // SwapQuote!
     swaps: NexusGenRootTypes['SwapsConnection']; // SwapsConnection!
     token: NexusGenRootTypes['Token']; // Token!
     tokens: NexusGenRootTypes['TokensConnection']; // TokensConnection!
@@ -402,6 +406,10 @@ export interface NexusGenFieldTypeNames {
     hasPreviousPage: 'Boolean';
     startCursor: 'String';
   };
+  Mutation: {
+    // field return type name
+    swapQuote: 'SwapQuote';
+  };
   PriceHistoricItem: {
     // field return type name
     at: 'DateTime';
@@ -412,7 +420,6 @@ export interface NexusGenFieldTypeNames {
     priceHistoric: 'PriceHistoricItem';
     spender: 'String';
     swap: 'Swap';
-    swapQuote: 'SwapQuote';
     swaps: 'SwapsConnection';
     token: 'Token';
     tokens: 'TokensConnection';
@@ -516,6 +523,17 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    swapQuote: {
+      // args
+      beneficiaryAddress?: string | null; // String
+      destTokenAddress: string; // String!
+      initiatorAddress: string; // String!
+      network: NexusGenEnums['Network']; // Network!
+      srcTokenAddress: string; // String!
+      srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
+    };
+  };
   Query: {
     priceHistoric: {
       // args
@@ -529,15 +547,6 @@ export interface NexusGenArgTypes {
     swap: {
       // args
       id: string; // ID!
-    };
-    swapQuote: {
-      // args
-      beneficiaryAddress?: string | null; // String
-      destTokenAddress: string; // String!
-      initiatorAddress: string; // String!
-      network: NexusGenEnums['Network']; // Network!
-      srcTokenAddress: string; // String!
-      srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     };
     swaps: {
       // args

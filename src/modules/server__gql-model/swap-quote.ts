@@ -67,8 +67,8 @@ const SwapQuote = objectType({
   },
 });
 
-export const SwapQuoteQuery = extendType({
-  type: 'Query',
+export const SwapQuoteMutation = extendType({
+  type: 'Mutation',
   definition(t) {
     t.nonNull.field('swapQuote', {
       type: SwapQuote,
