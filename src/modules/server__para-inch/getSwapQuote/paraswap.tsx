@@ -100,20 +100,38 @@ export const getParaSwapSwapQuote = async ({
     fractionOfBest: new Prisma.Decimal(1),
     transaction,
     spender,
-    path: result.bestRoute.map((it): SwapQuote['bestRoute']['path'][number] => [
-      {
-        exchange: it.exchange,
-        fraction: (() => {
-          try {
-            return new Prisma.Decimal(it.percent).div(100);
-          } catch (e) {
-            return new Prisma.Decimal(0);
-          }
-        })(),
-        srcTokenAddress: it.data?.tokenFrom ?? srcTokenAddress,
-        destTokenAddress: it.data?.tokenTo ?? destTokenAddress,
-      },
-    ]),
+    path: await Promise.all(
+      result.bestRoute.map(async (it): Promise<SwapQuote['bestRoute']['path'][number]> => {
+        const web3 = new Web3();
+        const srcTokenAddress = web3.utils.toChecksumAddress(it.data?.tokenFrom);
+        const destTokenAddress = web3.utils.toChecksumAddress(it.data?.tokenTo);
+
+        const srcToken = await prisma.token.findUnique({
+          where: { network_address: { network, address: srcTokenAddress } },
+        });
+
+        const destToken = await prisma.token.findUnique({
+          where: { network_address: { network, address: destTokenAddress } },
+        });
+
+        return [
+          {
+            exchange: it.exchange,
+            fraction: (() => {
+              try {
+                return new Prisma.Decimal(it.percent).div(100);
+              } catch (e) {
+                return new Prisma.Decimal(0);
+              }
+            })(),
+            srcTokenAddress,
+            destTokenAddress,
+            srcToken,
+            destToken,
+          },
+        ];
+      }),
+    ),
     estimatedGas: new Prisma.Decimal(result.bestRouteGas),
     estimatedGasUsd: new Prisma.Decimal(result.bestRouteGasCostUSD),
     ...(() => {

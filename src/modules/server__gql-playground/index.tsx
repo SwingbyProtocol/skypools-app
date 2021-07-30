@@ -93,5 +93,50 @@ export const playground: Config['playground'] = {
        `),
       ),
     },
+    {
+      name: 'Swap quote',
+      endpoint,
+      query: print(
+        parse(`
+          mutation {
+            swapQuote(
+              initiatorAddress: "0x3A9077DE17DF9630C50A9fdcbf11a96015f20B5A"
+              srcTokenAmount: "1"
+              srcTokenAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7"
+              destTokenAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+              network: ETHEREUM
+            ) {
+              srcToken {
+                symbol
+              }
+              destToken {
+                symbol
+              }
+              srcTokenAmountUsd
+              bestRoute {
+                destTokenAmountUsd
+                estimatedGasUsd
+                path {
+                  exchange
+                  fraction
+                  srcToken {
+                    symbol
+                  }
+                  destToken {
+                    symbol
+                  }
+                }
+              }
+              otherExchanges {
+                exchange
+                destTokenAmountUsd
+                estimatedGasUsd
+                fractionOfBest
+              }
+            }
+          }
+       `),
+      ),
+    },
   ],
 };

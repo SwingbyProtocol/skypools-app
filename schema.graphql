@@ -246,9 +246,11 @@ type SwapQuoteOtherExchange {
 }
 
 type SwapQuotePathItem {
+  destToken: Token
   destTokenAddress: String!
   exchange: String!
   fraction: Decimal!
+  srcToken: Token
   srcTokenAddress: String!
 }
 

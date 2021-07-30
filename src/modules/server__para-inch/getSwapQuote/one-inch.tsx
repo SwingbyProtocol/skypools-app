@@ -116,19 +116,43 @@ export const getOneInchSwapQuote = async ({
       destTokenAmountUsd,
       estimatedGasUsd,
       destTokenAmount,
-      path: result.protocols[0].map((it) =>
-        it.map((it): SwapQuote['bestRoute']['path'][number][number] => ({
-          exchange: it.name,
-          fraction: (() => {
-            try {
-              return new Prisma.Decimal(it.part).div(100);
-            } catch (e) {
-              return new Prisma.Decimal(0);
-            }
-          })(),
-          srcTokenAddress: it.fromTokenAddress,
-          destTokenAddress: it.toTokenAddress,
-        })),
+      path: await Promise.all(
+        result.protocols[0].map(
+          async (it) =>
+            await Promise.all(
+              it.map(async (it): Promise<SwapQuote['bestRoute']['path'][number][number]> => {
+                const web3 = new Web3();
+                return {
+                  exchange: it.name,
+                  fraction: (() => {
+                    try {
+                      return new Prisma.Decimal(it.part).div(100);
+                    } catch (e) {
+                      return new Prisma.Decimal(0);
+                    }
+                  })(),
+                  srcTokenAddress: it.fromTokenAddress,
+                  destTokenAddress: it.toTokenAddress,
+                  srcToken: await prisma.token.findUnique({
+                    where: {
+                      network_address: {
+                        network,
+                        address: web3.utils.toChecksumAddress(srcTokenAddress),
+                      },
+                    },
+                  }),
+                  destToken: await prisma.token.findUnique({
+                    where: {
+                      network_address: {
+                        network,
+                        address: web3.utils.toChecksumAddress(destTokenAddress),
+                      },
+                    },
+                  }),
+                };
+              }),
+            ),
+        ),
       ),
     },
   };

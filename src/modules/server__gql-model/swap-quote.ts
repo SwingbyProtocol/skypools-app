@@ -9,6 +9,8 @@ const SwapQuotePathItem = objectType({
     t.nonNull.field('fraction', { type: 'Decimal' });
     t.nonNull.field('srcTokenAddress', { type: 'String' });
     t.nonNull.field('destTokenAddress', { type: 'String' });
+    t.nullable.field('srcToken', { type: 'Token' });
+    t.nullable.field('destToken', { type: 'Token' });
   },
 });
 

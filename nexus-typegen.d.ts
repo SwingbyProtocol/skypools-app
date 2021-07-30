@@ -218,9 +218,11 @@ export interface NexusGenObjects {
   };
   SwapQuotePathItem: {
     // root type
+    destToken?: NexusGenRootTypes['Token'] | null; // Token
     destTokenAddress: string; // String!
     exchange: string; // String!
     fraction: NexusGenScalars['Decimal']; // Decimal!
+    srcToken?: NexusGenRootTypes['Token'] | null; // Token
     srcTokenAddress: string; // String!
   };
   SwapsConnection: {
@@ -350,9 +352,11 @@ export interface NexusGenFieldTypes {
   };
   SwapQuotePathItem: {
     // field return type
+    destToken: NexusGenRootTypes['Token'] | null; // Token
     destTokenAddress: string; // String!
     exchange: string; // String!
     fraction: NexusGenScalars['Decimal']; // Decimal!
+    srcToken: NexusGenRootTypes['Token'] | null; // Token
     srcTokenAddress: string; // String!
   };
   SwapsConnection: {
@@ -474,9 +478,11 @@ export interface NexusGenFieldTypeNames {
   };
   SwapQuotePathItem: {
     // field return type name
+    destToken: 'Token';
     destTokenAddress: 'String';
     exchange: 'String';
     fraction: 'Decimal';
+    srcToken: 'Token';
     srcTokenAddress: 'String';
   };
   SwapsConnection: {
