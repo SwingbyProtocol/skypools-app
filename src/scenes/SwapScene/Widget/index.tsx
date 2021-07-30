@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { Big } from 'big.js';
 
 import { Button } from '../../../components/Button';
 import { useParaInch, useParaInchSwap } from '../../../modules/para-inch-react';
@@ -42,26 +43,26 @@ export const Widget = () => {
       coin: fromToken,
       amount,
       amountInfo:
-        !isAmountValid || !swapQuote?.fromTokenAmountUsd ? null : (
+        !isAmountValid || !swapQuote?.srcTokenAmountUsd ? null : (
           <FormattedNumber
-            value={swapQuote.fromTokenAmountUsd.toNumber()}
+            value={+swapQuote.srcTokenAmountUsd}
             style="currency" // eslint-disable-line react/style-prop-object
             currency="USD"
             currencyDisplay="narrowSymbol"
           />
         ),
     }),
-    [fromToken, amount, swapQuote?.fromTokenAmountUsd, isAmountValid],
+    [fromToken, amount, swapQuote?.srcTokenAmountUsd, isAmountValid],
   );
 
   const to = useMemo(
     (): CoinAmountInputValue => ({
       coin: toToken,
-      amount: (!isAmountValid ? null : swapQuote?.bestRoute.toTokenAmount.toFixed()) ?? null,
+      amount: (!isAmountValid ? null : swapQuote?.bestRoute.destTokenAmount) ?? null,
       amountInfo:
-        !isAmountValid || !swapQuote?.bestRoute.toTokenAmountUsd ? null : (
+        !isAmountValid || !swapQuote?.bestRoute.destTokenAmountUsd ? null : (
           <FormattedNumber
-            value={swapQuote.bestRoute.toTokenAmountUsd.toNumber()}
+            value={+swapQuote.bestRoute.destTokenAmountUsd}
             style="currency" // eslint-disable-line react/style-prop-object
             currency="USD"
             currencyDisplay="narrowSymbol"
@@ -70,8 +71,8 @@ export const Widget = () => {
     }),
     [
       toToken,
-      swapQuote?.bestRoute.toTokenAmount,
-      swapQuote?.bestRoute.toTokenAmountUsd,
+      swapQuote?.bestRoute.destTokenAmount,
+      swapQuote?.bestRoute.destTokenAmountUsd,
       isAmountValid,
     ],
   );
@@ -144,7 +145,9 @@ export const Widget = () => {
                 1&nbsp;{fromToken?.symbol}&nbsp;=&nbsp;
                 <span css={infoValueHighlight}>
                   <FormattedNumber
-                    value={swapQuote.fromTokenPriceUsd.times(swapQuote.toTokenPriceUsd).toNumber()}
+                    value={new Big(swapQuote.srcTokenPriceUsd)
+                      .times(swapQuote.destTokenPriceUsd)
+                      .toNumber()}
                     maximumSignificantDigits={6}
                   />
                 </span>
@@ -157,7 +160,9 @@ export const Widget = () => {
                 1&nbsp;{toToken?.symbol}&nbsp;=&nbsp;
                 <span css={infoValueHighlight}>
                   <FormattedNumber
-                    value={swapQuote.toTokenPriceUsd.div(swapQuote.fromTokenPriceUsd).toNumber()}
+                    value={new Big(swapQuote.srcTokenPriceUsd)
+                      .div(swapQuote.destTokenPriceUsd)
+                      .toNumber()}
                     maximumSignificantDigits={6}
                   />
                 </span>
@@ -172,7 +177,7 @@ export const Widget = () => {
                 </td>
                 <td css={infoValue}>
                   <FormattedNumber
-                    value={swapQuote.bestRoute.estimatedGasUsd.toNumber()}
+                    value={+swapQuote.bestRoute.estimatedGasUsd}
                     style="currency" // eslint-disable-line react/style-prop-object
                     currency="USD"
                   />

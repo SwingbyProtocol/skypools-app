@@ -14,29 +14,65 @@ enum Network {
 }
 
 model Token {
-  id                    String                  @id
-  network               Network
-  address               String
-  decimals              Int                     @db.SmallInt
-  symbol                String
-  logoUri               String?
-  usdPriceHistoric      TokenUsdPriceHistoric[] @relation("TokenUsdPriceHistoric")
-  priceHistoryUpdatedAt DateTime                @default(now())
-  logoUpdatedAt         DateTime                @default(now())
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
+  id       String  @id
+  network  Network
+  address  String
+  decimals Int     @db.SmallInt
+  symbol   String
+  logoUri  String?
+
+  priceHistoryUpdatedAt DateTime @default(now())
+  logoUpdatedAt         DateTime @default(now())
+
+  usdPriceHistoric TokenUsdPriceHistoric[] @relation("TokenUsdPriceHistoric")
+  swapsAsSrc       SwapHistoric[]          @relation("SwapSourceToken")
+  swapsAsDest      SwapHistoric[]          @relation("SwapDestToken")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([network, address])
   @@index([network, address])
 }
 
 model TokenUsdPriceHistoric {
-  tokenId   String
-  token     Token    @relation("TokenUsdPriceHistoric", fields: [tokenId], references: [id])
-  at        DateTime
-  price     Decimal  @db.Decimal(65, 20)
+  tokenId String
+  token   Token    @relation("TokenUsdPriceHistoric", fields: [tokenId], references: [id])
+  at      DateTime
+  price   Decimal  @db.Decimal(65, 20)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@id([tokenId, at])
+}
+
+enum SwapStatus {
+  SENT
+  CONFIRMED
+  FAILED
+}
+
+model SwapHistoric {
+  id               String     @id
+  network          Network
+  hash             String
+  at               DateTime
+  status           SwapStatus
+  blockNumber      BigInt
+  contractAddress  String
+  initiatorAddress String
+
+  srcAmount   Decimal? @db.Decimal(65, 20)
+  srcToken    Token?   @relation("SwapSourceToken", fields: [srcTokenId], references: [id])
+  srcTokenId  String?
+  destAmount  Decimal? @db.Decimal(65, 20)
+  destToken   Token?   @relation("SwapDestToken", fields: [destTokenId], references: [id])
+  destTokenId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([network, hash])
+  @@index([network, hash])
 }

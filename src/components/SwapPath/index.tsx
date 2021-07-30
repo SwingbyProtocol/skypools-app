@@ -3,55 +3,31 @@ import { useContainerQuery } from 'react-container-query';
 
 import { Icon } from '../Icon';
 import { Coin } from '../Coin';
-import type { SwapQuoteRoute } from '../../modules/server__para-inch';
-import { useParaInch } from '../../modules/para-inch-react';
+import { SwapQuoteMutationResult } from '../../generated/skypools-graphql';
 
 import { coin, swapPath, divider, wrapper } from './styles';
 import { PlatformBox } from './PlatformBox';
 
 type Props = {
   className?: string;
-  value: SwapQuoteRoute;
+  value: Pick<NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute'], 'path'>;
 };
 
-export const SwapPath = ({ value: valueParam, className }: Props) => {
-  const { tokens } = useParaInch();
-
+export const SwapPath = ({ value, className }: Props) => {
   const query = useMemo(
     () => ({
-      withFractions: { minWidth: 120 * valueParam.path?.length },
-      withNames: { minWidth: 280 * valueParam.path?.length },
+      withFractions: { minWidth: 120 * value.path?.length },
+      withNames: { minWidth: 280 * value.path?.length },
     }),
-    [valueParam.path?.length],
+    [value.path?.length],
   );
 
   const [params, containerRef] = useContainerQuery(query, {});
 
-  const value = useMemo(
-    () => ({
-      ...valueParam,
-      path: valueParam.path.map((it) =>
-        it.map((it) => ({
-          ...it,
-          platform: it.exchange,
-          fraction: it.fraction,
-          fromTokenLogo:
-            tokens.find(
-              ({ address }) => address.toLowerCase() === it.fromTokenAddress.toLowerCase(),
-            )?.logoUri ?? null,
-          toTokenLogo:
-            tokens.find(({ address }) => address.toLowerCase() === it.toTokenAddress.toLowerCase())
-              ?.logoUri ?? null,
-        })),
-      ),
-    }),
-    [valueParam, tokens],
-  );
-
   return (
     <div ref={containerRef} css={swapPath} className={className}>
       <div css={wrapper}>
-        <Coin css={coin} src={value.path[0]?.[0]?.fromTokenLogo} />
+        <Coin css={coin} src={value.path[0]?.[0]?.srcToken?.logoUri} />
         {value.path.map((it, index) => (
           <React.Fragment key={index}>
             <span css={divider}>
@@ -68,7 +44,7 @@ export const SwapPath = ({ value: valueParam, className }: Props) => {
               <Icon.CaretRight />
             </span>
 
-            <Coin css={coin} src={it[0]?.toTokenLogo} />
+            <Coin css={coin} src={it[0]?.destToken?.logoUri} />
           </React.Fragment>
         ))}
       </div>

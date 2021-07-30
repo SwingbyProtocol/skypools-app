@@ -53,6 +53,20 @@ export const DecimalFilter = inputObjectType({
   },
 });
 
+export const BigIntFilter = inputObjectType({
+  name: 'BigIntFilter',
+  definition(t) {
+    t.field('equals', { type: 'BigInt' });
+    t.field('gt', { type: 'BigInt' });
+    t.field('gte', { type: 'BigInt' });
+    t.list.field('in', { type: 'BigInt' });
+    t.field('lt', { type: 'BigInt' });
+    t.field('lte', { type: 'BigInt' });
+    t.field('not', { type: 'BigIntFilter' });
+    t.list.field('notIn', { type: 'BigInt' });
+  },
+});
+
 export const IntFilter = inputObjectType({
   name: 'IntFilter',
   definition(t) {
@@ -90,5 +104,15 @@ export const NetworkEnumFilter = inputObjectType({
     t.list.field('in', { type: 'Network' });
     t.field('not', { type: 'NetworkEnumFilter' });
     t.list.field('notIn', { type: 'Network' });
+  },
+});
+
+export const SwapStatusEnumFilter = inputObjectType({
+  name: 'SwapStatusEnumFilter',
+  definition(t) {
+    t.field('equals', { type: 'SwapStatus' });
+    t.list.field('in', { type: 'SwapStatus' });
+    t.field('not', { type: 'SwapStatusEnumFilter' });
+    t.list.field('notIn', { type: 'SwapStatus' });
   },
 });

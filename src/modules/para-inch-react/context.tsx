@@ -4,11 +4,9 @@ import { Big } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
 import type { ParaInchToken } from '../para-inch';
-import type { SwapQuote } from '../server__para-inch';
-import { getSwapQuote } from '../server__para-inch';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
-import { logger } from '../logger';
+import { SwapQuoteMutationResult, useSwapQuoteMutation } from '../../generated/skypools-graphql';
 
 export type ParaInchContextValue = {
   amount: string | null;
@@ -22,7 +20,7 @@ export type ParaInchContextValue = {
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
   isAmountValid: boolean;
-  swapQuote: SwapQuote | null;
+  swapQuote: NonNullable<SwapQuoteMutationResult['data']>['swapQuote'] | null;
 };
 
 export const ParaInchContext = createContext<ParaInchContextValue>({
@@ -51,12 +49,12 @@ export const ParaInchTokenProvider = ({
     push,
     query: { skybridgeSwap },
   } = useRouter();
-  const { wallet, address } = useOnboard();
+  const { address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueParam.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueParam.toToken);
-  const [swapQuote, setSwapQuote] = useState<SwapQuote | null>(null);
+  const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteMutation();
 
   const setFromToken = useCallback(
     (value: string) => {
@@ -124,41 +122,27 @@ export const ParaInchTokenProvider = ({
   }, [push, valueParam.network, fromToken, toToken]);
 
   useEffect(() => {
-    let cancelled = false;
-
     if (!fromToken || !toToken) {
       return;
     }
 
-    const loadQuote = async () => {
-      try {
-        if (cancelled) return;
-
-        setSwapQuote(null);
-        const result = await getSwapQuote({
-          fromToken,
-          toToken,
-          amount: amount ?? 1,
-          network: valueParam.network,
-          sourceAddress: address,
-          walletProvider: wallet?.provider,
-        });
-
-        if (cancelled) return;
-        logger.debug({ swapQuote: result }, 'Got a swap quote');
-        setSwapQuote(result);
-      } catch (err) {
-        logger.error({ err }, 'Failed to load swap quote');
-        setTimeout(loadQuote, 2500);
-      }
-    };
-
-    loadQuote();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [fromToken, toToken, valueParam?.network, amount, address, wallet?.provider]);
+    getSwapQuote({
+      variables: {
+        srcTokenAddress: fromToken.address,
+        destTokenAddress: toToken.address,
+        initiatorAddress: address ?? '0x3A9077DE17DF9630C50A9fdcbf11a96015f20B5A',
+        network: valueParam.network,
+        srcTokenAmount: (() => {
+          try {
+            if (!amount) return '1';
+            return new Big(amount).toFixed();
+          } catch (e) {
+            return '1';
+          }
+        })(),
+      },
+    });
+  }, [address, amount, fromToken, getSwapQuote, toToken, valueParam.network]);
 
   const value = useMemo(
     () => ({
@@ -178,7 +162,7 @@ export const ParaInchTokenProvider = ({
           return false;
         }
       })(),
-      swapQuote,
+      swapQuote: swapQuoteData?.swapQuote ?? null,
       unlinkSkybridgeSwap,
     }),
     [
@@ -190,7 +174,7 @@ export const ParaInchTokenProvider = ({
       setFromToken,
       setToToken,
       setNetwork,
-      swapQuote,
+      swapQuoteData,
       unlinkSkybridgeSwap,
     ],
   );

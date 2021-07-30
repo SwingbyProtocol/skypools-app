@@ -19,6 +19,8 @@ const NETWORK_TASKS: Task[] = [
   { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
   'token-logos',
   'prices-historic',
+  'newer-swaps',
+  'older-swaps',
 ];
 
 NETWORKS.forEach((mode) => {

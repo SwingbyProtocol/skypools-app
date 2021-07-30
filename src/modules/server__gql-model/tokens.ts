@@ -1,7 +1,6 @@
 import { extendType, objectType, arg, inputObjectType, idArg, nonNull } from 'nexus';
 
 import { paginate, paginatedType, paginationArgs } from './pagination';
-import { fromGraphWhereArgToPrisma } from './fromGraphWhereArgToPrisma';
 
 export const Token = objectType({
   name: 'Token',
@@ -22,7 +21,7 @@ const TokenWhereInput = inputObjectType({
   name: 'TokenWhereInput',
   definition(t) {
     t.list.field('AND', { type: 'TokenWhereInput' });
-    t.list.field('NOT', { type: 'TokenWhereInput' });
+    t.field('NOT', { type: 'TokenWhereInput' });
     t.list.field('OR', { type: 'TokenWhereInput' });
 
     t.field('id', { type: 'StringFilter' });
@@ -68,7 +67,7 @@ export const TokensQuery = extendType({
         return paginate({
           ...args,
           allEdges: await ctx.prisma.token.findMany({
-            where: fromGraphWhereArgToPrisma(args.where),
+            where: args.where as any,
             orderBy: [{ symbol: 'asc' }, { address: 'asc' }],
           }),
         });

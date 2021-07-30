@@ -1,0 +1,57 @@
+mutation SwapQuote(
+  $initiatorAddress: String!
+  $srcTokenAmount: Decimal!
+  $srcTokenAddress: String!
+  $destTokenAddress: String!
+  $network: Network!
+) {
+  swapQuote(
+    initiatorAddress: $initiatorAddress
+    srcTokenAmount: $srcTokenAmount
+    srcTokenAddress: $srcTokenAddress
+    destTokenAddress: $destTokenAddress
+    network: $network
+  ) {
+    srcToken {
+      symbol
+    }
+    destToken {
+      symbol
+    }
+    srcTokenPriceUsd
+    destTokenPriceUsd
+    srcTokenAmountUsd
+    bestRoute {
+      spender
+      destTokenAmount
+      destTokenAmountUsd
+      estimatedGasUsd
+      transaction {
+        from
+        to
+        data
+        value
+      }
+      path {
+        exchange
+        fraction
+        srcToken {
+          address
+          symbol
+          logoUri
+        }
+        destToken {
+          address
+          symbol
+          logoUri
+        }
+      }
+    }
+    otherExchanges {
+      exchange
+      destTokenAmountUsd
+      estimatedGasUsd
+      fractionOfBest
+    }
+  }
+}
