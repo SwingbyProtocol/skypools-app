@@ -18,14 +18,18 @@ export default createEndpoint({
 
     const priceHistorics = await Promise.all(
       tokens.map(async (it) => {
-        logger.debug({ token: it }, 'Will fetch price history');
-        const priceHistoric = await getPriceHistoryFromCoingecko({
-          network,
-          tokenAddress: it.address,
-        });
-        logger.trace({ token: it, priceHistoric }, 'Got price history');
+        try {
+          logger.debug({ token: it }, 'Will fetch price history');
+          const priceHistoric = await getPriceHistoryFromCoingecko({
+            network,
+            tokenAddress: it.address,
+          });
+          logger.trace({ token: it, priceHistoric }, 'Got price history');
 
-        return priceHistoric;
+          return priceHistoric;
+        } catch (e) {
+          return null;
+        }
       }),
     );
 
@@ -38,6 +42,9 @@ export default createEndpoint({
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i];
       const priceHistoric = priceHistorics[i];
+      if (!priceHistoric) {
+        continue;
+      }
 
       try {
         logger.debug({ token }, 'Will save price history to DB');
