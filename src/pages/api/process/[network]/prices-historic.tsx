@@ -27,7 +27,11 @@ export default createEndpoint({
           logger.trace({ token: it, priceHistoric }, 'Got price history');
 
           return priceHistoric;
-        } catch (e) {
+        } catch (err) {
+          logger.error(
+            { err, tokenAddress: it.address },
+            'Failed to get price history from Coingecko',
+          );
           return null;
         }
       }),
