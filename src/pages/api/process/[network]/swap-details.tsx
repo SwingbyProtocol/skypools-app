@@ -25,7 +25,7 @@ export default createEndpoint({
 
     for (const swap of swaps) {
       try {
-        const info = await getSwapDetails({ network, hash: swap.hash });
+        const info = await getSwapDetails({ network, hash: swap.hash, logger });
         logger.debug({ swapId: swap.id, info }, 'Got swap details');
         await prisma.swapHistoric.update({
           where: { id: swap.id },
