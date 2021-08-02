@@ -27,7 +27,15 @@ export default createEndpoint({
       try {
         const info = await getSwapDetails({ network, hash: swap.hash });
         logger.debug({ swapId: swap.id, info }, 'Got swap details');
-        await prisma.swapHistoric.update({ where: { id: swap.id }, data: info });
+        await prisma.swapHistoric.update({
+          where: { id: swap.id },
+          data: {
+            srcTokenId: info.srcTokenId || undefined,
+            destTokenId: info.destTokenId || undefined,
+            srcAmount: info.srcAmount ?? undefined,
+            destAmount: info.destAmount ?? undefined,
+          },
+        });
       } catch (err) {
         logger.error({ err, swapId: swap.id }, 'Failed to save swap details to DB');
         failed.push(swap);

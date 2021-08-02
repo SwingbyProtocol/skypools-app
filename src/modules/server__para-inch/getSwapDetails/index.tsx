@@ -22,13 +22,18 @@ type TransactionDetails = Pick<
 type Params = {
   network: Network;
   hash: string;
+  logger: typeof baseLogger;
 };
 
 const abi = shouldUseParaSwap ? paraSwapAbi : oneInchAbi;
 abiDecoder.addABI(abi);
 
-export const getSwapDetails = async ({ network, hash }: Params): Promise<TransactionDetails> => {
-  const logger = baseLogger.child({ hash });
+export const getSwapDetails = async ({
+  network,
+  hash,
+  logger: loggerParam = baseLogger,
+}: Params): Promise<TransactionDetails> => {
+  const logger = loggerParam.child({ hash });
 
   const web3 = buildWeb3Instance({ network });
   const receipt = await web3.eth.getTransactionReceipt(hash);
