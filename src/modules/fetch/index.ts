@@ -43,14 +43,3 @@ export const fetcher = async <Data extends unknown = unknown>(
 
   return result.response;
 };
-
-export const fetcherEtherscan = async <Data extends unknown = unknown>(
-  ...args: Parameters<typeof fetch>
-) => {
-  const result = await fetcher<Data>(...args);
-  if (`${(result as any).status}` === '0') {
-    throw new Error((result as any).result);
-  }
-
-  return result;
-};

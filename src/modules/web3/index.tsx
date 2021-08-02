@@ -1,4 +1,44 @@
+import { stringifyUrl, StringifiableRecord } from 'query-string';
+
+import { fetcher } from '../fetch';
 import { Network } from '../networks';
+import { server__bscscanSecret, server__etherscanSecret } from '../server__env';
+
+export const scanApiFetcher = async <Data extends unknown = unknown>({
+  network,
+  query,
+}: {
+  network: Network;
+  query?: StringifiableRecord;
+}) => {
+  const result = await fetcher<{ status: string } & Data>(
+    stringifyUrl({
+      url: getScanApiUrl({ network }),
+      query: {
+        ...query,
+        apikey: getScanApiKey({ network }),
+      },
+    }),
+  );
+  if (result.status === '0') {
+    throw new Error((result as any).result);
+  }
+
+  return result;
+};
+
+const getScanApiKey = ({ network }: { network: Network }) => {
+  switch (network) {
+    case Network.ETHEREUM:
+      return server__etherscanSecret;
+    case Network.BSC:
+      return server__bscscanSecret;
+    case Network.POLYGON:
+      return undefined;
+    default:
+      return undefined;
+  }
+};
 
 export const getScanApiUrl = ({ network }: { network: Network }) => {
   switch (network) {

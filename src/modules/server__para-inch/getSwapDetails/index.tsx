@@ -1,13 +1,11 @@
 import Web3 from 'web3';
 import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
-import { stringifyUrl } from 'query-string';
 import { Prisma, SwapHistoric } from '@prisma/client';
 
 import { shouldUseParaSwap } from '../../env';
 import { Network } from '../../networks';
-import { fetcherEtherscan } from '../../fetch';
-import { getScanApiUrl } from '../../web3';
+import { scanApiFetcher } from '../../web3';
 import { logger as baseLogger } from '../../logger';
 import { isNativeToken } from '../../para-inch';
 import { buildWeb3Instance } from '../../server__web3';
@@ -142,16 +140,14 @@ const getToAmountFromScan = async ({
 }): Promise<Prisma.Decimal | null> => {
   try {
     if (isNativeToken(toTokenAddress)) {
-      const resultInternalTx = await fetcherEtherscan<ApiResult>(
-        stringifyUrl({
-          url: getScanApiUrl({ network }),
-          query: {
-            module: 'account',
-            action: 'txlistinternal',
-            txhash: hash,
-          },
-        }),
-      );
+      const resultInternalTx = await scanApiFetcher<ApiResult>({
+        network,
+        query: {
+          module: 'account',
+          action: 'txlistinternal',
+          txhash: hash,
+        },
+      });
 
       const tx = resultInternalTx.result.find((it) => it.to.toLowerCase() === receivingAddress);
 
@@ -159,17 +155,15 @@ const getToAmountFromScan = async ({
       return new Prisma.Decimal(tx.value).div('1e18');
     }
 
-    const result = await fetcherEtherscan<ApiResult>(
-      stringifyUrl({
-        url: getScanApiUrl({ network }),
-        query: {
-          module: 'account',
-          action: 'tokentx',
-          contractaddress: toTokenAddress,
-          address: receivingAddress,
-        },
-      }),
-    );
+    const result = await scanApiFetcher<ApiResult>({
+      network,
+      query: {
+        module: 'account',
+        action: 'tokentx',
+        contractaddress: toTokenAddress,
+        address: receivingAddress,
+      },
+    });
 
     const tx = result.result.find((it) => it.hash === hash);
     if (!tx) return null;

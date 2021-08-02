@@ -1,11 +1,9 @@
 import { DateTime } from 'luxon';
-import { stringifyUrl } from 'query-string';
 import { Prisma, SwapHistoric, SwapStatus } from '@prisma/client';
 
 import { Network } from '../networks';
-import { fetcherEtherscan } from '../fetch';
 import { logger as baseLogger } from '../logger';
-import { getScanApiUrl } from '../web3';
+import { scanApiFetcher } from '../web3';
 import { buildWeb3Instance } from '../server__web3';
 
 import { getSpender } from './getSpender';
@@ -45,19 +43,17 @@ export const getShallowSwaps = async ({
 
   const response =
     (
-      await fetcherEtherscan<ApiResult>(
-        stringifyUrl({
-          url: getScanApiUrl({ network }),
-          query: {
-            module: 'account',
-            action: 'txlist',
-            address,
-            sort: 'desc',
-            startblock: startBlockNumber ?? undefined,
-            endblock: endBlockNumber ?? undefined,
-          },
-        }),
-      )
+      await scanApiFetcher<ApiResult>({
+        network,
+        query: {
+          module: 'account',
+          action: 'txlist',
+          address,
+          sort: 'desc',
+          startblock: startBlockNumber ?? undefined,
+          endblock: endBlockNumber ?? undefined,
+        },
+      })
     ).result ?? [];
 
   return response

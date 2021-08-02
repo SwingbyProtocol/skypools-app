@@ -1,6 +1,5 @@
 import { Big } from 'big.js';
 import React, { useEffect, useMemo } from 'react';
-import { DateTime } from 'luxon';
 import Web3 from 'web3';
 import ABI from 'human-standard-token-abi';
 
