@@ -3,8 +3,8 @@ import { stringifyUrl } from 'query-string';
 import { Prisma, SwapHistoric, SwapStatus } from '@prisma/client';
 
 import { Network } from '../networks';
-import { fetcher } from '../fetch';
-import { logger } from '../logger';
+import { fetcherEtherscan } from '../fetch';
+import { logger as baseLogger } from '../logger';
 import { getScanApiUrl } from '../web3';
 import { buildWeb3Instance } from '../server__web3';
 
@@ -31,10 +31,12 @@ export const getShallowSwaps = async ({
   network,
   endBlockNumber,
   startBlockNumber,
+  logger = baseLogger,
 }: {
   network: Network;
   startBlockNumber?: number | string | null;
   endBlockNumber?: number | string | null;
+  logger?: typeof baseLogger;
 }) => {
   const web3 = buildWeb3Instance({ network });
   const address = (await getSpender({ network })).toLowerCase();
@@ -43,7 +45,7 @@ export const getShallowSwaps = async ({
 
   const response =
     (
-      await fetcher<ApiResult>(
+      await fetcherEtherscan<ApiResult>(
         stringifyUrl({
           url: getScanApiUrl({ network }),
           query: {

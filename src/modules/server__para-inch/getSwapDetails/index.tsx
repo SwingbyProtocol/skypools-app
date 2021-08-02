@@ -6,7 +6,7 @@ import { Prisma, SwapHistoric } from '@prisma/client';
 
 import { shouldUseParaSwap } from '../../env';
 import { Network } from '../../networks';
-import { fetcher } from '../../fetch';
+import { fetcherEtherscan } from '../../fetch';
 import { getScanApiUrl } from '../../web3';
 import { logger as baseLogger } from '../../logger';
 import { isNativeToken } from '../../para-inch';
@@ -142,7 +142,7 @@ const getToAmountFromScan = async ({
 }): Promise<Prisma.Decimal | null> => {
   try {
     if (isNativeToken(toTokenAddress)) {
-      const resultInternalTx = await fetcher<ApiResult>(
+      const resultInternalTx = await fetcherEtherscan<ApiResult>(
         stringifyUrl({
           url: getScanApiUrl({ network }),
           query: {
@@ -159,7 +159,7 @@ const getToAmountFromScan = async ({
       return new Prisma.Decimal(tx.value).div('1e18');
     }
 
-    const result = await fetcher<ApiResult>(
+    const result = await fetcherEtherscan<ApiResult>(
       stringifyUrl({
         url: getScanApiUrl({ network }),
         query: {
