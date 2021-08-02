@@ -18,6 +18,7 @@ export default createEndpoint({
       ),
     );
 
+    logger.debug('Added %d swaps to DB', swaps.length);
     res.status(StatusCodes.OK).json({ swaps: swaps.length });
   },
 });

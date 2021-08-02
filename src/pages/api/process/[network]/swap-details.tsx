@@ -34,6 +34,7 @@ export default createEndpoint({
       }
     }
 
+    logger.debug('Tried to add %d swaps to DB, %d failed', swaps.length, failed.length);
     res.status(StatusCodes.OK).json({ swaps: swaps.length, failed: failed.length });
   },
 });
