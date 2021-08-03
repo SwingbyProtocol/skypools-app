@@ -3,8 +3,7 @@ import { Prisma, SwapHistoric, SwapStatus } from '@prisma/client';
 
 import { Network } from '../networks';
 import { logger as baseLogger } from '../logger';
-import { scanApiFetcher } from '../web3';
-import { buildWeb3Instance } from '../server__web3';
+import { buildWeb3Instance, scanApiFetcher } from '../server__web3';
 
 import { getSpender } from './getSpender';
 

@@ -5,10 +5,9 @@ import { Prisma, SwapHistoric } from '@prisma/client';
 
 import { shouldUseParaSwap } from '../../env';
 import { Network } from '../../networks';
-import { scanApiFetcher } from '../../web3';
 import { logger as baseLogger } from '../../logger';
 import { isNativeToken } from '../../para-inch';
-import { buildWeb3Instance } from '../../server__web3';
+import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
 
 import oneInchAbi from './one-inch-abi.json';
