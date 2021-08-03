@@ -20,6 +20,7 @@ const NETWORK_TASKS: Task[] = [
   'older-swaps',
   'prices-historic',
   'swap-details',
+  'swap-status',
   'token-logos',
   { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
 ];
