@@ -26,7 +26,7 @@ export default createEndpoint({
           },
         ],
       },
-      orderBy: { detailsUpdatedAt: 'asc' },
+      orderBy: [{ detailsUpdatedAt: 'asc' }, { at: 'desc' }],
       take: 100,
     });
 

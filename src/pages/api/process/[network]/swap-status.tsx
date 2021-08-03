@@ -13,7 +13,7 @@ export default createEndpoint({
       where: {
         status: { notIn: [SwapStatus.CONFIRMED, SwapStatus.FAILED] },
       },
-      orderBy: { updatedAt: 'asc' },
+      orderBy: [{ updatedAt: 'asc' }, { at: 'desc' }],
       take: 100,
     });
 
