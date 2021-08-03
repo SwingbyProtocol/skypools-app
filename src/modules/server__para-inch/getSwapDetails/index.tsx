@@ -37,6 +37,9 @@ export const getSwapDetails = async ({
 
   const web3 = buildWeb3Instance({ network });
   const receipt = await web3.eth.getTransactionReceipt(hash);
+  if (!receipt) {
+    throw new Error(`No receipt found for "${hash}"`);
+  }
 
   const logs = abiDecoder.decodeLogs(receipt.logs);
   const events = logs?.find?.((it: any) => it.name === 'Swapped')?.events ?? [];

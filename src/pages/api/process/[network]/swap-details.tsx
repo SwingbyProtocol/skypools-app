@@ -1,3 +1,4 @@
+import { SwapStatus } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import { getSwapDetails } from '../../../../modules/server__para-inch';
@@ -10,13 +11,18 @@ export default createEndpoint({
     const failed: typeof swaps = [];
     const swaps = await prisma.swapHistoric.findMany({
       where: {
-        OR: [
-          { srcTokenId: { equals: null } },
-          { destTokenId: { equals: null } },
-          { srcAmount: { equals: null } },
-          { destAmount: { equals: null } },
-          { srcAmount: { equals: 0 } },
-          { destAmount: { equals: 0 } },
+        AND: [
+          { status: { equals: SwapStatus.CONFIRMED } },
+          {
+            OR: [
+              { srcTokenId: { equals: null } },
+              { destTokenId: { equals: null } },
+              { srcAmount: { equals: null } },
+              { destAmount: { equals: null } },
+              { srcAmount: { equals: 0 } },
+              { destAmount: { equals: 0 } },
+            ],
+          },
         ],
       },
       orderBy: { updatedAt: 'asc' },
