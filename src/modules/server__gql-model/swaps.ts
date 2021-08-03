@@ -1,6 +1,6 @@
 import { extendType, objectType, arg, inputObjectType, idArg, nonNull } from 'nexus';
 
-import { paginate, paginatedType, paginationArgs } from './pagination';
+import { buildCursor, decodeCursor, paginatedType, paginationArgs } from './pagination';
 
 export const Swap = objectType({
   name: 'Swap',
@@ -79,13 +79,81 @@ export const SwapsQuery = extendType({
         ...paginationArgs,
       },
       async resolve(source, args, ctx, info) {
-        return paginate({
-          ...args,
-          allEdges: await ctx.prisma.swapHistoric.findMany({
-            where: args.where as any,
-            orderBy: [{ at: 'desc' }, { blockNumber: 'desc' }, { hash: 'asc' }],
-          }),
-        });
+        type Where = NonNullable<Parameters<typeof ctx.prisma.swapHistoric.findMany>['0']>['where'];
+        type OrderBy = NonNullable<
+          Parameters<typeof ctx.prisma.swapHistoric.findMany>['0']
+        >['orderBy'];
+
+        const type =
+          typeof args.last === 'number' || typeof args.before === 'string' ? 'before' : 'after';
+
+        if (
+          (type === 'before' &&
+            (typeof args.after === 'string' || typeof args.first === 'number')) ||
+          (type === 'after' && (typeof args.before === 'string' || typeof args.last === 'number'))
+        ) {
+          throw new Error('You may combine only "first" and "after", or "last" and "before".');
+        }
+
+        const take = args.last ?? args.first ?? 25;
+        if (1 > take || take > 1000) {
+          throw new Error('"first" or "last" must be between 1 and 1000');
+        }
+
+        const after = !args.after
+          ? null
+          : await ctx.prisma.swapHistoric.findUnique({ where: { id: decodeCursor(args.after) } });
+        const before = !args.before
+          ? null
+          : await ctx.prisma.swapHistoric.findUnique({ where: { id: decodeCursor(args.before) } });
+
+        const where: Where =
+          !before && !after
+            ? (args.where as any)
+            : {
+                AND: [
+                  { at: { [before ? 'lt' : 'gt']: before ? before.at : after?.at } },
+                  args.where,
+                ],
+              };
+
+        const orderBy: OrderBy =
+          type === 'after'
+            ? [{ at: 'asc' }, { blockNumber: 'asc' }, { hash: 'desc' }]
+            : [{ at: 'desc' }, { blockNumber: 'desc' }, { hash: 'asc' }];
+
+        const edges = (
+          await ctx.prisma.swapHistoric.findMany({
+            where,
+            orderBy,
+            take,
+          })
+        ).map((it) => ({ node: it, cursor: buildCursor(it.id) }));
+
+        if (type === 'before') {
+          edges.reverse();
+        }
+
+        return {
+          totalCount: (
+            await ctx.prisma.swapHistoric.aggregate({ where: args.where as any, _count: true })
+          )._count,
+          edges,
+          pageInfo: {
+            startCursor: edges[0]?.cursor || '',
+            endCursor: edges[edges.length - 1]?.cursor || '',
+            hasPreviousPage:
+              edges.length > 0 &&
+              !!(await ctx.prisma.swapHistoric.findFirst({
+                where: { AND: [{ at: { lt: edges[0].node.at } }] },
+              })),
+            hasNextPage:
+              edges.length > 0 &&
+              !!(await ctx.prisma.swapHistoric.findFirst({
+                where: { AND: [{ at: { gt: edges[edges.length - 1].node.at } }] },
+              })),
+          },
+        };
       },
     });
   },

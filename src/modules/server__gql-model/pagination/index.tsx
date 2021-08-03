@@ -1,6 +1,8 @@
 import { intArg, objectType, stringArg } from 'nexus';
 
-export const buildCursor = (value: string) => `0x${Buffer.from(value, 'utf-8').toString('hex')}`;
+export const buildCursor = (value: string) => Buffer.from(value, 'utf-8').toString('base64');
+
+export const decodeCursor = (value: string) => Buffer.from(value, 'base64').toString('utf-8');
 
 const ForwardPaginationPageInfo = objectType({
   name: 'ForwardPaginationPageInfo',

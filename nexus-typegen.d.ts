@@ -150,7 +150,7 @@ export interface NexusGenScalars {
   Float: number;
   Boolean: boolean;
   ID: string;
-  BigInt: any;
+  BigInt: BigInt;
   DateTime: Date;
   Decimal: Decimal;
 }
