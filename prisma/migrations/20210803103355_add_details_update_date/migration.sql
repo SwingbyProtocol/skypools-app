@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "SwapHistoric" ADD COLUMN     "detailsUpdatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

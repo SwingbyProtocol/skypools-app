@@ -22,13 +22,15 @@ export default createEndpoint({
 
     for (const swap of swaps) {
       try {
-        const transaction = await web3.eth.getTransactionReceipt(swap.hash);
+        const receipt = await web3.eth.getTransactionReceipt(swap.hash);
+        if (!receipt) continue;
+
         await prisma.swapHistoric.update({
           where: { id: swap.id },
           data: {
-            status: !transaction.status
+            status: !receipt.status
               ? SwapStatus.FAILED
-              : new Prisma.Decimal(blockNumber).minus(transaction.blockNumber).gte(15)
+              : new Prisma.Decimal(blockNumber).minus(receipt.blockNumber).gte(15)
               ? SwapStatus.CONFIRMED
               : SwapStatus.SENT,
           },

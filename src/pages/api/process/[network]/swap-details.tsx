@@ -25,8 +25,14 @@ export default createEndpoint({
           },
         ],
       },
-      orderBy: { updatedAt: 'asc' },
+      orderBy: { detailsUpdatedAt: 'asc' },
       take: 100,
+    });
+
+    // We do this first to make sure that we rotate what tokens are processed each time.
+    await prisma.swapHistoric.updateMany({
+      where: { id: { in: swaps.map((it) => it.id) } },
+      data: { detailsUpdatedAt: DateTime.utc().toJSDate() },
     });
 
     for (const swap of swaps) {

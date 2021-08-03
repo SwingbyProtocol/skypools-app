@@ -70,8 +70,9 @@ model SwapHistoric {
   destToken   Token?   @relation("SwapDestToken", fields: [destTokenId], references: [id])
   destTokenId String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  detailsUpdatedAt DateTime @default(now())
 
   @@unique([network, hash])
   @@index([network, hash])
