@@ -62,7 +62,13 @@ export const getShallowSwaps = async ({
         it,
       ): Omit<
         SwapHistoric,
-        'createdAt' | 'updatedAt' | 'srcAmount' | 'srcTokenId' | 'destAmount' | 'destTokenId'
+        | 'createdAt'
+        | 'updatedAt'
+        | 'detailsUpdatedAt'
+        | 'srcAmount'
+        | 'srcTokenId'
+        | 'destAmount'
+        | 'destTokenId'
       > => {
         const hash = it.hash.toLowerCase();
         return {
