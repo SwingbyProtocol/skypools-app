@@ -71,10 +71,31 @@ model SwapHistoric {
   destToken   Token?   @relation("SwapDestToken", fields: [destTokenId], references: [id])
   destTokenId String?
 
+  logs SwapLogHistoric[] @relation("SwapLogs")
+
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   detailsUpdatedAt DateTime @default(now())
 
   @@unique([network, hash])
   @@index([network, hash])
+}
+
+model SwapLogHistoric {
+  id               String   @id
+  network          Network
+  transactionHash  String
+  transactionIndex Int
+  logIndex         Int
+  data             String
+  topics           String[]
+  blockNumber      BigInt
+
+  swap SwapHistoric @relation("SwapLogs", fields: [network, transactionHash], references: [network, hash])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([network, transactionHash, logIndex])
+  @@index([network, transactionHash, logIndex])
 }

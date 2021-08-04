@@ -4,3 +4,4 @@ export { getPriceHistoryFromCoingecko, getTokenLogoFromCoingecko } from './coin-
 export { getShallowSwaps } from './getShallowSwaps';
 export { getSwapDetails } from './getSwapDetails';
 export { getSpender } from './getSpender';
+export { getSwapLogs } from './getSwapLogs';
