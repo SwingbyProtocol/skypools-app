@@ -62,6 +62,7 @@ model SwapHistoric {
   blockNumber      BigInt
   contractAddress  String
   initiatorAddress String
+  input            String
 
   srcAmount   Decimal? @db.Decimal(65, 20)
   srcToken    Token?   @relation("SwapSourceToken", fields: [srcTokenId], references: [id])
