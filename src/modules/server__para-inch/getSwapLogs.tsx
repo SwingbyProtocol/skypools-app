@@ -46,7 +46,7 @@ export const getSwapLogs = async ({
   logger?: typeof baseLogger;
 }) => {
   const address = (await getSpender({ network })).toLowerCase();
-  logger.debug({ address, startBlockNumber, endBlockNumber }, 'Will fetch swap list');
+  logger.debug({ address, startBlockNumber, endBlockNumber }, 'Will fetch log list');
 
   const response =
     (
@@ -65,7 +65,7 @@ export const getSwapLogs = async ({
 
   return response.map((it): SwapLog => {
     const transactionHash = it.transactionHash.toLowerCase();
-    const logIndex = +BigInt(it.logIndex).toString();
+    const logIndex = it.logIndex === '0x' ? 0 : +BigInt(it.logIndex).toString();
 
     return {
       id: buildLogId({ network, transactionHash, logIndex }),
@@ -75,7 +75,7 @@ export const getSwapLogs = async ({
       network,
       topics: it.topics,
       transactionHash,
-      transactionIndex: +BigInt(it.transactionIndex).toString(),
+      transactionIndex: it.transactionIndex === '0x' ? 0 : +BigInt(it.transactionIndex).toString(),
     };
   });
 };

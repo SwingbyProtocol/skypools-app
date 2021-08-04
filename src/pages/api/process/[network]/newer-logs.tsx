@@ -19,6 +19,6 @@ export default createEndpoint({
     );
 
     logger.debug('Added %d logs to DB', logs.length);
-    res.status(StatusCodes.OK).json({ swaps: logs.length });
+    res.status(StatusCodes.OK).json({ logs: logs.length });
   },
 });
