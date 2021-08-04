@@ -31,7 +31,7 @@ export const getSwapDetails = async ({
   network,
   hash,
   logger: loggerParam = baseLogger,
-}: Params): Promise<TransactionDetails | undefined> => {
+}: Params): Promise<TransactionDetails> => {
   const logger = loggerParam.child({ hash });
 
   const web3 = buildWeb3Instance({ network });
@@ -74,33 +74,6 @@ export const getSwapDetails = async ({
   const input = await abiDecoder.decodeMethod(transaction.input);
   const functionName = input.name;
 
-  if (functionName === 'swapOnUniswap' || functionName === 'swapOnUniswapFork') {
-    const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
-    const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
-    const srcAmount = input.params.find((it: any) => it.name === 'amountIn').value;
-    const receivingAddress = transaction.from.toLowerCase();
-
-    return {
-      srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
-      destTokenId: destTokenAddress
-        ? buildTokenId({ network, tokenAddress: destTokenAddress })
-        : null,
-      srcAmount: await parseAmount({
-        amount: srcAmount,
-        tokenAddress: srcTokenAddress,
-        web3,
-        logger,
-      }),
-      destAmount: await getToAmountFromScan({
-        hash,
-        network,
-        toTokenAddress: destTokenAddress,
-        receivingAddress,
-        logger,
-      }),
-    };
-  }
-
   if (functionName === 'unoswap') {
     const srcTokenAddress = input.params
       .find((it: any) => it.name === 'srcToken')
@@ -129,6 +102,32 @@ export const getSwapDetails = async ({
       }),
     };
   }
+
+  // Memo: functionName === 'swapOnUniswap' || functionName === 'swapOnUniswapFork'
+  const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
+  const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
+  const srcAmount = input.params.find((it: any) => it.name === 'amountIn').value;
+  const receivingAddress = transaction.from.toLowerCase();
+
+  return {
+    srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
+    destTokenId: destTokenAddress
+      ? buildTokenId({ network, tokenAddress: destTokenAddress })
+      : null,
+    srcAmount: await parseAmount({
+      amount: srcAmount,
+      tokenAddress: srcTokenAddress,
+      web3,
+      logger,
+    }),
+    destAmount: await getToAmountFromScan({
+      hash,
+      network,
+      toTokenAddress: destTokenAddress,
+      receivingAddress,
+      logger,
+    }),
+  };
 };
 
 const findLogValue = (logs: { name: string; type: string; value: string }[], name: string) => {
