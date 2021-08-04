@@ -1,11 +1,11 @@
-import Web3 from 'web3';
+import { Prisma, SwapHistoric } from '@prisma/client';
 import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
-import { Prisma, SwapHistoric } from '@prisma/client';
+import Web3 from 'web3';
 
 import { shouldUseParaSwap } from '../../env';
-import { Network } from '../../networks';
 import { logger as baseLogger } from '../../logger';
+import { Network } from '../../networks';
 import { isNativeToken, NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
@@ -221,4 +221,32 @@ const getToAmountFromScan = async ({
       tokenDecimal: string;
     }>;
   };
+};
+
+const swapFunctions = [
+  'swapOnUniswap', // paraswap function
+  'swapOnUniswapFork', // paraswap function
+  'simpleSwap', // paraswap event
+  'megaSwap', // paraswap event
+  'multiSwap', // paraswap event
+  'swap', // 1inch event
+  'unoswap', // 1inch function
+];
+
+export const isSwapTx = async ({
+  network,
+  hash,
+  logger: loggerParam = baseLogger,
+}: Params): Promise<boolean> => {
+  try {
+    const web3 = buildWeb3Instance({ network });
+    const transaction = await web3.eth.getTransaction(hash);
+    const input = await abiDecoder.decodeMethod(transaction.input);
+    const functionName = input.name;
+    return swapFunctions.includes(functionName);
+  } catch (err) {
+    const logger = loggerParam.child({ hash });
+    logger.trace({ network, hash, err }, 'Failed to parse transaction');
+    return false;
+  }
 };
