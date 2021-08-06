@@ -44,6 +44,7 @@ type ShallowSwap = Omit<
   | 'createdAt'
   | 'updatedAt'
   | 'detailsUpdatedAt'
+  | 'logsUpdatedAt'
   | 'srcAmount'
   | 'srcTokenId'
   | 'destAmount'
