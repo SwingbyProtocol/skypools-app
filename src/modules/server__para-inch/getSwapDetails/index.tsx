@@ -9,6 +9,7 @@ import { logger as baseLogger } from '../../logger';
 import { isNativeToken } from '../../para-inch';
 import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
+import { prisma } from '../../server__env';
 
 import oneInchAbi from './one-inch-abi.json';
 import paraSwapAbi from './paraswap-abi.json';
@@ -33,14 +34,13 @@ export const getSwapDetails = async ({
   logger: loggerParam = baseLogger,
 }: Params): Promise<TransactionDetails> => {
   const logger = loggerParam.child({ hash });
-
   const web3 = buildWeb3Instance({ network });
-  const receipt = await web3.eth.getTransactionReceipt(hash);
-  if (!receipt) {
-    throw new Error(`No receipt found for "${hash}"`);
-  }
 
-  const logs = abiDecoder.decodeLogs(receipt.logs);
+  const rawLogs = await prisma.swapLogHistoric.findMany({
+    where: { network, transactionHash: { equals: hash, mode: 'insensitive' } },
+  });
+
+  const logs = abiDecoder.decodeLogs(rawLogs);
   const events = logs?.find?.((it: any) => it.name === 'Swapped')?.events ?? [];
 
   if (events.length > 0) {
