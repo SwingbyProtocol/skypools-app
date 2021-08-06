@@ -46,6 +46,7 @@ CREATE TABLE "SwapHistoric" (
     "srcTokenId" TEXT,
     "destAmount" DECIMAL(65,20),
     "destTokenId" TEXT,
+    "logsUpdatedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "detailsUpdatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -60,9 +61,11 @@ CREATE TABLE "SwapLogHistoric" (
     "transactionHash" TEXT NOT NULL,
     "transactionIndex" INTEGER NOT NULL,
     "logIndex" INTEGER NOT NULL,
+    "address" TEXT NOT NULL,
     "data" TEXT NOT NULL,
     "topics" TEXT[],
     "blockNumber" BIGINT NOT NULL,
+    "blockHash" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -88,10 +91,13 @@ CREATE UNIQUE INDEX "SwapLogHistoric.network_transactionHash_logIndex_unique" ON
 CREATE INDEX "SwapLogHistoric.network_transactionHash_logIndex_index" ON "SwapLogHistoric"("network", "transactionHash", "logIndex");
 
 -- AddForeignKey
+ALTER TABLE "TokenUsdPriceHistoric" ADD FOREIGN KEY ("tokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SwapLogHistoric" ADD FOREIGN KEY ("network", "transactionHash") REFERENCES "SwapHistoric"("network", "hash") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "SwapHistoric" ADD FOREIGN KEY ("srcTokenId") REFERENCES "Token"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SwapHistoric" ADD FOREIGN KEY ("destTokenId") REFERENCES "Token"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "TokenUsdPriceHistoric" ADD FOREIGN KEY ("tokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;

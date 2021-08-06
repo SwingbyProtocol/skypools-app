@@ -16,12 +16,11 @@ const isTaskConfig = (value: any): value is TaskConfig =>
 
 const NETWORKS = Object.values(Network).map((it) => it.toLowerCase() as Lowercase<Network>);
 const NETWORK_TASKS: Task[] = [
-  'newer-logs',
   'newer-swaps',
-  'older-logs',
   'older-swaps',
   'prices-historic',
   { name: 'swap-details', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
+  'swap-logs',
   { name: 'swap-status', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
   'token-logos',
   { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
