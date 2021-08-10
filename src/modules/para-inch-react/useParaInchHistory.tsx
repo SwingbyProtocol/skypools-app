@@ -24,24 +24,10 @@ export const useParaInchHistory = () => {
     getSwaps({
       variables: {
         where: {
-          AND: [
-            {
-              initiatorAddress: {
-                equals: address,
-                mode: StringFilterMode.Insensitive,
-              },
-            },
-            {
-              NOT: {
-                OR: [
-                  { srcToken: null },
-                  { destToken: null },
-                  { destAmount: null },
-                  { srcAmount: null },
-                ],
-              },
-            },
-          ],
+          initiatorAddress: {
+            equals: address,
+            mode: StringFilterMode.Insensitive,
+          },
         },
       },
     });
