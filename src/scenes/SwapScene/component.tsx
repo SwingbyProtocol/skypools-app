@@ -41,12 +41,12 @@ export const SwapScene = () => {
 
   const priceHistory = useMemo(
     () =>
-      priceHistoryData?.priceHistoric.map(
-        (it): React.ComponentPropsWithoutRef<typeof TradingView>['data'][number] => ({
+      priceHistoryData?.priceHistoric
+        .map((it): React.ComponentPropsWithoutRef<typeof TradingView>['data'][number] => ({
           time: it.at,
           value: +it.price,
-        }),
-      ),
+        }))
+        .sort((a, b) => a.time.localeCompare(b.time)),
     [priceHistoryData?.priceHistoric],
   );
 
