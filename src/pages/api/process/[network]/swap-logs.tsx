@@ -1,6 +1,7 @@
 import { SwapStatus } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
+import Web3 from 'web3';
 
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 import { buildWeb3Instance } from '../../../../modules/server__web3';
@@ -24,7 +25,15 @@ export default createEndpoint({
   isSecret: true,
   logId: 'process/swap-logs',
   fn: async ({ res, network, prisma, logger }) => {
-    const web3 = buildWeb3Instance({ network });
+    const web3 = (() => {
+      if (network === Network.ETHEREUM) {
+        return new Web3(
+          new Web3.providers.HttpProvider('http://btc-eth-indexer.swingby.network:8545'),
+        );
+      }
+
+      return buildWeb3Instance({ network });
+    })();
 
     const failed: typeof swaps = [];
     const swaps = await prisma.swapHistoric.findMany({
@@ -33,7 +42,7 @@ export default createEndpoint({
         status: { equals: SwapStatus.CONFIRMED },
       },
       orderBy: { at: 'desc' },
-      take: 10,
+      take: 100,
     });
 
     for (const swap of swaps) {
