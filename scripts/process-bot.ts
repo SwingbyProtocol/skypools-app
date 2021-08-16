@@ -26,16 +26,16 @@ const NETWORK_TASKS: Task[] = [
   { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
 ];
 
-NETWORKS.forEach((mode) => {
-  NETWORK_TASKS.forEach((task) => {
-    (async () => {
-      const generator = runNetworkTask(mode, task);
-      for await (let value of generator) {
-        logger.info(value, 'Got result for %j/%j', mode, task);
-      }
-    })();
-  });
-});
+// NETWORKS.forEach((mode) => {
+//   NETWORK_TASKS.forEach((task) => {
+//     (async () => {
+//       const generator = runNetworkTask(mode, task);
+//       for await (let value of generator) {
+//         logger.info(value, 'Got result for %j/%j', mode, task);
+//       }
+//     })();
+//   });
+// });
 
 async function* runNetworkTask(
   network: typeof NETWORKS[number],
