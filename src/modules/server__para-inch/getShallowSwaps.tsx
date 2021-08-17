@@ -78,12 +78,13 @@ export const getShallowSwaps = async ({
           sort: 'desc',
           startblock: startBlockNumber ?? undefined,
           endblock: endBlockNumber ?? undefined,
+          offset: 500,
         },
       })
     ).result ?? [];
 
   return response
-    .filter((it) => it.to.toLowerCase() === address)
+    .filter((it) => it.to.toLowerCase() === address && new Prisma.Decimal(it.confirmations).gte(5))
     .map((it): ShallowSwap | null => {
       const hash = it.hash.toLowerCase();
       const input: { name: string } = abiDecoder.decodeMethod(it.input);
