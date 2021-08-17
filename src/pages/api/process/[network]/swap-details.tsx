@@ -28,6 +28,7 @@ export default createEndpoint({
       },
       orderBy: [{ detailsUpdatedAt: 'asc' }, { at: 'desc' }],
       take: 100,
+      include: { logs: true },
     });
 
     // We do this first to make sure that we rotate what tokens are processed each time.
@@ -38,7 +39,7 @@ export default createEndpoint({
 
     for (const swap of swaps) {
       try {
-        const info = await getSwapDetails({ network, hash: swap.hash, logger });
+        const info = await getSwapDetails({ network, hash: swap.hash, logger, logs: swap.logs });
         logger.debug({ swapId: swap.id, info }, 'Got swap details');
         await prisma.swapHistoric.update({
           where: { id: swap.id },

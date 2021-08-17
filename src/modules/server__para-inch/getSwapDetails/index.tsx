@@ -1,7 +1,7 @@
 import Web3 from 'web3';
 import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
-import { Prisma, SwapHistoric } from '@prisma/client';
+import { Prisma, SwapHistoric, SwapLogHistoric } from '@prisma/client';
 
 import { shouldUseParaSwap } from '../../env';
 import { Network } from '../../networks';
@@ -9,7 +9,6 @@ import { logger as baseLogger } from '../../logger';
 import { isNativeToken } from '../../para-inch';
 import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
-import { prisma } from '../../server__env';
 
 import oneInchAbi from './one-inch-abi.json';
 import paraSwapAbi from './paraswap-abi.json';
@@ -23,6 +22,7 @@ type Params = {
   network: Network;
   hash: string;
   logger: typeof baseLogger;
+  logs: SwapLogHistoric[];
 };
 
 const abi = shouldUseParaSwap ? paraSwapAbi : oneInchAbi;
@@ -32,13 +32,10 @@ export const getSwapDetails = async ({
   network,
   hash,
   logger: loggerParam = baseLogger,
+  logs: rawLogs,
 }: Params): Promise<TransactionDetails> => {
   const logger = loggerParam.child({ hash });
   const web3 = buildWeb3Instance({ network });
-
-  const rawLogs = await prisma.swapLogHistoric.findMany({
-    where: { network, transactionHash: { equals: hash, mode: 'insensitive' } },
-  });
 
   const logs = abiDecoder.decodeLogs(rawLogs);
   const events = logs?.find?.((it: any) => it.name === 'Swapped')?.events ?? [];
