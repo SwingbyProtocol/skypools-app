@@ -12,11 +12,9 @@ export default createEndpoint({
     )._max.blockNumber?.toString();
 
     const swaps = await getShallowSwaps({ network, startBlockNumber });
-    await prisma.$transaction(
-      swaps.map((it) =>
-        prisma.swapHistoric.upsert({ where: { id: it.id }, update: it, create: it }),
-      ),
-    );
+    for (const swap of swaps) {
+      await prisma.swapHistoric.upsert({ where: { id: swap.id }, update: swap, create: swap });
+    }
 
     logger.debug('Added %d swaps to DB', swaps.length);
     res.status(StatusCodes.OK).json({ swaps: swaps.length });

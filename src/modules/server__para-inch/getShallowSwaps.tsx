@@ -78,6 +78,7 @@ export const getShallowSwaps = async ({
           sort: 'desc',
           startblock: startBlockNumber ?? undefined,
           endblock: endBlockNumber ?? undefined,
+          page: 1,
           offset: 500,
         },
       })
