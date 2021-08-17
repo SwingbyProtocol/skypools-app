@@ -13,6 +13,23 @@ enum Network {
   POLYGON
 }
 
+enum LockId {
+  NEWER_SWAPS
+  OLDER_SWAPS
+  PRICES_HISTORIC
+  SWAP_DETAILS
+  SWAP_LOGS
+  SWAP_STATUS
+}
+
+model Locks {
+  id      LockId
+  network Network
+  at      DateTime
+
+  @@id([id, network])
+}
+
 model Token {
   id       String  @id
   network  Network

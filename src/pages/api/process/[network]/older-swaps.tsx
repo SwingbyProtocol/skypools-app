@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import { LockId } from '@prisma/client';
 
 import { getShallowSwaps } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
@@ -6,7 +7,8 @@ import { createEndpoint } from '../../../../modules/server__api-endpoint';
 export default createEndpoint({
   isSecret: true,
   logId: 'process/older-swaps',
-  fn: async ({ res, network, prisma, logger }) => {
+  fn: async ({ res, network, prisma, logger, lock }) => {
+    await lock(LockId.OLDER_SWAPS);
     const endBlockNumber = (
       await prisma.swapHistoric.aggregate({ where: { network }, _min: { blockNumber: true } })
     )._min.blockNumber;

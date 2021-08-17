@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { LockId, Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
 
@@ -8,7 +8,8 @@ import { createEndpoint } from '../../../../modules/server__api-endpoint';
 export default createEndpoint({
   isSecret: true,
   logId: 'process/prices-historic',
-  fn: async ({ res, network, prisma, logger }) => {
+  fn: async ({ res, network, prisma, logger, lock }) => {
+    await lock(LockId.PRICES_HISTORIC);
     const failed: typeof tokens = [];
     const tokens = await prisma.token.findMany({
       where: { network },

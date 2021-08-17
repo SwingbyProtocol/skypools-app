@@ -1,4 +1,4 @@
-import { SwapStatus } from '@prisma/client';
+import { LockId, SwapStatus } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
 import Web3 from 'web3';
@@ -24,7 +24,8 @@ const buildLogId = ({
 export default createEndpoint({
   isSecret: true,
   logId: 'process/swap-logs',
-  fn: async ({ res, network, prisma, logger }) => {
+  fn: async ({ res, network, prisma, logger, lock }) => {
+    await lock(LockId.SWAP_LOGS);
     const web3 = (() => {
       if (network === Network.ETHEREUM) {
         return new Web3(
