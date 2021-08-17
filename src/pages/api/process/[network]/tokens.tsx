@@ -22,8 +22,6 @@ export default createEndpoint({
             symbol: token.symbol,
           },
           update: {
-            id: token.id,
-            network,
             address: token.address,
             decimals: token.decimals,
             logoUri: token.logoUri ?? undefined,
