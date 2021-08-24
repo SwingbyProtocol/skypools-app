@@ -1,12 +1,12 @@
-import Web3 from 'web3';
+import { Prisma, SwapHistoric, SwapLogHistoric } from '@prisma/client';
 import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
-import { Prisma, SwapHistoric, SwapLogHistoric } from '@prisma/client';
+import Web3 from 'web3';
 
 import { shouldUseParaSwap } from '../../env';
-import { Network } from '../../networks';
 import { logger as baseLogger } from '../../logger';
-import { isNativeToken } from '../../para-inch';
+import { Network } from '../../networks';
+import { isNativeToken, NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
 
@@ -69,6 +69,36 @@ export const getSwapDetails = async ({
   logger.debug('Did not find "Swapped" event');
   const transaction = await web3.eth.getTransaction(hash);
   const input = await abiDecoder.decodeMethod(transaction.input);
+  const functionName = input.name;
+
+  if (functionName === 'unoswap') {
+    const srcTokenAddress = input.params
+      .find((it: any) => it.name === 'srcToken')
+      .value.toLowerCase();
+    const destTokenAddress = NATIVE_TOKEN_ADDRESS;
+    const srcAmount = input.params.find((it: any) => it.name === 'amount').value;
+    const receivingAddress = transaction.from.toLowerCase();
+
+    return {
+      srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
+      destTokenId: destTokenAddress
+        ? buildTokenId({ network, tokenAddress: destTokenAddress })
+        : null,
+      srcAmount: await parseAmount({
+        amount: srcAmount,
+        tokenAddress: srcTokenAddress,
+        web3,
+        logger,
+      }),
+      destAmount: await getToAmountFromScan({
+        hash,
+        network,
+        toTokenAddress: destTokenAddress,
+        receivingAddress,
+        logger,
+      }),
+    };
+  }
 
   const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
   const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
@@ -186,4 +216,23 @@ const getToAmountFromScan = async ({
       tokenDecimal: string;
     }>;
   };
+};
+
+const swapFunctions = shouldUseParaSwap
+  ? ['swapOnUniswap', 'swapOnUniswapFork', 'simpleSwap', 'megaSwap', 'multiSwap']
+  : ['swap', 'unoswap'];
+
+export const isSwap = async ({ network, hash, logger }: Params): Promise<boolean> => {
+  try {
+    const web3 = buildWeb3Instance({ network });
+    const transaction = await web3.eth.getTransaction(hash);
+
+    const input = await abiDecoder.decodeMethod(transaction.input);
+    const functionName = input.name;
+
+    return swapFunctions.includes(functionName);
+  } catch (err) {
+    logger.trace({ network, hash, err }, 'Failed to parse transaction');
+    return false;
+  }
 };
