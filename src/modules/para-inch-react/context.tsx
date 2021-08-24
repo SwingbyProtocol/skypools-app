@@ -39,7 +39,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
 });
 
 export const ParaInchTokenProvider = ({
-  value: valueParam,
+  value: valueProp,
   children,
 }: {
   children?: ReactNode;
@@ -52,15 +52,18 @@ export const ParaInchTokenProvider = ({
   const { address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
-  const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueParam.fromToken);
-  const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueParam.toToken);
+  const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
+  const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
   const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteMutation();
 
   const setFromToken = useCallback(
-    (value: string) => {
-      const token = valueParam.tokens.find(
-        ({ address }) => address.toLowerCase() === value.toLowerCase(),
-      );
+    (newValue: string) => {
+      const value = newValue.toLowerCase();
+      if (fromToken?.address.toLowerCase() === value) {
+        return;
+      }
+
+      const token = valueProp.tokens.find(({ address }) => address.toLowerCase() === value);
       if (!token) {
         throw new Error(`Could not find token "${value}"`);
       }
@@ -68,21 +71,24 @@ export const ParaInchTokenProvider = ({
       setFromTokenState(token);
       push(
         stringifyUrl({
-          url: `/swap/${valueParam.network.toLowerCase()}/${token.address}/${toToken?.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
         '',
         { shallow: true },
       );
     },
-    [valueParam.tokens, push, toToken, valueParam.network, skybridgeSwap],
+    [valueProp.tokens, push, toToken, valueProp.network, skybridgeSwap, fromToken?.address],
   );
 
   const setToToken = useCallback(
-    (value: string) => {
-      const token = valueParam.tokens.find(
-        ({ address }) => address.toLowerCase() === value.toLowerCase(),
-      );
+    (newValue: string) => {
+      const value = newValue.toLowerCase();
+      if (toToken?.address.toLowerCase() === value) {
+        return;
+      }
+
+      const token = valueProp.tokens.find(({ address }) => address.toLowerCase() === value);
       if (!token) {
         throw new Error(`Could not find token "${value}"`);
       }
@@ -90,36 +96,41 @@ export const ParaInchTokenProvider = ({
       setToTokenState(token);
       push(
         stringifyUrl({
-          url: `/swap/${valueParam.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
           query: { skybridgeSwap },
         }),
         '',
         { shallow: true },
       );
     },
-    [valueParam.tokens, push, fromToken, valueParam.network, skybridgeSwap],
+    [valueProp.tokens, push, fromToken, valueProp.network, skybridgeSwap, toToken?.address],
   );
 
   const setNetwork = useCallback(
-    (value: Network) => {
+    (newValue: Network) => {
+      const value = newValue.toLowerCase();
+      if (value === valueProp.network.toLowerCase()) {
+        return;
+      }
+
       push(
         stringifyUrl({
-          url: `/swap/${value.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
+          url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
       );
     },
-    [push, fromToken, toToken, skybridgeSwap],
+    [push, fromToken, toToken, skybridgeSwap, valueProp.network],
   );
 
   const unlinkSkybridgeSwap = useCallback(() => {
     push(
       stringifyUrl({
-        url: `/swap/${valueParam.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
+        url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
         query: { skybridgeSwap: undefined },
       }),
     );
-  }, [push, valueParam.network, fromToken, toToken]);
+  }, [push, valueProp.network, fromToken, toToken]);
 
   useEffect(() => {
     if (!fromToken || !toToken) {
@@ -131,7 +142,7 @@ export const ParaInchTokenProvider = ({
         srcTokenAddress: fromToken.address,
         destTokenAddress: toToken.address,
         initiatorAddress: address ?? '0x3A9077DE17DF9630C50A9fdcbf11a96015f20B5A',
-        network: valueParam.network,
+        network: valueProp.network,
         srcTokenAmount: (() => {
           try {
             if (!amount) return '1';
@@ -142,12 +153,12 @@ export const ParaInchTokenProvider = ({
         })(),
       },
     });
-  }, [address, amount, fromToken, getSwapQuote, toToken, valueParam.network]);
+  }, [address, amount, fromToken, getSwapQuote, toToken, valueProp.network]);
 
   const value = useMemo(
     () => ({
-      network: valueParam.network,
-      tokens: valueParam.tokens,
+      network: valueProp.network,
+      tokens: valueProp.tokens,
       amount,
       setAmount,
       fromToken,
@@ -166,8 +177,8 @@ export const ParaInchTokenProvider = ({
       unlinkSkybridgeSwap,
     }),
     [
-      valueParam.network,
-      valueParam.tokens,
+      valueProp.network,
+      valueProp.tokens,
       amount,
       fromToken,
       toToken,

@@ -56,7 +56,8 @@ export const PriceHistoricQuery = extendType({
               price: fromToken.price.div(toToken.price),
             };
           })
-          .filter((it): it is NexusGen['allTypes']['PriceHistoricItem'] => !!it);
+          .filter((it): it is NexusGen['allTypes']['PriceHistoricItem'] => !!it)
+          .sort((a, b) => a.at.toISOString().localeCompare(b.at.toISOString()));
       },
     });
   },

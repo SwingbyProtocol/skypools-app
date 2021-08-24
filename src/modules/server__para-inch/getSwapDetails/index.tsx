@@ -1,4 +1,4 @@
-import { Prisma, SwapHistoric } from '@prisma/client';
+import { Prisma, SwapHistoric, SwapLogHistoric } from '@prisma/client';
 import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
 import Web3 from 'web3';
@@ -22,6 +22,7 @@ type Params = {
   network: Network;
   hash: string;
   logger: typeof baseLogger;
+  logs: SwapLogHistoric[];
 };
 
 const abi = shouldUseParaSwap ? paraSwapAbi : oneInchAbi;
@@ -31,16 +32,12 @@ export const getSwapDetails = async ({
   network,
   hash,
   logger: loggerParam = baseLogger,
+  logs: rawLogs,
 }: Params): Promise<TransactionDetails> => {
   const logger = loggerParam.child({ hash });
-
   const web3 = buildWeb3Instance({ network });
-  const receipt = await web3.eth.getTransactionReceipt(hash);
-  if (!receipt) {
-    throw new Error(`No receipt found for "${hash}"`);
-  }
 
-  const logs = abiDecoder.decodeLogs(receipt.logs);
+  const logs = abiDecoder.decodeLogs(rawLogs);
   const events = logs?.find?.((it: any) => it.name === 'Swapped')?.events ?? [];
 
   if (events.length > 0) {

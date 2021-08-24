@@ -1,4 +1,4 @@
-import { SwapStatus } from '@prisma/client';
+import { LockId, SwapStatus } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 import { DateTime } from 'luxon';
 
@@ -8,7 +8,8 @@ import { createEndpoint } from '../../../../modules/server__api-endpoint';
 export default createEndpoint({
   isSecret: true,
   logId: 'process/swap-details',
-  fn: async ({ res, network, prisma, logger }) => {
+  fn: async ({ res, network, prisma, logger, lock }) => {
+    await lock(LockId.SWAP_DETAILS);
     const failed: typeof swaps = [];
     const swaps = await prisma.swapHistoric.findMany({
       where: {
@@ -27,7 +28,8 @@ export default createEndpoint({
         ],
       },
       orderBy: [{ detailsUpdatedAt: 'asc' }, { at: 'desc' }],
-      take: 100,
+      take: 1000,
+      include: { logs: true },
     });
 
     // We do this first to make sure that we rotate what tokens are processed each time.
@@ -38,7 +40,7 @@ export default createEndpoint({
 
     for (const swap of swaps) {
       try {
-        const info = await getSwapDetails({ network, hash: swap.hash, logger });
+        const info = await getSwapDetails({ network, hash: swap.hash, logger, logs: swap.logs });
         logger.debug({ swapId: swap.id, info }, 'Got swap details');
         await prisma.swapHistoric.update({
           where: { id: swap.id },
