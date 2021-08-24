@@ -43,7 +43,7 @@ export default createEndpoint({
         status: { equals: SwapStatus.CONFIRMED },
       },
       orderBy: { at: 'desc' },
-      take: 100,
+      take: 1000,
     });
 
     for (const swap of swaps) {

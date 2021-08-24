@@ -28,7 +28,7 @@ export default createEndpoint({
         ],
       },
       orderBy: [{ detailsUpdatedAt: 'asc' }, { at: 'desc' }],
-      take: 100,
+      take: 1000,
       include: { logs: true },
     });
 
