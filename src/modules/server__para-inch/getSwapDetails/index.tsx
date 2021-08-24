@@ -100,7 +100,6 @@ export const getSwapDetails = async ({
     };
   }
 
-  // Memo: functionName === 'swapOnUniswap' || functionName === 'swapOnUniswapFork'
   const srcTokenAddress = input.params.find((it: any) => it.name === 'path').value[0];
   const destTokenAddress = input.params.find((it: any) => it.name === 'path').value[1];
   const srcAmount = input.params.find((it: any) => it.name === 'amountIn').value;
@@ -219,29 +218,20 @@ const getToAmountFromScan = async ({
   };
 };
 
-const swapFunctions = [
-  'swapOnUniswap', // paraswap function
-  'swapOnUniswapFork', // paraswap function
-  'simpleSwap', // paraswap event
-  'megaSwap', // paraswap event
-  'multiSwap', // paraswap event
-  'swap', // 1inch event
-  'unoswap', // 1inch function
-];
+const swapFunctions = shouldUseParaSwap
+  ? ['swapOnUniswap', 'swapOnUniswapFork', 'simpleSwap', 'megaSwap', 'multiSwap']
+  : ['swap', 'unoswap'];
 
-export const isSwapTx = async ({
-  network,
-  hash,
-  logger: loggerParam = baseLogger,
-}: Params): Promise<boolean> => {
+export const isSwap = async ({ network, hash, logger }: Params): Promise<boolean> => {
   try {
     const web3 = buildWeb3Instance({ network });
     const transaction = await web3.eth.getTransaction(hash);
+
     const input = await abiDecoder.decodeMethod(transaction.input);
     const functionName = input.name;
+
     return swapFunctions.includes(functionName);
   } catch (err) {
-    const logger = loggerParam.child({ hash });
     logger.trace({ network, hash, err }, 'Failed to parse transaction');
     return false;
   }
