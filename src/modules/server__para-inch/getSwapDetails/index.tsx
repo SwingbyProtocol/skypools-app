@@ -217,22 +217,3 @@ const getToAmountFromScan = async ({
     }>;
   };
 };
-
-const swapFunctions = shouldUseParaSwap
-  ? ['swapOnUniswap', 'swapOnUniswapFork', 'simpleSwap', 'megaSwap', 'multiSwap']
-  : ['swap', 'unoswap'];
-
-export const isSwap = async ({ network, hash, logger }: Params): Promise<boolean> => {
-  try {
-    const web3 = buildWeb3Instance({ network });
-    const transaction = await web3.eth.getTransaction(hash);
-
-    const input = await abiDecoder.decodeMethod(transaction.input);
-    const functionName = input.name;
-
-    return swapFunctions.includes(functionName);
-  } catch (err) {
-    logger.trace({ network, hash, err }, 'Failed to parse transaction');
-    return false;
-  }
-};
