@@ -153,7 +153,7 @@ export const createEndpoint =
           }
         },
       });
-    } catch (e) {
+    } catch (e: any) {
       const message = e?.message || '';
 
       if (e instanceof InvalidParamError) {

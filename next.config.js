@@ -14,6 +14,11 @@ module.exports = {
     ],
   },
   webpack(config) {
+    config.experiments = {
+      ...config.experiments,
+      topLevelAwait: true,
+    };
+
     config.module.rules = config.module.rules.map((it) => {
       if (!it.test || !it.test.source) {
         return it;

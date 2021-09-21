@@ -27,8 +27,8 @@ export const ConnectWallet = ({ className }: { className?: string }) => {
               }
 
               onboard?.walletSelect();
-            } catch (e) {
-              logger.error(e);
+            } catch (err) {
+              logger.error({ err });
             }
           }}
           title={address ?? undefined}

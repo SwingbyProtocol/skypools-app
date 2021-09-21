@@ -81,8 +81,8 @@ export default createEndpoint({
         ]);
 
         logger.debug({ swapId: swap.id, logs: receipt.logs }, 'Got swap logs');
-      } catch (err) {
-        if (/request count exceeded/i.test(err.message)) {
+      } catch (err: any) {
+        if (/request count exceeded/i.test(err?.message)) {
           logger.error('Infura request limit exceeded');
           throw err;
         }
