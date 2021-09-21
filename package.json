@@ -62,7 +62,7 @@
     "@percy/cli": "^1.0.0-beta.68",
     "@percy/cypress": "^3.1.1",
     "@svgr/webpack": "^5.5.0",
-    "@swingby-protocol/eslint-config": "2.5.0",
+    "@swingby-protocol/eslint-config": "3.0.0",
     "@swingby-protocol/prettier-config": "^1.0.0",
     "@types/big.js": "^6.1.2",
     "@types/jest": "^27.0.2",
@@ -84,5 +84,8 @@
     "typescript": "^4.4.3",
     "url-loader": "^4.1.1",
     "wait-on": "^6.0.0"
+  },
+  "resolutions": {
+    "**/@typescript-eslint/eslint-plugin": "4.31.2"
   }
 }
