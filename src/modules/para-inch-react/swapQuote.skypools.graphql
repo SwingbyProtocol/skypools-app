@@ -33,17 +33,24 @@ mutation SwapQuote(
         value
       }
       path {
-        exchange
         fraction
-        srcToken {
-          address
-          symbol
-          logoUri
-        }
-        destToken {
-          address
-          symbol
-          logoUri
+        swaps {
+          srcTokenAddress
+          srcToken {
+            address
+            symbol
+            logoUri
+          }
+          destTokenAddress
+          destToken {
+            address
+            symbol
+            logoUri
+          }
+          exchanges {
+            exchange
+            fraction
+          }
         }
       }
     }

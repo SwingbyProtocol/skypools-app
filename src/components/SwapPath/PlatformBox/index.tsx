@@ -18,7 +18,9 @@ type Props = {
   className?: string;
   withFractions: boolean;
   withNames: boolean;
-  value: NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute']['path'][number];
+  value: NonNullable<
+    SwapQuoteMutationResult['data']
+  >['swapQuote']['bestRoute']['path'][number]['swaps'][number]['exchanges'];
 };
 
 export const PlatformBox = ({ withFractions, withNames, className, value }: Props) => {

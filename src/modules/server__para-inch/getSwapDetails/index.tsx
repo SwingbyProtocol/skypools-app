@@ -3,14 +3,12 @@ import abiDecoder from 'abi-decoder';
 import erc20Abi from 'human-standard-token-abi';
 import Web3 from 'web3';
 
-import { shouldUseParaSwap } from '../../env';
 import { logger as baseLogger } from '../../logger';
 import { Network } from '../../networks';
 import { isNativeToken, NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
 
-import oneInchAbi from './one-inch-abi.json';
 import paraSwapAbi from './paraswap-abi.json';
 
 type TransactionDetails = Pick<
@@ -25,8 +23,7 @@ type Params = {
   logs: SwapLogHistoric[];
 };
 
-const abi = shouldUseParaSwap ? paraSwapAbi : oneInchAbi;
-abiDecoder.addABI(abi);
+abiDecoder.addABI(paraSwapAbi);
 
 export const getSwapDetails = async ({
   network,
@@ -44,7 +41,7 @@ export const getSwapDetails = async ({
     logger.debug('Found "Swapped" event');
 
     const srcTokenAddress = findLogValue(events, 'srcToken');
-    const destTokenAddress = findLogValue(events, shouldUseParaSwap ? 'destToken' : 'dstToken');
+    const destTokenAddress = findLogValue(events, 'destToken');
 
     return {
       srcTokenId: srcTokenAddress ? buildTokenId({ network, tokenAddress: srcTokenAddress }) : null,
@@ -52,13 +49,13 @@ export const getSwapDetails = async ({
         ? buildTokenId({ network, tokenAddress: destTokenAddress })
         : null,
       srcAmount: await parseAmount({
-        amount: findLogValue(events, shouldUseParaSwap ? 'srcAmount' : 'spentAmount'),
+        amount: findLogValue(events, 'srcAmount'),
         tokenAddress: srcTokenAddress,
         web3,
         logger,
       }),
       destAmount: await parseAmount({
-        amount: findLogValue(events, shouldUseParaSwap ? 'receivedAmount' : 'returnAmount'),
+        amount: findLogValue(events, 'receivedAmount'),
         tokenAddress: destTokenAddress,
         web3,
         logger,

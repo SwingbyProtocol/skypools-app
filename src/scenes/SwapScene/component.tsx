@@ -30,7 +30,18 @@ import { Widget } from './Widget';
 import { OtherExchanges } from './OtherExchanges';
 
 const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value'] = {
-  path: [[{ exchange: '…', fraction: '1' }]],
+  path: [
+    {
+      fraction: '1',
+      swaps: [
+        {
+          srcTokenAddress: '0x',
+          destTokenAddress: '0x',
+          exchanges: [{ exchange: '…', fraction: '1' }],
+        },
+      ],
+    },
+  ],
 };
 
 export const SwapScene = () => {

@@ -190,6 +190,7 @@ export interface NexusGenObjects {
     bestRoute: NexusGenRootTypes['SwapQuoteBestRoute']; // SwapQuoteBestRoute!
     destToken: NexusGenRootTypes['Token']; // Token!
     destTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
+    nativeTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     otherExchanges: NexusGenRootTypes['SwapQuoteOtherExchange'][]; // [SwapQuoteOtherExchange!]!
     srcToken: NexusGenRootTypes['Token']; // Token!
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
@@ -202,8 +203,7 @@ export interface NexusGenObjects {
     destTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     estimatedGas: NexusGenScalars['Decimal']; // Decimal!
     estimatedGasUsd: NexusGenScalars['Decimal']; // Decimal!
-    fractionOfBest: NexusGenScalars['Decimal']; // Decimal!
-    path: NexusGenRootTypes['SwapQuotePathItem'][][]; // [[SwapQuotePathItem!]!]!
+    path: NexusGenRootTypes['SwapQuotePathItem'][]; // [SwapQuotePathItem!]!
     spender: string; // String!
     transaction: NexusGenRootTypes['TransactionData']; // TransactionData!
   };
@@ -218,10 +218,21 @@ export interface NexusGenObjects {
   };
   SwapQuotePathItem: {
     // root type
-    destToken?: NexusGenRootTypes['Token'] | null; // Token
-    destTokenAddress: string; // String!
+    fraction: NexusGenScalars['Decimal']; // Decimal!
+    swaps: NexusGenRootTypes['SwapQuotePathSwapsItem'][]; // [SwapQuotePathSwapsItem!]!
+  };
+  SwapQuotePathSwapsExchangesItem: {
+    // root type
+    destTokenAmount?: NexusGenScalars['Decimal'] | null; // Decimal
     exchange: string; // String!
     fraction: NexusGenScalars['Decimal']; // Decimal!
+    srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
+  };
+  SwapQuotePathSwapsItem: {
+    // root type
+    destToken?: NexusGenRootTypes['Token'] | null; // Token
+    destTokenAddress: string; // String!
+    exchanges: NexusGenRootTypes['SwapQuotePathSwapsExchangesItem'][]; // [SwapQuotePathSwapsExchangesItem!]!
     srcToken?: NexusGenRootTypes['Token'] | null; // Token
     srcTokenAddress: string; // String!
   };
@@ -324,6 +335,7 @@ export interface NexusGenFieldTypes {
     bestRoute: NexusGenRootTypes['SwapQuoteBestRoute']; // SwapQuoteBestRoute!
     destToken: NexusGenRootTypes['Token']; // Token!
     destTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
+    nativeTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     otherExchanges: NexusGenRootTypes['SwapQuoteOtherExchange'][]; // [SwapQuoteOtherExchange!]!
     srcToken: NexusGenRootTypes['Token']; // Token!
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
@@ -336,8 +348,7 @@ export interface NexusGenFieldTypes {
     destTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     estimatedGas: NexusGenScalars['Decimal']; // Decimal!
     estimatedGasUsd: NexusGenScalars['Decimal']; // Decimal!
-    fractionOfBest: NexusGenScalars['Decimal']; // Decimal!
-    path: NexusGenRootTypes['SwapQuotePathItem'][][]; // [[SwapQuotePathItem!]!]!
+    path: NexusGenRootTypes['SwapQuotePathItem'][]; // [SwapQuotePathItem!]!
     spender: string; // String!
     transaction: NexusGenRootTypes['TransactionData']; // TransactionData!
   };
@@ -352,10 +363,21 @@ export interface NexusGenFieldTypes {
   };
   SwapQuotePathItem: {
     // field return type
-    destToken: NexusGenRootTypes['Token'] | null; // Token
-    destTokenAddress: string; // String!
+    fraction: NexusGenScalars['Decimal']; // Decimal!
+    swaps: NexusGenRootTypes['SwapQuotePathSwapsItem'][]; // [SwapQuotePathSwapsItem!]!
+  };
+  SwapQuotePathSwapsExchangesItem: {
+    // field return type
+    destTokenAmount: NexusGenScalars['Decimal'] | null; // Decimal
     exchange: string; // String!
     fraction: NexusGenScalars['Decimal']; // Decimal!
+    srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
+  };
+  SwapQuotePathSwapsItem: {
+    // field return type
+    destToken: NexusGenRootTypes['Token'] | null; // Token
+    destTokenAddress: string; // String!
+    exchanges: NexusGenRootTypes['SwapQuotePathSwapsExchangesItem'][]; // [SwapQuotePathSwapsExchangesItem!]!
     srcToken: NexusGenRootTypes['Token'] | null; // Token
     srcTokenAddress: string; // String!
   };
@@ -450,6 +472,7 @@ export interface NexusGenFieldTypeNames {
     bestRoute: 'SwapQuoteBestRoute';
     destToken: 'Token';
     destTokenPriceUsd: 'Decimal';
+    nativeTokenPriceUsd: 'Decimal';
     otherExchanges: 'SwapQuoteOtherExchange';
     srcToken: 'Token';
     srcTokenAmount: 'Decimal';
@@ -462,7 +485,6 @@ export interface NexusGenFieldTypeNames {
     destTokenAmountUsd: 'Decimal';
     estimatedGas: 'Decimal';
     estimatedGasUsd: 'Decimal';
-    fractionOfBest: 'Decimal';
     path: 'SwapQuotePathItem';
     spender: 'String';
     transaction: 'TransactionData';
@@ -478,10 +500,21 @@ export interface NexusGenFieldTypeNames {
   };
   SwapQuotePathItem: {
     // field return type name
-    destToken: 'Token';
-    destTokenAddress: 'String';
+    fraction: 'Decimal';
+    swaps: 'SwapQuotePathSwapsItem';
+  };
+  SwapQuotePathSwapsExchangesItem: {
+    // field return type name
+    destTokenAmount: 'Decimal';
     exchange: 'String';
     fraction: 'Decimal';
+    srcTokenAmount: 'Decimal';
+  };
+  SwapQuotePathSwapsItem: {
+    // field return type name
+    destToken: 'Token';
+    destTokenAddress: 'String';
+    exchanges: 'SwapQuotePathSwapsExchangesItem';
     srcToken: 'Token';
     srcTokenAddress: 'String';
   };
