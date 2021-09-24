@@ -5,7 +5,6 @@ import abiDecoder from 'abi-decoder';
 import { Network } from '../networks';
 import { logger as baseLogger } from '../logger';
 import { buildWeb3Instance, scanApiFetcher } from '../server__web3';
-import { shouldUseParaSwap } from '../env';
 
 import { getSpender } from './getSpender';
 
@@ -23,17 +22,13 @@ type ApiResult = {
   }> | null;
 };
 
-const SWAP_FUNCTIONS_PARASWAP = [
+const SWAP_FUNCTIONS = [
   'swapOnUniswap',
   'swapOnUniswapFork',
   'simpleSwap',
   'megaSwap',
   'multiSwap',
 ];
-
-const SWAP_FUNCTIONS_ONEINCH = ['swap', 'unoswap'];
-
-const SWAP_FUNCTIONS = shouldUseParaSwap ? SWAP_FUNCTIONS_PARASWAP : SWAP_FUNCTIONS_ONEINCH;
 
 const buildSwapId = ({ network, hash }: { network: Network; hash: string }) => {
   return Buffer.from(`${network}::${hash}`, 'utf-8').toString('base64');

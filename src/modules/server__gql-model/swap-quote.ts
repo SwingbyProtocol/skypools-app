@@ -2,11 +2,22 @@ import { extendType, objectType, arg, nonNull, nullable, list } from 'nexus';
 
 import { getSwapQuote } from '../server__para-inch';
 
-const SwapQuotePathItem = objectType({
-  name: 'SwapQuotePathItem',
+const SwapQuotePathSwapsExchangesItem = objectType({
+  name: 'SwapQuotePathSwapsExchangesItem',
   definition(t) {
     t.nonNull.field('exchange', { type: 'String' });
     t.nonNull.field('fraction', { type: 'Decimal' });
+    t.nonNull.field('srcTokenAmount', { type: 'Decimal' });
+    t.nullable.field('destTokenAmount', { type: 'Decimal' });
+  },
+});
+
+const SwapQuotePathSwapsExchanges = nonNull(list(nonNull(SwapQuotePathSwapsExchangesItem)));
+
+const SwapQuotePathSwapsItem = objectType({
+  name: 'SwapQuotePathSwapsItem',
+  definition(t) {
+    t.nonNull.field('exchanges', { type: SwapQuotePathSwapsExchanges });
     t.nonNull.field('srcTokenAddress', { type: 'String' });
     t.nonNull.field('destTokenAddress', { type: 'String' });
     t.nullable.field('srcToken', { type: 'Token' });
@@ -14,7 +25,17 @@ const SwapQuotePathItem = objectType({
   },
 });
 
-const SwapQuotePath = list(nonNull(list(nonNull(SwapQuotePathItem))));
+const SwapQuotePathSwaps = nonNull(list(nonNull(SwapQuotePathSwapsItem)));
+
+const SwapQuotePathItem = objectType({
+  name: 'SwapQuotePathItem',
+  definition(t) {
+    t.nonNull.field('fraction', { type: 'Decimal' });
+    t.nonNull.field('swaps', { type: SwapQuotePathSwaps });
+  },
+});
+
+const SwapQuotePath = nonNull(list(nonNull(SwapQuotePathItem)));
 
 const SwapQuoteOtherExchange = objectType({
   name: 'SwapQuoteOtherExchange',
@@ -48,7 +69,6 @@ const SwapQuoteBestRoute = objectType({
     t.nonNull.field('destTokenAmountUsd', { type: 'Decimal' });
     t.nonNull.field('estimatedGas', { type: 'Decimal' });
     t.nonNull.field('estimatedGasUsd', { type: 'Decimal' });
-    t.nonNull.field('fractionOfBest', { type: 'Decimal' });
 
     t.nonNull.field('spender', { type: 'String' });
     t.nonNull.field('transaction', { type: TransactionData });
@@ -60,6 +80,7 @@ const SwapQuote = objectType({
   definition(t) {
     t.nonNull.field('srcToken', { type: 'Token' });
     t.nonNull.field('destToken', { type: 'Token' });
+    t.nonNull.field('nativeTokenPriceUsd', { type: 'Decimal' });
     t.nonNull.field('srcTokenPriceUsd', { type: 'Decimal' });
     t.nonNull.field('srcTokenAmount', { type: 'Decimal' });
     t.nonNull.field('srcTokenAmountUsd', { type: 'Decimal' });

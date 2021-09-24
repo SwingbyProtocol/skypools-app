@@ -27,24 +27,29 @@ export const SwapPath = ({ value, className }: Props) => {
   return (
     <div ref={containerRef} css={swapPath} className={className}>
       <div css={wrapper}>
-        <Coin css={coin} src={value.path[0]?.[0]?.srcToken?.logoUri} />
-        {value.path.map((it, index) => (
+        {value.path.map((path, index) => (
           <React.Fragment key={index}>
-            <span css={divider}>
-              <Icon.CaretRight />
-            </span>
+            {path.swaps.map((swap, index) => (
+              <React.Fragment key={index}>
+                {index === 0 && <Coin css={coin} src={swap.srcToken?.logoUri} />}
 
-            <PlatformBox
-              value={it}
-              withFractions={!!params.withFractions}
-              withNames={!!params.withNames}
-            />
+                <span css={divider}>
+                  <Icon.CaretRight />
+                </span>
 
-            <span css={divider}>
-              <Icon.CaretRight />
-            </span>
+                <PlatformBox
+                  value={swap.exchanges}
+                  withFractions={!!params.withFractions}
+                  withNames={!!params.withNames}
+                />
 
-            <Coin css={coin} src={it[0]?.destToken?.logoUri} />
+                <span css={divider}>
+                  <Icon.CaretRight />
+                </span>
+
+                <Coin css={coin} src={swap.destToken?.logoUri} />
+              </React.Fragment>
+            ))}
           </React.Fragment>
         ))}
       </div>

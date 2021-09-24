@@ -146,7 +146,7 @@ export const Widget = () => {
                 <span css={infoValueHighlight}>
                   <FormattedNumber
                     value={new Big(swapQuote.srcTokenPriceUsd)
-                      .times(swapQuote.destTokenPriceUsd)
+                      .div(swapQuote.destTokenPriceUsd)
                       .toNumber()}
                     maximumSignificantDigits={6}
                   />
@@ -160,8 +160,8 @@ export const Widget = () => {
                 1&nbsp;{toToken?.symbol}&nbsp;=&nbsp;
                 <span css={infoValueHighlight}>
                   <FormattedNumber
-                    value={new Big(swapQuote.srcTokenPriceUsd)
-                      .div(swapQuote.destTokenPriceUsd)
+                    value={new Big(swapQuote.destTokenPriceUsd)
+                      .div(swapQuote.srcTokenPriceUsd)
                       .toNumber()}
                     maximumSignificantDigits={6}
                   />

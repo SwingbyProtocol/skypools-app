@@ -221,6 +221,7 @@ type SwapQuote {
   bestRoute: SwapQuoteBestRoute!
   destToken: Token!
   destTokenPriceUsd: Decimal!
+  nativeTokenPriceUsd: Decimal!
   otherExchanges: [SwapQuoteOtherExchange!]!
   srcToken: Token!
   srcTokenAmount: Decimal!
@@ -233,8 +234,7 @@ type SwapQuoteBestRoute {
   destTokenAmountUsd: Decimal!
   estimatedGas: Decimal!
   estimatedGasUsd: Decimal!
-  fractionOfBest: Decimal!
-  path: [[SwapQuotePathItem!]!]!
+  path: [SwapQuotePathItem!]!
   spender: String!
   transaction: TransactionData!
 }
@@ -249,10 +249,21 @@ type SwapQuoteOtherExchange {
 }
 
 type SwapQuotePathItem {
-  destToken: Token
-  destTokenAddress: String!
+  fraction: Decimal!
+  swaps: [SwapQuotePathSwapsItem!]!
+}
+
+type SwapQuotePathSwapsExchangesItem {
+  destTokenAmount: Decimal
   exchange: String!
   fraction: Decimal!
+  srcTokenAmount: Decimal!
+}
+
+type SwapQuotePathSwapsItem {
+  destToken: Token
+  destTokenAddress: String!
+  exchanges: [SwapQuotePathSwapsExchangesItem!]!
   srcToken: Token
   srcTokenAddress: String!
 }

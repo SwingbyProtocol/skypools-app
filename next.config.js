@@ -6,12 +6,7 @@ module.exports = {
     defaultLocale: 'en',
   },
   images: {
-    domains: [
-      'img.paraswap.network',
-      'raw.githubusercontent.com',
-      'tokens.1inch.exchange',
-      'assets.coingecko.com',
-    ],
+    domains: ['img.paraswap.network', 'raw.githubusercontent.com', 'assets.coingecko.com'],
   },
   webpack(config) {
     config.experiments = {
