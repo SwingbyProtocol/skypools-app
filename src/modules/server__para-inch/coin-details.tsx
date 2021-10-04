@@ -9,7 +9,6 @@ import { isFakeNativeToken } from '../para-inch';
 
 const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
-const WETH_POLYGON_ADDRESS = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
 
 const HISTORY_LENGTH = Duration.fromObject({ months: 6 });
 
@@ -26,18 +25,12 @@ const getCoingeckoNetworkId = (network: Network) => {
       return 'ethereum';
     case Network.BSC:
       return 'binance-smart-chain';
-    case Network.POLYGON:
-      return 'polygon-pos';
   }
 };
 
 const getContractAddress = ({ address, network }: { address: string; network: Network }) => {
   if (isFakeNativeToken(address)) {
-    return network === Network.POLYGON
-      ? WETH_POLYGON_ADDRESS
-      : network === Network.BSC
-      ? WBNB_ADDRESS
-      : WETH_ADDRESS;
+    return network === Network.BSC ? WBNB_ADDRESS : WETH_ADDRESS;
   }
 
   return address;

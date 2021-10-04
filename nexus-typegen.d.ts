@@ -139,7 +139,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  Network: 'BSC' | 'ETHEREUM' | 'POLYGON';
+  Network: 'BSC' | 'ETHEREUM';
   StringFilterMode: 'default' | 'insensitive';
   SwapStatus: 'CONFIRMED' | 'FAILED' | 'SENT';
 }
