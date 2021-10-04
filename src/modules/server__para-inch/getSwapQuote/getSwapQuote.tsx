@@ -82,63 +82,55 @@ export const getSwapQuote = async ({
     return paraSwapQuote;
   }
 
-  const firstSwap: typeof paraSwapQuote['bestRoute']['path'] =
-    paraSwapSrcToken === srcToken
-      ? []
-      : [
-          {
-            fraction: new Prisma.Decimal(1),
-            swaps: [
-              {
-                srcTokenAddress,
-                srcToken,
-                destToken: paraSwapSrcToken,
-                destTokenAddress: paraSwapSrcToken.address,
-                exchanges: [
-                  {
-                    exchange: 'skybridge',
-                    fraction: new Prisma.Decimal(1),
-                    srcTokenAmount: paraSwapQuote.srcTokenAmount,
-                    destTokenAmount: paraSwapQuote.srcTokenAmount,
-                  },
-                ],
-              },
-            ],
-          },
-        ];
-
-  const lastSwap: typeof paraSwapQuote['bestRoute']['path'] =
-    paraSwapDestToken === destToken
-      ? []
-      : [
-          {
-            fraction: new Prisma.Decimal(1),
-            swaps: [
-              {
-                srcTokenAddress: paraSwapDestToken.address,
-                srcToken: paraSwapDestToken,
-                destToken,
-                destTokenAddress,
-                exchanges: [
-                  {
-                    exchange: 'skybridge',
-                    fraction: new Prisma.Decimal(1),
-                    srcTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
-                    destTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
-                  },
-                ],
-              },
-            ],
-          },
-        ];
-
   return {
     ...paraSwapQuote,
     srcToken,
     destToken,
     bestRoute: {
       ...paraSwapQuote.bestRoute,
-      path: [...firstSwap, ...paraSwapQuote.bestRoute.path, ...lastSwap],
+      path: paraSwapQuote.bestRoute.path.map((it) => {
+        const firstSwap: typeof paraSwapQuote['bestRoute']['path'][number]['swaps'] =
+          paraSwapSrcToken === srcToken
+            ? []
+            : [
+                {
+                  srcTokenAddress,
+                  srcToken,
+                  destToken: paraSwapSrcToken,
+                  destTokenAddress: paraSwapSrcToken.address,
+                  exchanges: [
+                    {
+                      exchange: 'skybridge',
+                      fraction: new Prisma.Decimal(1),
+                      srcTokenAmount: paraSwapQuote.srcTokenAmount,
+                      destTokenAmount: paraSwapQuote.srcTokenAmount,
+                    },
+                  ],
+                },
+              ];
+
+        const lastSwap: typeof paraSwapQuote['bestRoute']['path'][number]['swaps'] =
+          paraSwapDestToken === destToken
+            ? []
+            : [
+                {
+                  srcTokenAddress: paraSwapDestToken.address,
+                  srcToken: paraSwapDestToken,
+                  destToken,
+                  destTokenAddress,
+                  exchanges: [
+                    {
+                      exchange: 'skybridge',
+                      fraction: new Prisma.Decimal(1),
+                      srcTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
+                      destTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
+                    },
+                  ],
+                },
+              ];
+
+        return { ...it, swaps: [...firstSwap, ...it.swaps, ...lastSwap] };
+      }),
     },
   };
 };
