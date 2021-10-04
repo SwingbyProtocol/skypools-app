@@ -5,7 +5,7 @@ import ABI from 'human-standard-token-abi';
 import { Big } from 'big.js';
 
 import { useOnboard } from '../onboard';
-import { isNativeToken } from '../para-inch';
+import { isFakeNativeToken } from '../para-inch';
 
 import { useParaInch } from './useParaInch';
 
@@ -26,7 +26,7 @@ export const useParaInchSwap = () => {
         return;
       }
 
-      if (isNativeToken(fromToken.address)) {
+      if (isFakeNativeToken(fromToken.address)) {
         setApprovalNeeded(false);
         return;
       }

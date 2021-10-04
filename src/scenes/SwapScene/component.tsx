@@ -7,7 +7,7 @@ import { Card } from '../../components/Card';
 import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
-import { isNativeToken } from '../../modules/para-inch';
+import { isFakeNativeToken } from '../../modules/para-inch';
 import { useParaInch } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { useSkybridgeSwap } from '../../modules/skybridge';
@@ -88,7 +88,7 @@ export const SwapScene = () => {
     (async () => {
       const web3 = new Web3(walletProvider);
       const balance = await (async () => {
-        if (isNativeToken(fromToken.address)) {
+        if (isFakeNativeToken(fromToken.address)) {
           return web3.utils.fromWei(await web3.eth.getBalance(address), 'ether');
         }
 
