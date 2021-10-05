@@ -1,4 +1,5 @@
 import { Duration } from 'luxon';
+import { stringifyUrl } from 'query-string';
 
 import { Network } from '../src/modules/networks';
 import { fetcher } from '../src/modules/fetch';
@@ -51,7 +52,10 @@ async function* runNetworkTask(
 
       const id = setTimeout(() => controller.abort(), TIMEOUT_AFTER);
       const result = await fetcher<Record<string, any>>(
-        `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}?secret=${process.env.PROCESS_TASK_SECRET}`,
+        stringifyUrl({
+          url: `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}`,
+          query: { secret: process.env.PROCESS_TASK_SECRET },
+        }),
         { signal: controller.signal },
       );
       clearTimeout(id);
