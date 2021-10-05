@@ -18,8 +18,6 @@ export const buildWeb3Instance = ({ network }: { network: Network }) => {
         return `https://:${server__infuraProjectSecret}@mainnet.infura.io/v3/${server__infuraProjectId}`;
       case Network.BSC:
         return 'https://bsc-dataseed1.binance.org:443';
-      case Network.POLYGON:
-        return 'https://rpc-mainnet.matic.network';
       default:
         throw new Error(`Cannot find an API endpoint for network "${network}"`);
     }
@@ -57,8 +55,6 @@ const getScanApiKey = ({ network }: { network: Network }) => {
       return server__etherscanSecret;
     case Network.BSC:
       return server__bscscanSecret;
-    case Network.POLYGON:
-      return undefined;
     default:
       return undefined;
   }

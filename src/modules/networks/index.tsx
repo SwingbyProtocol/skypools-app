@@ -8,8 +8,6 @@ export const getNetworkId = (network: Network) => {
       return 1;
     case Network.BSC:
       return 56;
-    case Network.POLYGON:
-      return 137;
   }
 
   throw new Error(`Unsupported network: "${network}"`);
@@ -21,8 +19,6 @@ export const getNetwork = (networkId: number) => {
       return Network.ETHEREUM;
     case 56:
       return Network.BSC;
-    case 137:
-      return Network.POLYGON;
   }
 
   return null;
