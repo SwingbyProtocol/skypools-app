@@ -3,7 +3,6 @@ import { Duration } from 'luxon';
 import { Network } from '../src/modules/networks';
 import { fetcher } from '../src/modules/fetch';
 import { logger } from '../src/modules/logger';
-import { server__processTaskSecret } from '../src/modules/server__env';
 
 const REPEAT_INTERVAL = Duration.fromObject({ seconds: 30 }).as('milliseconds');
 const TIMEOUT_AFTER = Duration.fromObject({ minutes: 1.5 }).as('milliseconds');
@@ -52,7 +51,7 @@ async function* runNetworkTask(
 
       const id = setTimeout(() => controller.abort(), TIMEOUT_AFTER);
       const result = await fetcher<Record<string, any>>(
-        `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}?secret=${server__processTaskSecret}`,
+        `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}?secret=${process.env.PROCESS_TASK_SECRET}`,
         { signal: controller.signal },
       );
       clearTimeout(id);
