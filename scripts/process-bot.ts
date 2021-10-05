@@ -4,6 +4,7 @@ import { stringifyUrl } from 'query-string';
 import { Network } from '../src/modules/networks';
 import { fetcher } from '../src/modules/fetch';
 import { logger } from '../src/modules/logger';
+import { server__processTaskSecret } from '../src/modules/server__env';
 
 const REPEAT_INTERVAL = Duration.fromObject({ seconds: 30 }).as('milliseconds');
 const TIMEOUT_AFTER = Duration.fromObject({ minutes: 1.5 }).as('milliseconds');
@@ -29,6 +30,7 @@ const NETWORK_TASKS: Task[] = [
 NETWORKS.forEach((mode) => {
   NETWORK_TASKS.forEach((task) => {
     (async () => {
+      logger.debug({ server__processTaskSecret }, 'Will run task: %j/%j', mode, task);
       const generator = runNetworkTask(mode, task);
       for await (let value of generator) {
         logger.info(value, 'Got result for %j/%j', mode, task);
@@ -50,14 +52,14 @@ async function* runNetworkTask(
     try {
       const controller = new AbortController();
 
+      const url = stringifyUrl({
+        url: `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}`,
+        query: { secret: server__processTaskSecret },
+      });
+      logger.debug('Will call URL "%s"', url);
+
       const id = setTimeout(() => controller.abort(), TIMEOUT_AFTER);
-      const result = await fetcher<Record<string, any>>(
-        stringifyUrl({
-          url: `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}`,
-          query: { secret: process.env.PROCESS_TASK_SECRET },
-        }),
-        { signal: controller.signal },
-      );
+      const result = await fetcher<Record<string, any>>(url, { signal: controller.signal });
       clearTimeout(id);
 
       yield { mode: network, task, result };
