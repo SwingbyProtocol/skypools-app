@@ -36,13 +36,13 @@ export const Slippage = () => {
       <div css={selects}>
         <div css={buttons}>
           <Button isActive={slippage === '0.5'} css={buttonLeft} onClick={() => setSlippage('0.5')}>
-            0.5%
+            <FormattedMessage id="slippage.percent" values={{ value: '0.5' }} />
           </Button>
           <Button isActive={slippage === '1'} onClick={() => setSlippage('1')}>
-            1%
+            <FormattedMessage id="slippage.percent" values={{ value: '1' }} />
           </Button>
           <Button isActive={slippage === '3'} css={buttonRight} onClick={() => setSlippage('3')}>
-            3%
+            <FormattedMessage id="slippage.percent" values={{ value: '3' }} />
           </Button>
         </div>
         <TextInput
