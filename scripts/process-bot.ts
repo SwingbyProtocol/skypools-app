@@ -32,7 +32,7 @@ NETWORKS.forEach((mode) => {
     (async () => {
       const generator = runNetworkTask(mode, task);
       for await (let value of generator) {
-        logger.info(value, 'Got result for %j/%j', mode, task);
+        logger.info(value, 'Got result for task: %j/%j', mode, task);
       }
     })();
   });
@@ -53,7 +53,7 @@ async function* runNetworkTask(
       const controller = new AbortController();
 
       const url = stringifyUrl({
-        url: `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}`,
+        url: `http://skypools-ed-deployment:3000/api/process/${network}/${config.name}`,
         query: { secret: server__processTaskSecret },
       });
       logger.debug('Will call URL "%s"', url);
