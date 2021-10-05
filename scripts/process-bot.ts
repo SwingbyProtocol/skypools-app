@@ -23,7 +23,7 @@ const NETWORK_TASKS: Task[] = [
   { name: 'swap-logs', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
   { name: 'swap-status', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
   'token-logos',
-  { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
+  'tokens',
 ];
 
 NETWORKS.forEach((mode) => {
