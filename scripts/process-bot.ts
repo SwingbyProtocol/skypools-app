@@ -30,7 +30,6 @@ const NETWORK_TASKS: Task[] = [
 NETWORKS.forEach((mode) => {
   NETWORK_TASKS.forEach((task) => {
     (async () => {
-      logger.debug({ server__processTaskSecret }, 'Will run task: %j/%j', mode, task);
       const generator = runNetworkTask(mode, task);
       for await (let value of generator) {
         logger.info(value, 'Got result for %j/%j', mode, task);
@@ -48,6 +47,7 @@ async function* runNetworkTask(
       repeatInterval: REPEAT_INTERVAL,
       ...(isTaskConfig(task) ? task : { name: task }),
     };
+    logger.debug({ server__processTaskSecret }, 'Will run task: %j/%j', network, task);
 
     try {
       const controller = new AbortController();
