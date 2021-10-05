@@ -28,6 +28,7 @@ import {
 } from './styles';
 import { Widget } from './Widget';
 import { OtherExchanges } from './OtherExchanges';
+import { Slippage } from './Slippage';
 
 const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value'] = {
   path: [
@@ -130,6 +131,7 @@ export const SwapScene = () => {
 
       <Card css={widgetCard}>
         <Widget />
+        <Slippage />
       </Card>
 
       <div css={historyContainer}>
