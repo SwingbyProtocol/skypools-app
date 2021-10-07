@@ -11,7 +11,7 @@ import {
   TokensQuery,
   TokensQueryVariables,
 } from '../../../../generated/skypools-graphql';
-import { isFakeBtcToken, isFakeNativeToken, isFakeToken } from '../../../../modules/para-inch';
+import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 

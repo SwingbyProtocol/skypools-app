@@ -1,10 +1,8 @@
 import { Duration } from 'luxon';
-import { stringifyUrl } from 'query-string';
 
 import { Network } from '../src/modules/networks';
 import { fetcher } from '../src/modules/fetch';
 import { logger } from '../src/modules/logger';
-import { server__processTaskSecret } from '../src/modules/server__env';
 
 const REPEAT_INTERVAL = Duration.fromObject({ seconds: 30 }).as('milliseconds');
 const TIMEOUT_AFTER = Duration.fromObject({ minutes: 1.5 }).as('milliseconds');
@@ -47,15 +45,12 @@ async function* runNetworkTask(
       repeatInterval: REPEAT_INTERVAL,
       ...(isTaskConfig(task) ? task : { name: task }),
     };
-    logger.debug({ server__processTaskSecret }, 'Will run task: %j/%j', network, task);
+    logger.debug('Will run task: %j/%j', network, task);
 
     try {
       const controller = new AbortController();
 
-      const url = stringifyUrl({
-        url: `http://skypools-ed-deployment:3000/api/process/${network}/${config.name}`,
-        query: { secret: server__processTaskSecret },
-      });
+      const url = `http://skypools-ed-deployment:3000/api/process/${network}/${config.name}`;
       logger.debug('Will call URL "%s"', url);
 
       const id = setTimeout(() => controller.abort(), TIMEOUT_AFTER);
