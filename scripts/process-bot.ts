@@ -50,7 +50,7 @@ async function* runNetworkTask(
     try {
       const controller = new AbortController();
 
-      const url = `http://skypools-ed-deployment:3000/api/process/${network}/${config.name}`;
+      const url = `${process.env.BASE_URL}/api/process/${network}/${config.name}`;
       logger.debug('Will call URL "%s"', url);
 
       const id = setTimeout(() => controller.abort(), TIMEOUT_AFTER);
