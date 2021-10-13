@@ -43,7 +43,9 @@ jobs:
 
       - uses: actions-hub/kubectl@master
         with:
-          args: set image deployment/skypools-ed-deployment app=${{ steps.sha_tag.outputs.value }}
+          args:
+            set image --namespace=swingby deployment/swingby-skypools app=${{
+            steps.sha_tag.outputs.value }}
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
@@ -87,6 +89,7 @@ jobs:
       - uses: actions-hub/kubectl@master
         with:
           args:
-            set image deployment/skypools-bot-ed-deployment app=${{ steps.sha_tag.outputs.value }}
+            set image --namespace=swingby deployment/swingby-skypools-bot app=${{
+            steps.sha_tag.outputs.value }}
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
