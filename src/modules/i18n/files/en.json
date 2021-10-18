@@ -30,6 +30,5 @@
   "history.status.CONFIRMED": "Confirmed",
   "history.status.SENT": "Sent",
   "history.status.FAILED": "Failed",
-  "comparison.match": "MATCH",
-  "slippage.percent": "{value}%"
+  "comparison.match": "MATCH"
 }

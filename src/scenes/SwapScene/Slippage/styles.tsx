@@ -16,30 +16,19 @@ export const label = css`
   align-self: flex-end;
 `;
 
-export const selects = css`
+export const selector = css`
   grid-column-gap: ${rem(size.drawer)};
   display: flex;
   justify-content: space-between;
-  @media (min-width: ${rem(400)}) {
-    justify-content: flex-start;
-  }
-  @media (min-width: ${rem(768)}) {
-    justify-content: space-between;
-  }
-  @media (min-width: ${rem(1100)}) {
-    justify-content: flex-start;
-  }
 `;
 
-export const buttons = css`
+export const selectorButtonsWrapper = css`
   display: grid;
-  grid-template-columns: auto auto auto;
-  border-radius: ${rem(size.house)};
-  grid-column-gap: 0;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 0;
 `;
 
-export const Button = styled.div<{ isActive: boolean }>`
-  width: ${rem(42)};
+export const selectorButton = css`
   border: 1px solid hsl(var(--sp-color-border-normal));
   background: hsl(var(--sp-color-bg-normal));
   display: flex;
@@ -47,30 +36,28 @@ export const Button = styled.div<{ isActive: boolean }>`
   align-items: center;
   cursor: pointer;
   font-size: ${rem(size.closet)};
-  background-color: ${(props) => props.isActive && 'hsl(var(--sp-color-border-normal))'};
   padding: ${rem(0)} ${rem(size.drawer)};
-  @media (min-width: ${rem(375)}) {
-    width: ${rem(46)};
+
+  :first-of-type {
+    border-top-left-radius: ${rem(size.house)};
+    border-bottom-left-radius: ${rem(size.house)};
+    border-right: 0;
   }
-  @media (min-width: ${rem(400)}) {
-    width: ${rem(size.state)};
+
+  :last-of-type {
+    border-top-right-radius: ${rem(size.house)};
+    border-bottom-right-radius: ${rem(size.house)};
+    border-left: 0;
   }
 `;
 
-export const buttonLeft = css`
-  border-top-left-radius: ${rem(size.house)};
-  border-bottom-left-radius: ${rem(size.house)};
-  border-right: 0;
-`;
-
-export const buttonRight = css`
-  border-top-right-radius: ${rem(size.house)};
-  border-bottom-right-radius: ${rem(size.house)};
-  border-left: 0;
+export const selectorButtonActive = css`
+  background-color: hsl(var(--sp-color-border-normal));
 `;
 
 export const textInput = css`
-  width: ${rem(98)};
+  width: ${rem(100)};
+
   input {
     text-align: end;
     font-size: ${rem(size.closet)};

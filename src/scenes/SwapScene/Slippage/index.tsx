@@ -1,60 +1,70 @@
-import { useEffect, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useState } from 'react';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { Big } from 'big.js';
 
 import { TextInput } from '../../../components/TextInput';
 
 import {
   container,
   label,
-  selects,
-  buttons,
+  selector,
+  selectorButtonsWrapper,
   inputRight,
-  buttonLeft,
-  buttonRight,
   textInput,
-  Button,
+  selectorButton,
+  selectorButtonActive,
 } from './styles';
 
-export const Slippage = () => {
-  const [slippage, setSlippage] = useState<string>('1');
-  const [custom, setCustom] = useState<string>('');
+const percentageProps: Intl.NumberFormatOptions = {
+  style: 'percent',
+  maximumFractionDigits: 1,
+};
 
-  useEffect(() => {
-    if (custom) {
-      setSlippage(custom);
-    }
-    if (!custom) {
-      setSlippage('1');
-    }
-  }, [custom]);
+const DEFAULT_SLIPPAGES = ['0.1', '0.5', '3'];
+
+export const Slippage = () => {
+  const [slippage, setSlippage] = useState<string>(DEFAULT_SLIPPAGES[0]);
+  const [usedCustom, setUsedCustom] = useState(false);
 
   return (
     <div css={container}>
       <div css={label}>
         <FormattedMessage id="widget.slippage" />
       </div>
-      <div css={selects}>
-        <div css={buttons}>
-          <Button isActive={slippage === '0.5'} css={buttonLeft} onClick={() => setSlippage('0.5')}>
-            <FormattedMessage id="slippage.percent" values={{ value: '0.5' }} />
-          </Button>
-          <Button isActive={slippage === '1'} onClick={() => setSlippage('1')}>
-            <FormattedMessage id="slippage.percent" values={{ value: '1' }} />
-          </Button>
-          <Button isActive={slippage === '3'} css={buttonRight} onClick={() => setSlippage('3')}>
-            <FormattedMessage id="slippage.percent" values={{ value: '3' }} />
-          </Button>
+      <div css={selector}>
+        <div css={selectorButtonsWrapper}>
+          {DEFAULT_SLIPPAGES.map((it) => (
+            <button
+              key={it}
+              css={[selectorButton, slippage === it && selectorButtonActive]}
+              onClick={() => {
+                setUsedCustom(false);
+                setSlippage(it);
+              }}
+            >
+              <FormattedNumber {...percentageProps} value={+it / 100} />
+            </button>
+          ))}
         </div>
         <TextInput
           placeholder="Custom"
           css={textInput}
           size="city"
-          value={custom}
-          onChange={(evt) => {
-            const value = Number(evt.target.value);
-            if (!isNaN(value)) {
-              setCustom(evt.target.value);
+          state={(() => {
+            try {
+              new Big(slippage);
+              return 'normal';
+            } catch (e) {
+              return 'danger';
             }
+          })()}
+          value={(() => {
+            if (!usedCustom) return '';
+            return slippage;
+          })()}
+          onChange={(evt) => {
+            setUsedCustom(true);
+            setSlippage(evt.target.value);
           }}
           right={<span css={inputRight}>%</span>}
         />
