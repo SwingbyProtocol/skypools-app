@@ -15,10 +15,10 @@ import {
   selectorButtonActive,
 } from './styles';
 
-const percentageProps: Intl.NumberFormatOptions = {
+const percentageProps = {
   style: 'percent',
   maximumFractionDigits: 1,
-};
+} as const;
 
 const DEFAULT_SLIPPAGES = ['0.1', '0.5', '3'];
 
@@ -52,7 +52,7 @@ export const Slippage = () => {
           size="city"
           state={(() => {
             try {
-              new Big(slippage);
+              new Big(slippage); // This will crash if `slippage` is not a valid number
               return 'normal';
             } catch (e) {
               return 'danger';
