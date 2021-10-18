@@ -1,8 +1,20 @@
 -- CreateEnum
-CREATE TYPE "Network" AS ENUM ('ETHEREUM', 'BSC', 'POLYGON');
+CREATE TYPE "Network" AS ENUM ('ETHEREUM', 'BSC');
+
+-- CreateEnum
+CREATE TYPE "LockId" AS ENUM ('NEWER_SWAPS', 'OLDER_SWAPS', 'PRICES_HISTORIC', 'SWAP_DETAILS', 'SWAP_LOGS', 'SWAP_STATUS');
 
 -- CreateEnum
 CREATE TYPE "SwapStatus" AS ENUM ('SENT', 'CONFIRMED', 'FAILED');
+
+-- CreateTable
+CREATE TABLE "Locks" (
+    "id" "LockId" NOT NULL,
+    "network" "Network" NOT NULL,
+    "at" TIMESTAMP(3) NOT NULL,
+
+    PRIMARY KEY ("id","network")
+);
 
 -- CreateTable
 CREATE TABLE "Token" (
@@ -91,13 +103,13 @@ CREATE UNIQUE INDEX "SwapLogHistoric.network_transactionHash_logIndex_unique" ON
 CREATE INDEX "SwapLogHistoric.network_transactionHash_logIndex_index" ON "SwapLogHistoric"("network", "transactionHash", "logIndex");
 
 -- AddForeignKey
-ALTER TABLE "TokenUsdPriceHistoric" ADD FOREIGN KEY ("tokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "SwapLogHistoric" ADD FOREIGN KEY ("network", "transactionHash") REFERENCES "SwapHistoric"("network", "hash") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "SwapHistoric" ADD FOREIGN KEY ("srcTokenId") REFERENCES "Token"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SwapHistoric" ADD FOREIGN KEY ("destTokenId") REFERENCES "Token"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TokenUsdPriceHistoric" ADD FOREIGN KEY ("tokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SwapLogHistoric" ADD FOREIGN KEY ("network", "transactionHash") REFERENCES "SwapHistoric"("network", "hash") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -5,7 +5,7 @@ import Web3 from 'web3';
 
 import { logger as baseLogger } from '../../logger';
 import { Network } from '../../networks';
-import { isNativeToken, NATIVE_TOKEN_ADDRESS } from '../../para-inch';
+import { isFakeNativeToken, FAKE_NATIVE_TOKEN_ADDRESS } from '../../para-inch';
 import { buildWeb3Instance, scanApiFetcher } from '../../server__web3';
 import { buildTokenId } from '../getTokens';
 
@@ -72,7 +72,7 @@ export const getSwapDetails = async ({
     const srcTokenAddress = input.params
       .find((it: any) => it.name === 'srcToken')
       .value.toLowerCase();
-    const destTokenAddress = NATIVE_TOKEN_ADDRESS;
+    const destTokenAddress = FAKE_NATIVE_TOKEN_ADDRESS;
     const srcAmount = input.params.find((it: any) => it.name === 'amount').value;
     const receivingAddress = transaction.from.toLowerCase();
 
@@ -143,7 +143,7 @@ const parseAmount = async ({
 
   try {
     const decimals = await (async () => {
-      if (isNativeToken(tokenAddress)) return 18;
+      if (isFakeNativeToken(tokenAddress)) return 18;
 
       const contract = new web3.eth.Contract(erc20Abi, tokenAddress);
       return await contract.methods.decimals().call();
@@ -170,7 +170,7 @@ const getToAmountFromScan = async ({
   logger: typeof baseLogger;
 }): Promise<Prisma.Decimal | null> => {
   try {
-    if (isNativeToken(toTokenAddress)) {
+    if (isFakeNativeToken(toTokenAddress)) {
       const resultInternalTx = await scanApiFetcher<ApiResult>({
         network,
         query: {

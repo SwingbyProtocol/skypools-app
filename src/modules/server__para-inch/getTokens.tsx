@@ -1,10 +1,15 @@
-import { ParaSwap } from 'paraswap';
+import { ParaSwap, Token as ParaSwapToken } from 'paraswap';
 import Web3 from 'web3';
 
 import { Network, getNetworkId, getNetwork } from '../networks';
-import { ParaInchToken } from '../para-inch';
+import { FAKE_BTC_ADDRESS, ParaInchToken } from '../para-inch';
 
 import { isParaSwapApiError } from './isParaSwapApiError';
+
+type RelevantParaSwapToken = Pick<
+  ParaSwapToken,
+  'address' | 'decimals' | 'img' | 'symbol' | 'network'
+>;
 
 export const getTokens = async ({ network }: { network: Network }): Promise<ParaInchToken[]> => {
   const web3 = new Web3();
@@ -15,9 +20,17 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
     throw new Error(`${tokens.status}: ${tokens.message}`);
   }
 
+  const BTC_TOKEN: RelevantParaSwapToken = {
+    address: FAKE_BTC_ADDRESS,
+    decimals: 8,
+    network: getNetworkId(network),
+    img: undefined,
+    symbol: 'BTC',
+  };
+
   return (
     await Promise.all(
-      tokens.map(async (it): Promise<ParaInchToken> => {
+      [BTC_TOKEN, ...tokens].map(async (it): Promise<ParaInchToken> => {
         const network = getNetwork(it.network)!;
         return {
           id: buildTokenId({ network, tokenAddress: it.address }),

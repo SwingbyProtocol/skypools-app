@@ -3,7 +3,6 @@ import { Duration } from 'luxon';
 import { Network } from '../src/modules/networks';
 import { fetcher } from '../src/modules/fetch';
 import { logger } from '../src/modules/logger';
-import { server__processTaskSecret } from '../src/modules/server__env';
 
 const REPEAT_INTERVAL = Duration.fromObject({ seconds: 30 }).as('milliseconds');
 const TIMEOUT_AFTER = Duration.fromObject({ minutes: 1.5 }).as('milliseconds');
@@ -23,7 +22,7 @@ const NETWORK_TASKS: Task[] = [
   { name: 'swap-logs', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
   { name: 'swap-status', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
   'token-logos',
-  { name: 'tokens', repeatInterval: Duration.fromObject({ hours: 2 }).as('milliseconds') },
+  'tokens',
 ];
 
 NETWORKS.forEach((mode) => {
@@ -31,7 +30,7 @@ NETWORKS.forEach((mode) => {
     (async () => {
       const generator = runNetworkTask(mode, task);
       for await (let value of generator) {
-        logger.info(value, 'Got result for %j/%j', mode, task);
+        logger.info(value, 'Got result for task: %j/%j', mode, task);
       }
     })();
   });
@@ -46,15 +45,16 @@ async function* runNetworkTask(
       repeatInterval: REPEAT_INTERVAL,
       ...(isTaskConfig(task) ? task : { name: task }),
     };
+    logger.debug('Will run task: %j/%j', network, task);
 
     try {
       const controller = new AbortController();
 
+      const url = `${process.env.BASE_URL}/api/process/${network}/${config.name}`;
+      logger.debug('Will call URL "%s"', url);
+
       const id = setTimeout(() => controller.abort(), TIMEOUT_AFTER);
-      const result = await fetcher<Record<string, any>>(
-        `https://k8s.skybridge.exchange/skypools/api/process/${network}/${config.name}?secret=${server__processTaskSecret}`,
-        { signal: controller.signal },
-      );
+      const result = await fetcher<Record<string, any>>(url, { signal: controller.signal });
       clearTimeout(id);
 
       yield { mode: network, task, result };

@@ -84,10 +84,16 @@ export const createEndpoint =
       await corsMiddleware({ req, res });
 
       const secret = getStringParam({ req, from: 'query', name: 'secret', defaultValue: '' });
-      if (isSecret && server__processTaskSecret && server__processTaskSecret !== secret) {
-        throw new NotAuthenticatedError(
-          'Must provide a secret key to be able to call this endpoint',
-        );
+      if (isSecret && server__processTaskSecret) {
+        if (!secret) {
+          throw new NotAuthenticatedError(
+            'Must provide a secret key to be able to call this endpoint',
+          );
+        }
+
+        if (server__processTaskSecret !== secret) {
+          throw new NotAuthenticatedError(`Provided secret ("${secret}") is incorrect`);
+        }
       }
 
       const getNetwork = () => {
@@ -157,19 +163,19 @@ export const createEndpoint =
       const message = e?.message || '';
 
       if (e instanceof InvalidParamError) {
-        ctx.logger.trace(e);
+        ctx.logger.error(e);
         res.status(StatusCodes.BAD_REQUEST).json({ message } as any);
         return;
       }
 
       if (e instanceof InvalidParamError) {
-        ctx.logger.trace(e);
+        ctx.logger.error(e);
         res.status(StatusCodes.METHOD_NOT_ALLOWED).json({ message } as any);
         return;
       }
 
       if (e instanceof NotAuthenticatedError) {
-        ctx.logger.trace(e);
+        ctx.logger.error(e);
         res
           .status(StatusCodes.UNAUTHORIZED)
           .json({ message: message || 'No authentication was provided' } as any);
@@ -177,7 +183,7 @@ export const createEndpoint =
       }
 
       if (e instanceof AlreadyLockedError) {
-        ctx.logger.trace(e);
+        ctx.logger.error(e);
         res
           .status(StatusCodes.LOCKED)
           .json({ message: message || 'This script is already being run' } as any);

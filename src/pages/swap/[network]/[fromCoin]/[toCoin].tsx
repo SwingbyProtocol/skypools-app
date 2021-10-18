@@ -11,7 +11,7 @@ import {
   TokensQuery,
   TokensQueryVariables,
 } from '../../../../generated/skypools-graphql';
-import { isNativeToken } from '../../../../modules/para-inch';
+import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
@@ -78,16 +78,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   if (!fromCoin || !toCoin) {
     const newFrom =
       fromCoin?.address ||
-      tokens.find(({ address }) => isNativeToken(address))?.address ||
+      tokens.find(({ address }) => isFakeBtcToken(address))?.address ||
       tokens[0]?.address;
 
     const newTo =
-      toCoin?.address || tokens.filter(({ address }) => !isNativeToken(address))?.[0]?.address;
+      toCoin?.address || tokens.filter(({ address }) => isFakeNativeToken(address))?.[0]?.address;
 
     if (newFrom && newTo) {
       return {
         redirect: {
-          destination: `/swap/${network}/${newFrom}/${newTo}`,
+          destination: `/swap/${network.toLowerCase()}/${newFrom}/${newTo}`,
           permanent: false,
         },
       };

@@ -7,7 +7,7 @@ import { FixedSizeList as List } from 'react-window';
 import { Coin } from '../../../../components/Coin';
 import { TextInput } from '../../../../components/TextInput';
 import { size } from '../../../../modules/styles';
-import { isNativeToken } from '../../../../modules/para-inch';
+import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch';
 import { Network } from '../../../../modules/networks';
 import type { ParaInchToken } from '../../../../modules/para-inch';
 
@@ -156,7 +156,7 @@ export const CoinAmountInput = ({
             label: (
               <div key={coin.address} css={coinContainer}>
                 <span css={coinChainClass}>
-                  {isNativeToken(coin.address) ? (
+                  {isFakeNativeToken(coin.address) || isFakeBtcToken(coin.address) ? (
                     <FormattedMessage id="token.chain.native" />
                   ) : (
                     <FormattedMessage
@@ -182,11 +182,11 @@ export const CoinAmountInput = ({
           };
         })
         .sort((a, b) => {
-          if (isNativeToken(a.value.address)) {
+          if (isFakeNativeToken(a.value.address)) {
             return -1;
           }
 
-          if (isNativeToken(b.value.address)) {
+          if (isFakeNativeToken(b.value.address)) {
             return 1;
           }
 

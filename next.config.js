@@ -65,7 +65,7 @@ module.exports = {
       {
         source: '/',
         destination:
-          '/swap/ethereum/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0xdac17f958d2ee523a2206206994597c13d831ec7',
+          '/swap/ethereum/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
         permanent: false,
       },
     ];
