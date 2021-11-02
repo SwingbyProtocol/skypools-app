@@ -39,6 +39,16 @@ export const StringFilter = inputObjectType({
   },
 });
 
+export const StringArrayFilter = inputObjectType({
+  name: 'StringArrayFilter',
+  definition(t) {
+    t.nullable.list.nonNull.string('equals');
+    t.string('has');
+    t.nullable.list.nonNull.string('hasEvery');
+    t.boolean('isEmpty');
+  },
+});
+
 export const DecimalFilter = inputObjectType({
   name: 'DecimalFilter',
   definition(t) {
@@ -104,15 +114,5 @@ export const NetworkEnumFilter = inputObjectType({
     t.list.field('in', { type: 'Network' });
     t.field('not', { type: 'NetworkEnumFilter' });
     t.list.field('notIn', { type: 'Network' });
-  },
-});
-
-export const SwapStatusEnumFilter = inputObjectType({
-  name: 'SwapStatusEnumFilter',
-  definition(t) {
-    t.field('equals', { type: 'SwapStatus' });
-    t.list.field('in', { type: 'SwapStatus' });
-    t.field('not', { type: 'SwapStatusEnumFilter' });
-    t.list.field('notIn', { type: 'SwapStatus' });
   },
 });

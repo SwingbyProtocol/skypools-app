@@ -6,6 +6,8 @@ export const getNetworkId = (network: Network) => {
   switch (network) {
     case Network.ETHEREUM:
       return 1;
+    case Network.ROPSTEN:
+      return 3;
     case Network.BSC:
       return 56;
   }
@@ -17,6 +19,8 @@ export const getNetwork = (networkId: number) => {
   switch (networkId) {
     case 1:
       return Network.ETHEREUM;
+    case 3:
+      return Network.ROPSTEN;
     case 56:
       return Network.BSC;
   }

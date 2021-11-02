@@ -9,14 +9,14 @@ import { logger } from '../../logger';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
 
+type Result = SwapQuote;
+
 export const getParaSwapQuote = async ({
-  beneficiaryAddress,
   destTokenAddress,
-  initiatorAddress,
   network,
   srcTokenAddress,
   srcTokenAmount: srcTokenAmountParam,
-}: GetSwapQuoteParams): Promise<SwapQuote> => {
+}: GetSwapQuoteParams): Promise<Result> => {
   const { srcToken, destToken } = await (async () => {
     const web3 = new Web3();
     const srcToken = await prisma.token.findUnique({
@@ -67,31 +67,7 @@ export const getParaSwapQuote = async ({
   const destTokenPriceUsd = new Prisma.Decimal(result.destUSD).div(destTokenAmount);
   const nativeTokenPriceUsd = new Prisma.Decimal(result.gasCostUSD).div(result.gasCost);
 
-  const transaction = await (async (): Promise<SwapQuote['bestRoute']['transaction']> => {
-    const tx = await paraSwap.buildTx(
-      srcToken.address,
-      destToken.address,
-      result.srcAmount,
-      result.destAmount,
-      result,
-      initiatorAddress,
-      'skypools',
-      undefined,
-      undefined,
-      beneficiaryAddress ?? initiatorAddress,
-      { ignoreChecks: true },
-    );
-
-    if (isParaSwapApiError(tx)) {
-      logger.error({ err: tx }, 'Failed to build ParaSwap transaction');
-      throw tx;
-    }
-
-    return tx;
-  })();
-
-  const bestRoute: SwapQuote['bestRoute'] = {
-    transaction,
+  const bestRoute: Result['bestRoute'] = {
     spender,
     path: await Promise.all(
       result.bestRoute.map(async (it): Promise<SwapQuote['bestRoute']['path'][number]> => {

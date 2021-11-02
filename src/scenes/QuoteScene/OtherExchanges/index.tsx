@@ -2,7 +2,7 @@ import { Fragment } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Big } from 'big.js';
 
-import { useParaInch } from '../../../modules/para-inch-react';
+import { useParaInchForm } from '../../../modules/para-inch-react';
 import { PlatformLogo } from '../../../components/PlatformLogo';
 
 import {
@@ -18,7 +18,7 @@ import {
 } from './styles';
 
 export const OtherExchanges = ({ className }: { className?: string }) => {
-  const { swapQuote, isAmountValid } = useParaInch();
+  const { swapQuote, isAmountValid } = useParaInchForm();
 
   if (!swapQuote || swapQuote.otherExchanges.length < 1) {
     return <></>;

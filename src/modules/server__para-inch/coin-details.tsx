@@ -5,12 +5,7 @@ import { Prisma } from '@prisma/client';
 import { Network } from '../networks';
 import { fetcher } from '../fetch';
 import { logger } from '../logger';
-import {
-  isFakeNativeToken,
-  isFakeBtcToken,
-  BSC_BTCB_ADDRESS,
-  ETHEREUM_WBTC_ADDRESS,
-} from '../para-inch';
+import { isFakeNativeToken, isFakeBtcToken, getWrappedBtcAddress } from '../para-inch';
 
 const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
 const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
@@ -39,7 +34,7 @@ const getContractAddress = ({ address, network }: { address: string; network: Ne
   }
 
   if (isFakeBtcToken(address)) {
-    return network === Network.BSC ? BSC_BTCB_ADDRESS : ETHEREUM_WBTC_ADDRESS;
+    return getWrappedBtcAddress({ network });
   }
 
   return address;

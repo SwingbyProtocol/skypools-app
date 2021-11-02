@@ -8,7 +8,6 @@ export const container = css`
   grid-template-columns: 1fr;
   grid-template-rows: repeat(7, min-content);
   grid-template-areas:
-    'skybridge'
     'from-label'
     'from-input'
     'to-label'
@@ -68,8 +67,4 @@ export const infoValue = css`
 
 export const infoValueHighlight = css`
   color: hsl(var(--sp-color-text-normal));
-`;
-
-export const skybridge = css`
-  grid-area: skybridge;
 `;

@@ -6,13 +6,15 @@ import { stringifyUrl } from 'query-string';
 import type { ParaInchToken } from '../para-inch';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
-import { SwapQuoteMutationResult, useSwapQuoteMutation } from '../../generated/skypools-graphql';
+import { SwapQuoteQueryResult, useSwapQuoteLazyQuery } from '../../generated/skypools-graphql';
 
 export type ParaInchContextValue = {
   amount: string | null;
   fromToken: ParaInchToken | null;
   network: Network;
+  slippage: string;
   setAmount: (amount: string | null) => void;
+  setSlippage: (slippage: string) => void;
   setFromToken: (address: string) => void;
   setNetwork: (amount: Network) => void;
   setToToken: (address: string) => void;
@@ -20,14 +22,16 @@ export type ParaInchContextValue = {
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
   isAmountValid: boolean;
-  swapQuote: NonNullable<SwapQuoteMutationResult['data']>['swapQuote'] | null;
+  swapQuote: NonNullable<SwapQuoteQueryResult['data']>['swapQuote'] | null;
 };
 
 export const ParaInchContext = createContext<ParaInchContextValue>({
   amount: null,
   fromToken: null,
   network: Network.ETHEREUM,
+  slippage: '',
   setAmount: () => {},
+  setSlippage: () => {},
   setFromToken: () => {},
   setNetwork: () => {},
   setToToken: () => {},
@@ -52,9 +56,10 @@ export const ParaInchTokenProvider = ({
   const { address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
+  const [slippage, setSlippage] = useState<string>('');
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
-  const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteMutation();
+  const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteLazyQuery();
 
   const setFromToken = useCallback(
     (newValue: string) => {
@@ -71,7 +76,7 @@ export const ParaInchTokenProvider = ({
       setFromTokenState(token);
       push(
         stringifyUrl({
-          url: `/swap/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
+          url: `/quote/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -96,7 +101,7 @@ export const ParaInchTokenProvider = ({
       setToTokenState(token);
       push(
         stringifyUrl({
-          url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
+          url: `/quote/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -115,7 +120,7 @@ export const ParaInchTokenProvider = ({
 
       push(
         stringifyUrl({
-          url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
+          url: `/quote/${value}/${fromToken?.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
       );
@@ -126,7 +131,7 @@ export const ParaInchTokenProvider = ({
   const unlinkSkybridgeSwap = useCallback(() => {
     push(
       stringifyUrl({
-        url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
+        url: `/quote/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
         query: { skybridgeSwap: undefined },
       }),
     );
@@ -160,6 +165,8 @@ export const ParaInchTokenProvider = ({
       network: valueProp.network,
       tokens: valueProp.tokens,
       amount,
+      slippage,
+      setSlippage,
       setAmount,
       fromToken,
       toToken,
@@ -185,6 +192,8 @@ export const ParaInchTokenProvider = ({
       setFromToken,
       setToToken,
       setNetwork,
+      slippage,
+      setSlippage,
       swapQuoteData,
       unlinkSkybridgeSwap,
     ],

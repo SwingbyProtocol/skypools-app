@@ -1,9 +1,10 @@
 import { Prisma, Token } from '@prisma/client';
 import Web3 from 'web3';
+import { ApolloError } from 'apollo-server';
 
 import { Network } from '../../networks';
 import { prisma } from '../../server__env';
-import { BSC_BTCB_ADDRESS, ETHEREUM_WBTC_ADDRESS, isFakeBtcToken } from '../../para-inch';
+import { getWrappedBtcAddress, isFakeBtcToken } from '../../para-inch';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
 import { getParaSwapQuote } from './getParaSwapQuote';
@@ -19,7 +20,7 @@ const getParaSwapToken = async ({
     return token;
   }
 
-  const address = network === Network.BSC ? BSC_BTCB_ADDRESS : ETHEREUM_WBTC_ADDRESS;
+  const address = getWrappedBtcAddress({ network });
   const web3 = new Web3();
   const result = await prisma.token.findUnique({
     where: {
@@ -78,8 +79,53 @@ export const getSwapQuote = async ({
     srcTokenAddress: paraSwapSrcToken.address,
     beneficiaryAddress,
   });
-  if (paraSwapSrcToken === srcToken && paraSwapDestToken === destToken) {
-    return paraSwapQuote;
+
+  const initialSkybridgeSwap:
+    | typeof paraSwapQuote['bestRoute']['path'][number]['swaps'][number]
+    | null =
+    paraSwapSrcToken === srcToken
+      ? null
+      : {
+          srcTokenAddress,
+          srcToken,
+          destToken: paraSwapSrcToken,
+          destTokenAddress: paraSwapSrcToken.address,
+          exchanges: [
+            {
+              exchange: 'skybridge',
+              fraction: new Prisma.Decimal(1),
+              srcTokenAmount: paraSwapQuote.srcTokenAmount,
+              destTokenAmount: paraSwapQuote.srcTokenAmount,
+            },
+          ],
+        };
+
+  const finalSkybridgeSwap:
+    | typeof paraSwapQuote['bestRoute']['path'][number]['swaps'][number]
+    | null =
+    paraSwapDestToken === destToken
+      ? null
+      : {
+          srcTokenAddress: paraSwapDestToken.address,
+          srcToken: paraSwapDestToken,
+          destToken,
+          destTokenAddress,
+          exchanges: [
+            {
+              exchange: 'skybridge',
+              fraction: new Prisma.Decimal(1),
+              srcTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
+              destTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
+            },
+          ],
+        };
+
+  if (initialSkybridgeSwap && finalSkybridgeSwap) {
+    throw new ApolloError(
+      'Swap requires Skybridge both as the initial and final steps',
+      'SWAP_REQUIRES_SKYBRIDGE_TWICE',
+      { initialSkybridgeSwap, finalSkybridgeSwap },
+    );
   }
 
   return {
@@ -89,47 +135,14 @@ export const getSwapQuote = async ({
     bestRoute: {
       ...paraSwapQuote.bestRoute,
       path: paraSwapQuote.bestRoute.path.map((it) => {
-        const firstSwap: typeof paraSwapQuote['bestRoute']['path'][number]['swaps'] =
-          paraSwapSrcToken === srcToken
-            ? []
-            : [
-                {
-                  srcTokenAddress,
-                  srcToken,
-                  destToken: paraSwapSrcToken,
-                  destTokenAddress: paraSwapSrcToken.address,
-                  exchanges: [
-                    {
-                      exchange: 'skybridge',
-                      fraction: new Prisma.Decimal(1),
-                      srcTokenAmount: paraSwapQuote.srcTokenAmount,
-                      destTokenAmount: paraSwapQuote.srcTokenAmount,
-                    },
-                  ],
-                },
-              ];
-
-        const lastSwap: typeof paraSwapQuote['bestRoute']['path'][number]['swaps'] =
-          paraSwapDestToken === destToken
-            ? []
-            : [
-                {
-                  srcTokenAddress: paraSwapDestToken.address,
-                  srcToken: paraSwapDestToken,
-                  destToken,
-                  destTokenAddress,
-                  exchanges: [
-                    {
-                      exchange: 'skybridge',
-                      fraction: new Prisma.Decimal(1),
-                      srcTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
-                      destTokenAmount: paraSwapQuote.bestRoute.destTokenAmount,
-                    },
-                  ],
-                },
-              ];
-
-        return { ...it, swaps: [...firstSwap, ...it.swaps, ...lastSwap] };
+        return {
+          ...it,
+          swaps: [
+            ...(!initialSkybridgeSwap ? [] : [initialSkybridgeSwap]),
+            ...it.swaps,
+            ...(!finalSkybridgeSwap ? [] : [finalSkybridgeSwap]),
+          ],
+        };
       }),
     },
   };

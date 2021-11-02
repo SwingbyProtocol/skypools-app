@@ -57,13 +57,13 @@ export const icon = css`
   color: #0f0;
 `;
 
-export const iconConfirmed = css`
+export const iconCompleted = css`
   background: hsl(var(--sp-color-success-normal));
   color: hsl(var(--sp-color-success-text));
 `;
 
-export const iconSent = css`
-  ${iconConfirmed};
+export const iconPending = css`
+  ${iconCompleted};
   ${pulseAnimation};
 `;
 

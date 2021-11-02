@@ -79,23 +79,23 @@ input IntFilter {
 }
 
 type Mutation {
-  swapQuote(
-    beneficiaryAddress: String
-    destTokenAddress: String!
+  createSwap(
+    beneficiaryAddress: String!
+    destTokenId: ID!
     initiatorAddress: String!
     network: Network!
-    srcTokenAddress: String!
-
-    """
-    In human units. For example, of swapping USDT, "1" would represent 1 USDT.
-    """
-    srcTokenAmount: Decimal!
-  ): SwapQuote!
+    paraSwapRate: String!
+    skybridgeSwapId: String
+    skypoolsTransactionHash: String
+    srcAmount: Decimal!
+    srcTokenId: ID!
+  ): Swap!
 }
 
 enum Network {
   BSC
   ETHEREUM
+  ROPSTEN
 }
 
 input NetworkEnumFilter {
@@ -124,6 +124,18 @@ type Query {
   ): [PriceHistoricItem!]!
   spender(network: Network!): String!
   swap(id: ID!): Swap!
+  swapQuote(
+    beneficiaryAddress: String
+    destTokenAddress: String!
+    initiatorAddress: String!
+    network: Network!
+    srcTokenAddress: String!
+
+    """
+    In human units. For example, of swapping USDT, "1" would represent 1 USDT.
+    """
+    srcTokenAmount: Decimal!
+  ): SwapQuote!
   swaps(
     """
     Only items coming immediately after this will be returned. Can be combined with "first".
@@ -179,6 +191,13 @@ type Query {
   ): TokensConnection!
 }
 
+input StringArrayFilter {
+  equals: [String!]
+  has: String
+  hasEvery: [String!]
+  isEmpty: Boolean
+}
+
 input StringFilter {
   contains: String
   endsWith: String
@@ -200,18 +219,18 @@ enum StringFilterMode {
 }
 
 type Swap {
-  at: DateTime!
-  blockNumber: BigInt!
-  contractAddress: String!
+  beneficiaryAddress: String!
   createdAt: DateTime!
-  destAmount: Decimal
-  destToken: Token
-  hash: String!
-  id: String!
+  destAmount: Decimal!
+  destToken: Token!
+  id: ID!
   initiatorAddress: String!
   network: Network!
-  srcAmount: Decimal
-  srcToken: Token
+  paraSwapRate: String!
+  skybridgeSwapId: String
+  skypoolsTransactionHashes: [String!]!
+  srcAmount: Decimal!
+  srcToken: Token!
   status: SwapStatus!
   updatedAt: DateTime!
 }
@@ -235,7 +254,6 @@ type SwapQuoteBestRoute {
   estimatedGasUsd: Decimal!
   path: [SwapQuotePathItem!]!
   spender: String!
-  transaction: TransactionData!
 }
 
 type SwapQuoteOtherExchange {
@@ -268,35 +286,26 @@ type SwapQuotePathSwapsItem {
 }
 
 enum SwapStatus {
-  CONFIRMED
+  COMPLETED
   FAILED
-  SENT
-}
-
-input SwapStatusEnumFilter {
-  equals: SwapStatus
-  in: [SwapStatus]
-  not: SwapStatusEnumFilter
-  notIn: [SwapStatus]
+  PENDING
 }
 
 input SwapWhereInput {
   AND: [SwapWhereInput]
   NOT: SwapWhereInput
   OR: [SwapWhereInput]
-  at: DateTimeFilter
-  blockNumber: BigIntFilter
-  contractAddress: StringFilter
+  beneficiaryAddress: StringFilter
   createdAt: DateTimeFilter
   destAmount: DecimalFilter
   destToken: TokenWhereInput
-  hash: StringFilter
-  id: StringFilter
+  id: IdFilter
   initiatorAddress: StringFilter
   network: NetworkEnumFilter
+  skybridgeSwapId: StringFilter
+  skypoolsTransactionHashes: StringArrayFilter
   srcAmount: DecimalFilter
   srcToken: TokenWhereInput
-  status: SwapStatusEnumFilter
   updatedAt: DateTimeFilter
 }
 
@@ -345,12 +354,4 @@ type TokensConnection {
 type TokensConnectionEdges {
   cursor: String!
   node: Token!
-}
-
-type TransactionData {
-  chainId: Int!
-  data: String!
-  from: String!
-  to: String!
-  value: String!
 }

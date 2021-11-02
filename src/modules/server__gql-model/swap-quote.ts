@@ -49,17 +49,6 @@ const SwapQuoteOtherExchange = objectType({
   },
 });
 
-const TransactionData = objectType({
-  name: 'TransactionData',
-  definition(t) {
-    t.nonNull.field('from', { type: 'String' });
-    t.nonNull.field('to', { type: 'String' });
-    t.nonNull.field('data', { type: 'String' });
-    t.nonNull.field('value', { type: 'String' });
-    t.nonNull.field('chainId', { type: 'Int' });
-  },
-});
-
 const SwapQuoteBestRoute = objectType({
   name: 'SwapQuoteBestRoute',
   definition(t) {
@@ -71,7 +60,6 @@ const SwapQuoteBestRoute = objectType({
     t.nonNull.field('estimatedGasUsd', { type: 'Decimal' });
 
     t.nonNull.field('spender', { type: 'String' });
-    t.nonNull.field('transaction', { type: TransactionData });
   },
 });
 
@@ -90,8 +78,8 @@ const SwapQuote = objectType({
   },
 });
 
-export const SwapQuoteMutation = extendType({
-  type: 'Mutation',
+export const SwapQuoteQuery = extendType({
+  type: 'Query',
   definition(t) {
     t.nonNull.field('swapQuote', {
       type: SwapQuote,

@@ -1,6 +1,6 @@
 export { ParaInchTokenProvider } from './context';
-export { useParaInchSwap } from './useParaInchSwap';
-export { useParaInch } from './useParaInch';
+export { useParaInchCreateSwap } from './useParaInchCreateSwap';
+export { useParaInchForm } from './useParaInchForm';
 export { useParaInchHistory } from './useParaInchHistory';
 
 export type { ParaInchContextValue } from './context';

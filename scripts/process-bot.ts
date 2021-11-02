@@ -14,16 +14,7 @@ const isTaskConfig = (value: any): value is TaskConfig =>
   typeof value === 'object' && typeof value.name === 'string';
 
 const NETWORKS = Object.values(Network).map((it) => it.toLowerCase() as Lowercase<Network>);
-const NETWORK_TASKS: Task[] = [
-  'newer-swaps',
-  'older-swaps',
-  'prices-historic',
-  { name: 'swap-details', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
-  { name: 'swap-logs', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
-  { name: 'swap-status', repeatInterval: Duration.fromObject({ seconds: 15 }).as('milliseconds') },
-  'token-logos',
-  'tokens',
-];
+const NETWORK_TASKS: Task[] = ['prices-historic', 'token-logos', 'tokens'];
 
 NETWORKS.forEach((mode) => {
   NETWORK_TASKS.forEach((task) => {
