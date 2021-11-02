@@ -1,18 +1,30 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { useMeasure } from 'react-use';
 import { createChart, IChartApi, ISeriesApi, PriceScaleMode } from 'lightweight-charts';
 import { useIntl } from 'react-intl';
+import { BigSource, Big } from 'big.js';
 
 import { container, wrapper } from './styles';
 
-export type Props = { data: Array<{ time: string; value: number }> };
+export type Props = { data: Array<{ at: string; price: BigSource }> };
 
-export const TradingView = ({ data = [] }: Props) => {
+export const TradingView = ({ data: dataParam = [] }: Props) => {
   const { locale } = useIntl();
   const [containerRef, { width, height }] = useMeasure<HTMLDivElement>();
   const chartDivRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const areaSeriesRef = useRef<ISeriesApi<'Area'> | null>(null);
+
+  const data = useMemo(
+    () =>
+      dataParam
+        .map((it) => ({
+          time: it.at,
+          value: new Big(it.price).toNumber(),
+        }))
+        .sort((a, b) => a.time.localeCompare(b.time)),
+    [dataParam],
+  );
 
   useEffect(() => {
     chartRef.current = createChart(chartDivRef.current!, {

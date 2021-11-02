@@ -158,3 +158,8 @@ export const pulseAnimation = css`
   opacity: 0.5;
   animation: ${pulse} 5s ease infinite;
 `;
+
+export const pulseAnimationBlackAndWhite = css`
+  ${pulseAnimation};
+  filter: saturate(0%);
+`;

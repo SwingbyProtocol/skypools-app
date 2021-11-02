@@ -1,30 +1,17 @@
 import { Big } from 'big.js';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import Web3 from 'web3';
 import ABI from 'human-standard-token-abi';
 
-import { Card } from '../../components/Card';
-import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
-import { TradingView } from '../../components/TradingView';
 import { isFakeNativeToken } from '../../modules/para-inch';
 import { useParaInchForm } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
 import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
+import { Layout } from '../../components/Layout';
+import { pulseAnimationBlackAndWhite } from '../../modules/styles';
 
-import { History } from './History';
-import {
-  chartContainer,
-  headerContainer,
-  historyCard,
-  priceAndPathCard,
-  swapPathContainer,
-  swapScene,
-  widgetCard,
-  loadingPulseAnimation,
-  historyContainer,
-  otherExchanges,
-} from './styles';
+import { swapPathContainer, otherExchanges } from './styles';
 import { Widget } from './Widget';
 import { OtherExchanges } from './OtherExchanges';
 import { Slippage } from './Slippage';
@@ -48,17 +35,6 @@ export const QuoteScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInchForm();
   const [getPriceHistory, { data: priceHistoryData }] = usePriceHistoryLazyQuery();
-
-  const priceHistory = useMemo(
-    () =>
-      priceHistoryData?.priceHistoric
-        .map((it): React.ComponentPropsWithoutRef<typeof TradingView>['data'][number] => ({
-          time: it.at,
-          value: +it.price,
-        }))
-        .sort((a, b) => a.time.localeCompare(b.time)),
-    [priceHistoryData?.priceHistoric],
-  );
 
   useEffect(() => {
     if (!onboardNetwork) return;
@@ -107,34 +83,26 @@ export const QuoteScene = () => {
   }, [wallet, setAmount, address, fromToken]);
 
   return (
-    <div css={swapScene}>
-      <Header css={headerContainer} />
-
-      <Card css={priceAndPathCard}>
-        {!!priceHistory && priceHistory.length > 0 && (
-          <div css={chartContainer}>
-            <TradingView data={priceHistory} />
+    <Layout
+      afterPriceChart={
+        <>
+          <div css={swapPathContainer}>
+            <SwapPath
+              css={swapQuote === null && pulseAnimationBlackAndWhite}
+              value={swapQuote?.bestRoute ?? FAKE_QUOTE_ROUTE}
+            />
           </div>
-        )}
 
-        <div css={swapPathContainer}>
-          <SwapPath
-            css={swapQuote === null && loadingPulseAnimation}
-            value={swapQuote?.bestRoute ?? FAKE_QUOTE_ROUTE}
-          />
-        </div>
-
-        <OtherExchanges css={otherExchanges} />
-      </Card>
-
-      <Card css={widgetCard}>
-        <Widget />
-        <Slippage />
-      </Card>
-
-      <div css={historyContainer}>
-        <History css={historyCard} />
-      </div>
-    </div>
+          <OtherExchanges css={otherExchanges} />
+        </>
+      }
+      priceHistory={priceHistoryData?.priceHistoric}
+      widgetContent={
+        <>
+          <Widget />
+          <Slippage />
+        </>
+      }
+    />
   );
 };

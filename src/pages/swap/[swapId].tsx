@@ -2,11 +2,12 @@ import { GetServerSideProps } from 'next';
 
 import { SwapDocument, SwapQuery, SwapQueryVariables } from '../../generated/skypools-graphql';
 import { apolloClient } from '../../modules/apollo';
+import { SwapScene } from '../../scenes/SwapScene';
 
 type Props = { swapId: string };
 
 export default function SwapPage({ swapId }: Props) {
-  return <span>{swapId}</span>;
+  return <SwapScene />;
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
@@ -27,9 +28,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
       return null;
     }
   })();
-  if (swap && typeof swap.id === 'string') {
-    return { props: { swapId: swap.id } };
+  if (!swap || typeof swap.id !== 'string') {
+    return { notFound: true };
   }
 
-  return { notFound: true };
+  return { props: { swapId: swap.id } };
 };

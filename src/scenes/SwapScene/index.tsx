@@ -1,0 +1,1 @@
+export { SwapScene } from './component';
