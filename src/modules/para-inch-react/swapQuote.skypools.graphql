@@ -1,4 +1,4 @@
-mutation SwapQuote(
+query SwapQuote(
   $initiatorAddress: String!
   $srcTokenAmount: Decimal!
   $srcTokenAddress: String!
@@ -13,11 +13,16 @@ mutation SwapQuote(
     network: $network
   ) {
     srcToken {
+      id
       symbol
+      address
     }
     destToken {
+      id
       symbol
+      address
     }
+    srcTokenAmount
     srcTokenPriceUsd
     destTokenPriceUsd
     srcTokenAmountUsd
@@ -26,12 +31,6 @@ mutation SwapQuote(
       destTokenAmount
       destTokenAmountUsd
       estimatedGasUsd
-      transaction {
-        from
-        to
-        data
-        value
-      }
       path {
         fraction
         swaps {

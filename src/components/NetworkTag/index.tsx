@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl';
 
 import { Network } from '../../modules/networks';
 
-import { container, bsc, eth } from './styled';
+import { container, bsc, eth, ropsten } from './styled';
 
 export const NetworkTag = ({
   network,
@@ -17,9 +17,8 @@ export const NetworkTag = ({
       css={[
         container,
         network === Network.ETHEREUM && eth,
-        // network === 5 && goerli,
+        network === Network.ROPSTEN && ropsten,
         network === Network.BSC && bsc,
-        // network === 97 && bsct,
       ]}
       className={className}
       title={formatMessage({

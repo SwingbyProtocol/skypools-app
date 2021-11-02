@@ -7,7 +7,7 @@ import {
   SwapsQueryResult,
 } from '../../generated/skypools-graphql';
 
-import { useParaInch } from './useParaInch';
+import { useParaInchForm } from './useParaInchForm';
 
 export type ParaInchHistoryItem = NonNullable<
   SwapsQueryResult['data']
@@ -15,7 +15,7 @@ export type ParaInchHistoryItem = NonNullable<
 
 export const useParaInchHistory = () => {
   const { address } = useOnboard();
-  const { network } = useParaInch();
+  const { network } = useParaInchForm();
   const [getSwaps, result] = useSwapsLazyQuery();
 
   useEffect(() => {

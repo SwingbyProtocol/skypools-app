@@ -80,6 +80,13 @@ export interface NexusGenInputs {
     not?: NexusGenInputs['NetworkEnumFilter'] | null; // NetworkEnumFilter
     notIn?: Array<NexusGenEnums['Network'] | null> | null; // [Network]
   };
+  StringArrayFilter: {
+    // input type
+    equals?: string[] | null; // [String!]
+    has?: string | null; // String
+    hasEvery?: string[] | null; // [String!]
+    isEmpty?: boolean | null; // Boolean
+  };
   StringFilter: {
     // input type
     contains?: string | null; // String
@@ -95,31 +102,22 @@ export interface NexusGenInputs {
     notIn?: Array<string | null> | null; // [String]
     startsWith?: string | null; // String
   };
-  SwapStatusEnumFilter: {
-    // input type
-    equals?: NexusGenEnums['SwapStatus'] | null; // SwapStatus
-    in?: Array<NexusGenEnums['SwapStatus'] | null> | null; // [SwapStatus]
-    not?: NexusGenInputs['SwapStatusEnumFilter'] | null; // SwapStatusEnumFilter
-    notIn?: Array<NexusGenEnums['SwapStatus'] | null> | null; // [SwapStatus]
-  };
   SwapWhereInput: {
     // input type
     AND?: Array<NexusGenInputs['SwapWhereInput'] | null> | null; // [SwapWhereInput]
     NOT?: NexusGenInputs['SwapWhereInput'] | null; // SwapWhereInput
     OR?: Array<NexusGenInputs['SwapWhereInput'] | null> | null; // [SwapWhereInput]
-    at?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
-    blockNumber?: NexusGenInputs['BigIntFilter'] | null; // BigIntFilter
-    contractAddress?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    beneficiaryAddress?: NexusGenInputs['StringFilter'] | null; // StringFilter
     createdAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
     destAmount?: NexusGenInputs['DecimalFilter'] | null; // DecimalFilter
     destToken?: NexusGenInputs['TokenWhereInput'] | null; // TokenWhereInput
-    hash?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    id?: NexusGenInputs['IdFilter'] | null; // IdFilter
     initiatorAddress?: NexusGenInputs['StringFilter'] | null; // StringFilter
     network?: NexusGenInputs['NetworkEnumFilter'] | null; // NetworkEnumFilter
+    skybridgeSwapId?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    skypoolsTransactionHashes?: NexusGenInputs['StringArrayFilter'] | null; // StringArrayFilter
     srcAmount?: NexusGenInputs['DecimalFilter'] | null; // DecimalFilter
     srcToken?: NexusGenInputs['TokenWhereInput'] | null; // TokenWhereInput
-    status?: NexusGenInputs['SwapStatusEnumFilter'] | null; // SwapStatusEnumFilter
     updatedAt?: NexusGenInputs['DateTimeFilter'] | null; // DateTimeFilter
   };
   TokenWhereInput: {
@@ -139,9 +137,9 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  Network: 'BSC' | 'ETHEREUM';
+  Network: 'BSC' | 'ETHEREUM' | 'ROPSTEN';
   StringFilterMode: 'default' | 'insensitive';
-  SwapStatus: 'CONFIRMED' | 'FAILED' | 'SENT';
+  SwapStatus: 'COMPLETED' | 'FAILED' | 'PENDING';
 }
 
 export interface NexusGenScalars {
@@ -172,16 +170,18 @@ export interface NexusGenObjects {
   Query: {};
   Swap: {
     // root type
-    at: NexusGenScalars['DateTime']; // DateTime!
-    blockNumber: NexusGenScalars['BigInt']; // BigInt!
-    contractAddress: string; // String!
+    beneficiaryAddress: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    destAmount?: NexusGenScalars['Decimal'] | null; // Decimal
-    hash: string; // String!
-    id: string; // String!
+    destAmount: NexusGenScalars['Decimal']; // Decimal!
+    destToken: NexusGenRootTypes['Token']; // Token!
+    id: string; // ID!
     initiatorAddress: string; // String!
     network: NexusGenEnums['Network']; // Network!
-    srcAmount?: NexusGenScalars['Decimal'] | null; // Decimal
+    paraSwapRate: string; // String!
+    skybridgeSwapId?: string | null; // String
+    skypoolsTransactionHashes: string[]; // [String!]!
+    srcAmount: NexusGenScalars['Decimal']; // Decimal!
+    srcToken: NexusGenRootTypes['Token']; // Token!
     status: NexusGenEnums['SwapStatus']; // SwapStatus!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   };
@@ -205,7 +205,6 @@ export interface NexusGenObjects {
     estimatedGasUsd: NexusGenScalars['Decimal']; // Decimal!
     path: NexusGenRootTypes['SwapQuotePathItem'][]; // [SwapQuotePathItem!]!
     spender: string; // String!
-    transaction: NexusGenRootTypes['TransactionData']; // TransactionData!
   };
   SwapQuoteOtherExchange: {
     // root type
@@ -269,14 +268,6 @@ export interface NexusGenObjects {
     cursor: string; // String!
     node: NexusGenRootTypes['Token']; // Token!
   };
-  TransactionData: {
-    // root type
-    chainId: number; // Int!
-    data: string; // String!
-    from: string; // String!
-    to: string; // String!
-    value: string; // String!
-  };
 }
 
 export interface NexusGenInterfaces {}
@@ -297,7 +288,7 @@ export interface NexusGenFieldTypes {
   };
   Mutation: {
     // field return type
-    swapQuote: NexusGenRootTypes['SwapQuote']; // SwapQuote!
+    createSwap: NexusGenRootTypes['Swap']; // Swap!
   };
   PriceHistoricItem: {
     // field return type
@@ -309,24 +300,25 @@ export interface NexusGenFieldTypes {
     priceHistoric: NexusGenRootTypes['PriceHistoricItem'][]; // [PriceHistoricItem!]!
     spender: string; // String!
     swap: NexusGenRootTypes['Swap']; // Swap!
+    swapQuote: NexusGenRootTypes['SwapQuote']; // SwapQuote!
     swaps: NexusGenRootTypes['SwapsConnection']; // SwapsConnection!
     token: NexusGenRootTypes['Token']; // Token!
     tokens: NexusGenRootTypes['TokensConnection']; // TokensConnection!
   };
   Swap: {
     // field return type
-    at: NexusGenScalars['DateTime']; // DateTime!
-    blockNumber: NexusGenScalars['BigInt']; // BigInt!
-    contractAddress: string; // String!
+    beneficiaryAddress: string; // String!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    destAmount: NexusGenScalars['Decimal'] | null; // Decimal
-    destToken: NexusGenRootTypes['Token'] | null; // Token
-    hash: string; // String!
-    id: string; // String!
+    destAmount: NexusGenScalars['Decimal']; // Decimal!
+    destToken: NexusGenRootTypes['Token']; // Token!
+    id: string; // ID!
     initiatorAddress: string; // String!
     network: NexusGenEnums['Network']; // Network!
-    srcAmount: NexusGenScalars['Decimal'] | null; // Decimal
-    srcToken: NexusGenRootTypes['Token'] | null; // Token
+    paraSwapRate: string; // String!
+    skybridgeSwapId: string | null; // String
+    skypoolsTransactionHashes: string[]; // [String!]!
+    srcAmount: NexusGenScalars['Decimal']; // Decimal!
+    srcToken: NexusGenRootTypes['Token']; // Token!
     status: NexusGenEnums['SwapStatus']; // SwapStatus!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
   };
@@ -350,7 +342,6 @@ export interface NexusGenFieldTypes {
     estimatedGasUsd: NexusGenScalars['Decimal']; // Decimal!
     path: NexusGenRootTypes['SwapQuotePathItem'][]; // [SwapQuotePathItem!]!
     spender: string; // String!
-    transaction: NexusGenRootTypes['TransactionData']; // TransactionData!
   };
   SwapQuoteOtherExchange: {
     // field return type
@@ -414,14 +405,6 @@ export interface NexusGenFieldTypes {
     cursor: string; // String!
     node: NexusGenRootTypes['Token']; // Token!
   };
-  TransactionData: {
-    // field return type
-    chainId: number; // Int!
-    data: string; // String!
-    from: string; // String!
-    to: string; // String!
-    value: string; // String!
-  };
 }
 
 export interface NexusGenFieldTypeNames {
@@ -434,7 +417,7 @@ export interface NexusGenFieldTypeNames {
   };
   Mutation: {
     // field return type name
-    swapQuote: 'SwapQuote';
+    createSwap: 'Swap';
   };
   PriceHistoricItem: {
     // field return type name
@@ -446,22 +429,23 @@ export interface NexusGenFieldTypeNames {
     priceHistoric: 'PriceHistoricItem';
     spender: 'String';
     swap: 'Swap';
+    swapQuote: 'SwapQuote';
     swaps: 'SwapsConnection';
     token: 'Token';
     tokens: 'TokensConnection';
   };
   Swap: {
     // field return type name
-    at: 'DateTime';
-    blockNumber: 'BigInt';
-    contractAddress: 'String';
+    beneficiaryAddress: 'String';
     createdAt: 'DateTime';
     destAmount: 'Decimal';
     destToken: 'Token';
-    hash: 'String';
-    id: 'String';
+    id: 'ID';
     initiatorAddress: 'String';
     network: 'Network';
+    paraSwapRate: 'String';
+    skybridgeSwapId: 'String';
+    skypoolsTransactionHashes: 'String';
     srcAmount: 'Decimal';
     srcToken: 'Token';
     status: 'SwapStatus';
@@ -487,7 +471,6 @@ export interface NexusGenFieldTypeNames {
     estimatedGasUsd: 'Decimal';
     path: 'SwapQuotePathItem';
     spender: 'String';
-    transaction: 'TransactionData';
   };
   SwapQuoteOtherExchange: {
     // field return type name
@@ -551,26 +534,21 @@ export interface NexusGenFieldTypeNames {
     cursor: 'String';
     node: 'Token';
   };
-  TransactionData: {
-    // field return type name
-    chainId: 'Int';
-    data: 'String';
-    from: 'String';
-    to: 'String';
-    value: 'String';
-  };
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
-    swapQuote: {
+    createSwap: {
       // args
-      beneficiaryAddress?: string | null; // String
-      destTokenAddress: string; // String!
+      beneficiaryAddress: string; // String!
+      destTokenId: string; // ID!
       initiatorAddress: string; // String!
       network: NexusGenEnums['Network']; // Network!
-      srcTokenAddress: string; // String!
-      srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
+      paraSwapRate: string; // String!
+      skybridgeSwapId?: string | null; // String
+      skypoolsTransactionHash?: string | null; // String
+      srcAmount: NexusGenScalars['Decimal']; // Decimal!
+      srcTokenId: string; // ID!
     };
   };
   Query: {
@@ -586,6 +564,15 @@ export interface NexusGenArgTypes {
     swap: {
       // args
       id: string; // ID!
+    };
+    swapQuote: {
+      // args
+      beneficiaryAddress?: string | null; // String
+      destTokenAddress: string; // String!
+      initiatorAddress: string; // String!
+      network: NexusGenEnums['Network']; // Network!
+      srcTokenAddress: string; // String!
+      srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     };
     swaps: {
       // args

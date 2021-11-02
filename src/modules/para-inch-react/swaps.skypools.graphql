@@ -4,19 +4,27 @@ query Swaps($where: SwapWhereInput) {
       node {
         id
         network
-        hash
-        at
         status
+        initiatorAddress
+        beneficiaryAddress
         srcToken {
+          id
           symbol
           logoUri
+          address
         }
         srcAmount
+        destAmount
         destToken {
+          id
           symbol
           logoUri
+          address
         }
-        destAmount
+        paraSwapRate
+        skybridgeSwapId
+        skypoolsTransactionHashes
+        createdAt
       }
     }
   }

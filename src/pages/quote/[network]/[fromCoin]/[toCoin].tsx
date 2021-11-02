@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Network } from '../../../../modules/networks';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
-import { SwapScene } from '../../../../scenes/SwapScene';
+import { QuoteScene } from '../../../../scenes/QuoteScene';
 import { apolloClient } from '../../../../modules/apollo';
 import {
   TokensDocument,
@@ -15,7 +15,7 @@ import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
-export default function HomePage({ fromToken, toToken, tokens, network }: Props) {
+export default function QuotePage({ fromToken, toToken, tokens, network }: Props) {
   const value = useMemo(
     () => ({ fromToken, toToken, tokens, network }),
     [fromToken, toToken, tokens, network],
@@ -23,7 +23,7 @@ export default function HomePage({ fromToken, toToken, tokens, network }: Props)
 
   return (
     <ParaInchTokenProvider value={value}>
-      <SwapScene />
+      <QuoteScene />
     </ParaInchTokenProvider>
   );
 }
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   if (!network) {
     return {
       redirect: {
-        destination: `/swap/ethereum/${fromCoinAddress}/${toCoinAddress}`,
+        destination: `/quote/ethereum/${fromCoinAddress}/${toCoinAddress}`,
         permanent: false,
       },
     };
@@ -87,7 +87,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     if (newFrom && newTo) {
       return {
         redirect: {
-          destination: `/swap/${network.toLowerCase()}/${newFrom}/${newTo}`,
+          destination: `/quote/${network.toLowerCase()}/${newFrom}/${newTo}`,
           permanent: false,
         },
       };

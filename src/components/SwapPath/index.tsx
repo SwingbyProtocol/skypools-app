@@ -3,14 +3,14 @@ import { useContainerQuery } from 'react-container-query';
 
 import { Icon } from '../Icon';
 import { Coin } from '../Coin';
-import { SwapQuoteMutationResult } from '../../generated/skypools-graphql';
+import { SwapQuoteQueryResult } from '../../generated/skypools-graphql';
 
 import { coin, swapPath, divider, wrapper } from './styles';
 import { PlatformBox } from './PlatformBox';
 
 type Props = {
   className?: string;
-  value: Pick<NonNullable<SwapQuoteMutationResult['data']>['swapQuote']['bestRoute'], 'path'>;
+  value: Pick<NonNullable<SwapQuoteQueryResult['data']>['swapQuote']['bestRoute'], 'path'>;
 };
 
 export const SwapPath = ({ value, className }: Props) => {

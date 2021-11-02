@@ -1,0 +1,27 @@
+query Swap($id: ID!) {
+  swap(id: $id) {
+    id
+    network
+    status
+    initiatorAddress
+    beneficiaryAddress
+    srcToken {
+      id
+      symbol
+      logoUri
+      address
+    }
+    srcAmount
+    destAmount
+    destToken {
+      id
+      symbol
+      logoUri
+      address
+    }
+    paraSwapRate
+    skybridgeSwapId
+    skypoolsTransactionHashes
+    createdAt
+  }
+}

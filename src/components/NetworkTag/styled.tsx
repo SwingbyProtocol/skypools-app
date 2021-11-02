@@ -13,7 +13,7 @@ export const eth = css`
   color: hsl(var(--sp-color-text-normal));
 `;
 
-export const goerli = css`
+export const ropsten = css`
   ${darkTheme};
 
   background: ${transparentize(0.5, COLOR_ETH)};

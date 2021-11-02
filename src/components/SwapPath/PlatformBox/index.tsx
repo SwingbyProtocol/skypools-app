@@ -1,7 +1,7 @@
 import { Big } from 'big.js';
 import { FormattedNumber, useIntl } from 'react-intl';
 
-import { SwapQuoteMutationResult } from '../../../generated/skypools-graphql';
+import { SwapQuoteQueryResult } from '../../../generated/skypools-graphql';
 import { PlatformLogo } from '../../PlatformLogo';
 
 import {
@@ -19,7 +19,7 @@ type Props = {
   withFractions: boolean;
   withNames: boolean;
   value: NonNullable<
-    SwapQuoteMutationResult['data']
+    SwapQuoteQueryResult['data']
   >['swapQuote']['bestRoute']['path'][number]['swaps'][number]['exchanges'];
 };
 

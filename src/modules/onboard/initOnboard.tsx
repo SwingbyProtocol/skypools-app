@@ -35,9 +35,9 @@ export const initOnboard = ({
     walletSelect: {
       wallets: [
         { walletName: 'metamask', preferred: true },
-        { walletName: 'ledger', preferred: true },
-        ...(infuraApiKey ? [{ walletName: 'walletConnect', preferred: true }] : []),
-        { walletName: 'walletLink', preferred: true },
+        { walletName: 'ledger', preferred: false },
+        ...(infuraApiKey ? [{ walletName: 'walletConnect', preferred: false }] : []),
+        { walletName: 'walletLink', preferred: false },
         { walletName: 'authereum' },
         { walletName: 'lattice' },
         { walletName: 'torus' },

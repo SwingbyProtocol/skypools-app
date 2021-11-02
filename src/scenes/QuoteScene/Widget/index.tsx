@@ -3,8 +3,7 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Big } from 'big.js';
 
 import { Button } from '../../../components/Button';
-import { useParaInch, useParaInchSwap } from '../../../modules/para-inch-react';
-import { useSkybridgeSwap } from '../../../modules/skybridge';
+import { useParaInchForm, useParaInchCreateSwap } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -19,9 +18,7 @@ import {
   infoLabel,
   infoValue,
   infoValueHighlight,
-  skybridge,
 } from './styles';
-import { SkybridgeSwapBanner } from './SkybridgeSwapBanner';
 
 export const Widget = () => {
   const {
@@ -34,9 +31,8 @@ export const Widget = () => {
     setAmount,
     isAmountValid,
     swapQuote,
-  } = useParaInch();
-  const { isApprovalNeeded, approve, swap } = useParaInchSwap();
-  const { fromDisabled } = useSkybridgeSwap();
+  } = useParaInchForm();
+  const { isApprovalNeeded, approve, createSwap } = useParaInchCreateSwap();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -84,8 +80,6 @@ export const Widget = () => {
 
   return (
     <div css={container}>
-      <SkybridgeSwapBanner css={skybridge} />
-
       <div css={[label, fromLabel]}>
         <FormattedMessage id="widget.from" />
       </div>
@@ -99,7 +93,6 @@ export const Widget = () => {
             setFromToken(coin.address);
           }
         }}
-        disabled={fromDisabled ? 'all' : undefined}
       />
 
       <div css={[label, toLabel]}>
@@ -123,7 +116,7 @@ export const Widget = () => {
           size="state"
           css={swapButton}
           disabled={isApprovalNeeded === null}
-          onClick={swap ?? undefined}
+          onClick={createSwap ?? undefined}
         >
           <FormattedMessage id="widget.swap" />
         </Button>

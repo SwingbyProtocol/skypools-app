@@ -19,6 +19,8 @@
 /graphql.schema.json
 /.linaria-cache
 /src/generated
+/schema.graphql
+/nexus-typegen.d.ts
 
 # misc
 .DS_Store

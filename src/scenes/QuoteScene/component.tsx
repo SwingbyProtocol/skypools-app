@@ -8,9 +8,8 @@ import { Header } from '../../components/Header';
 import { SwapPath } from '../../components/SwapPath';
 import { TradingView } from '../../components/TradingView';
 import { isFakeNativeToken } from '../../modules/para-inch';
-import { useParaInch } from '../../modules/para-inch-react';
+import { useParaInchForm } from '../../modules/para-inch-react';
 import { useOnboard } from '../../modules/onboard';
-import { useSkybridgeSwap } from '../../modules/skybridge';
 import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
 
 import { History } from './History';
@@ -45,10 +44,9 @@ const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value']
   ],
 };
 
-export const SwapScene = () => {
+export const QuoteScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
-  const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInch();
-  const { swapId } = useSkybridgeSwap();
+  const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInchForm();
   const [getPriceHistory, { data: priceHistoryData }] = usePriceHistoryLazyQuery();
 
   const priceHistory = useMemo(
@@ -80,7 +78,7 @@ export const SwapScene = () => {
   useEffect(() => {
     const walletProvider = wallet?.provider;
 
-    if (!walletProvider || !fromToken || !address || !!swapId) {
+    if (!walletProvider || !fromToken || !address) {
       return;
     }
 
@@ -106,7 +104,7 @@ export const SwapScene = () => {
     return () => {
       cancelled = true;
     };
-  }, [wallet, setAmount, address, fromToken, swapId]);
+  }, [wallet, setAmount, address, fromToken]);
 
   return (
     <div css={swapScene}>

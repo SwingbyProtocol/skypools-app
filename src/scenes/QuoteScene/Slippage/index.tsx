@@ -3,6 +3,7 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Big } from 'big.js';
 
 import { TextInput } from '../../../components/TextInput';
+import { useParaInchForm } from '../../../modules/para-inch-react';
 
 import {
   container,
@@ -23,7 +24,7 @@ const percentageProps = {
 const DEFAULT_SLIPPAGES = ['0.1', '0.5', '3'];
 
 export const Slippage = () => {
-  const [slippage, setSlippage] = useState<string>(DEFAULT_SLIPPAGES[0]);
+  const { slippage, setSlippage } = useParaInchForm();
   const [usedCustom, setUsedCustom] = useState(false);
 
   return (

@@ -1,0 +1,46 @@
+mutation CreateSwap(
+  $network: Network!
+  $beneficiaryAddress: String!
+  $initiatorAddress: String!
+  $paraSwapRate: String!
+  $srcAmount: Decimal!
+  $destTokenId: ID!
+  $srcTokenId: ID!
+  $skypoolsTransactionHash: String
+  $skybridgeSwapId: String
+) {
+  createSwap(
+    network: $network
+    beneficiaryAddress: $beneficiaryAddress
+    initiatorAddress: $initiatorAddress
+    paraSwapRate: $paraSwapRate
+    srcAmount: $srcAmount
+    destTokenId: $destTokenId
+    srcTokenId: $srcTokenId
+    skypoolsTransactionHash: $skypoolsTransactionHash
+    skybridgeSwapId: $skybridgeSwapId
+  ) {
+    id
+    network
+    status
+    initiatorAddress
+    beneficiaryAddress
+    srcToken {
+      id
+      symbol
+      logoUri
+      address
+    }
+    srcAmount
+    destToken {
+      id
+      symbol
+      logoUri
+      address
+    }
+    paraSwapRate
+    skybridgeSwapId
+    skypoolsTransactionHashes
+    createdAt
+  }
+}

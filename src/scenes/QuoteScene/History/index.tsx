@@ -9,13 +9,14 @@ import { DateTime } from 'luxon';
 import { size } from '../../../modules/styles';
 import {
   ParaInchHistoryItem,
-  useParaInch,
+  useParaInchForm,
   useParaInchHistory,
 } from '../../../modules/para-inch-react';
 import { shortenAddress } from '../../../modules/short-address';
 import { buildLinkToTransaction } from '../../../modules/web3';
 import { Coin } from '../../../components/Coin';
 import { SwapStatus } from '../../../generated/skypools-graphql';
+import { isFakeBtcToken } from '../../../modules/para-inch';
 
 import {
   amountIn,
@@ -29,9 +30,9 @@ import {
   firstRow,
   lastRow,
   sizeCalc,
-  iconConfirmed,
+  iconCompleted,
   iconFailed,
-  iconSent,
+  iconPending,
   coinIn,
   coinOut,
 } from './styles';
@@ -54,7 +55,7 @@ const NUMBER_FORMAT_FULL: Partial<React.ComponentPropsWithoutRef<typeof Formatte
 const Context = createContext<ParaInchHistoryItem[]>([]);
 
 const Row = ({ style, index }: ListChildComponentProps) => {
-  const { network } = useParaInch();
+  const { network } = useParaInchForm();
   const { formatNumber } = useIntl();
   const data = useContext(Context);
 
@@ -71,8 +72,8 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       <div
         css={[
           icon,
-          item.status === SwapStatus.Confirmed && iconConfirmed,
-          item.status === SwapStatus.Sent && iconSent,
+          item.status === SwapStatus.Completed && iconCompleted,
+          item.status === SwapStatus.Pending && iconPending,
           item.status === SwapStatus.Failed && iconFailed,
         ]}
       >
@@ -83,14 +84,12 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         <FormattedMessage id={`history.status.${item.status}`} />
       </div>
       <div css={time}>
-        {!!item.at && (
-          <FormattedDate
-            value={DateTime.fromISO(item.at).toJSDate()}
-            dateStyle="short"
-            timeStyle="short"
-            hour12={false}
-          />
-        )}
+        <FormattedDate
+          value={DateTime.fromISO(item.createdAt).toJSDate()}
+          dateStyle="short"
+          timeStyle="short"
+          hour12={false}
+        />
       </div>
 
       {!!item.srcAmount && new Big(item.srcAmount).gt(0) && (
@@ -112,13 +111,40 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       )}
 
       <div css={hash}>
-        <a
-          href={buildLinkToTransaction({ network, transactionHash: item.hash })}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {shortenAddress({ value: item.hash })}
-        </a>
+        {isFakeBtcToken(item.srcToken.address) && !!item.skybridgeSwapId && (
+          <a
+            href={`https://widget.skybridge.exchange/${
+              item.network === 'ROPSTEN' ? 'test' : 'production'
+            }/swap/${item.skybridgeSwapId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {shortenAddress({ value: item.skybridgeSwapId })}
+          </a>
+        )}
+
+        {item.skypoolsTransactionHashes.map((it) => (
+          <a
+            key={it}
+            href={buildLinkToTransaction({ network, transactionHash: it })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {shortenAddress({ value: it })}
+          </a>
+        ))}
+
+        {isFakeBtcToken(item.destToken.address) && !!item.skybridgeSwapId && (
+          <a
+            href={`https://widget.skybridge.exchange/${
+              item.network === 'ROPSTEN' ? 'test' : 'production'
+            }/swap/${item.skybridgeSwapId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {shortenAddress({ value: item.skybridgeSwapId })}
+          </a>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ generator client {
 
 enum Network {
   ETHEREUM
+  ROPSTEN
   BSC
 }
 
@@ -19,6 +20,12 @@ enum LockId {
   SWAP_DETAILS
   SWAP_LOGS
   SWAP_STATUS
+}
+
+enum SwapStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }
 
 model Locks {
@@ -41,11 +48,12 @@ model Token {
   logoUpdatedAt         DateTime @default(now())
 
   usdPriceHistoric TokenUsdPriceHistoric[] @relation("TokenUsdPriceHistoric")
-  swapsAsSrc       SwapHistoric[]          @relation("SwapSourceToken")
-  swapsAsDest      SwapHistoric[]          @relation("SwapDestToken")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  swapsSrc  Swap[] @relation("SwapSrcToken")
+  swapsDest Swap[] @relation("SwapDestToken")
 
   @@unique([network, address])
   @@index([network, address])
@@ -63,58 +71,26 @@ model TokenUsdPriceHistoric {
   @@id([tokenId, at])
 }
 
-enum SwapStatus {
-  SENT
-  CONFIRMED
-  FAILED
-}
+model Swap {
+  id      String     @id
+  network Network
+  status  SwapStatus @default(PENDING)
 
-model SwapHistoric {
-  id               String     @id
-  network          Network
-  hash             String
-  at               DateTime
-  status           SwapStatus
-  blockNumber      BigInt
-  contractAddress  String
-  initiatorAddress String
-  input            String
+  initiatorAddress   String
+  beneficiaryAddress String
 
-  srcAmount   Decimal? @db.Decimal(65, 20)
-  srcToken    Token?   @relation("SwapSourceToken", fields: [srcTokenId], references: [id])
-  srcTokenId  String?
-  destAmount  Decimal? @db.Decimal(65, 20)
-  destToken   Token?   @relation("SwapDestToken", fields: [destTokenId], references: [id])
-  destTokenId String?
+  srcTokenId  String
+  srcToken    Token   @relation("SwapSrcToken", fields: [srcTokenId], references: [id])
+  srcAmount   Decimal @db.Decimal(65, 20)
+  destTokenId String
+  destToken   Token   @relation("SwapDestToken", fields: [destTokenId], references: [id])
+  destAmount  Decimal @db.Decimal(65, 20)
 
-  logs          SwapLogHistoric[] @relation("SwapLogs")
-  logsUpdatedAt DateTime?
+  paraSwapRate String
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  detailsUpdatedAt DateTime @default(now())
-
-  @@unique([network, hash])
-  @@index([network, hash])
-}
-
-model SwapLogHistoric {
-  id               String   @id
-  network          Network
-  transactionHash  String
-  transactionIndex Int
-  logIndex         Int
-  address          String
-  data             String
-  topics           String[]
-  blockNumber      BigInt
-  blockHash        String
-
-  swap SwapHistoric @relation("SwapLogs", fields: [network, transactionHash], references: [network, hash])
+  skypoolsTransactionHashes String[]
+  skybridgeSwapId           String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([network, transactionHash, logIndex])
-  @@index([network, transactionHash, logIndex])
 }
