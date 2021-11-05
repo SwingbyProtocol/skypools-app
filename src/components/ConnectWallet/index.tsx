@@ -1,15 +1,39 @@
 import { FormattedMessage } from 'react-intl';
+import { useEffect } from 'react';
 
 import { shortenAddress } from '../../modules/short-address';
 import { logger } from '../../modules/logger';
 import { Button } from '../Button';
 import { NetworkTag } from '../NetworkTag';
 import { useOnboard } from '../../modules/onboard';
+import { LOCAL_STORAGE } from '../../modules/env';
 
 import { container, networkTag, walletWrapper } from './styled';
 
 export const ConnectWallet = ({ className }: { className?: string }) => {
-  const { address, network, onboard } = useOnboard();
+  const { address, network, onboard, wallet } = useOnboard();
+  const localStorage = typeof window !== 'undefined' && window.localStorage;
+  const storedWallet = localStorage && localStorage.getItem(LOCAL_STORAGE.Wallet);
+
+  useEffect(() => {
+    const unableStoreWallets = ['WalletConnect'];
+    if (
+      !localStorage ||
+      !wallet ||
+      !wallet.name ||
+      unableStoreWallets.find((name) => name === wallet.name)
+    ) {
+      return;
+    }
+    localStorage.setItem(LOCAL_STORAGE.Wallet, wallet.name);
+  }, [wallet, localStorage]);
+
+  useEffect(() => {
+    if (!onboard || !storedWallet) return;
+    (async () => {
+      await onboard.walletSelect(storedWallet);
+    })();
+  }, [onboard, storedWallet]);
 
   return (
     <div css={container} className={className}>
@@ -23,6 +47,7 @@ export const ConnectWallet = ({ className }: { className?: string }) => {
             try {
               if (address) {
                 onboard?.walletReset();
+                localStorage && localStorage.setItem(LOCAL_STORAGE.Wallet, '');
                 return;
               }
 
