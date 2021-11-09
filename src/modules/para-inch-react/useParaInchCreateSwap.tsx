@@ -12,10 +12,11 @@ import {
   CreateSwapMutationVariables,
 } from '../../generated/skypools-graphql';
 import { useOnboard } from '../onboard';
-import { isFakeBtcToken } from '../para-inch';
+import { isFakeBtcToken, isFakeNativeToken } from '../para-inch';
 import { Network } from '../networks';
 import { CONTRACT_SKYPOOLS } from '../env';
 import { logger } from '../logger';
+import { getDecimals } from '../web3';
 
 import { useParaInchForm } from './useParaInchForm';
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
@@ -28,20 +29,24 @@ export const useParaInchCreateSwap = () => {
     spender: swapQuote?.bestRoute.spender,
     network,
   });
+
+  const skypools = CONTRACT_SKYPOOLS[network];
+  const { isApprovalNeeded: isSpApprovalNeeded, approve: spApprove } = useParaInchSwapApproval({
+    token: swapQuote?.srcToken.address,
+    spender: skypools,
+    network,
+  });
+
   const [createSwap] = useCreateSwapMutation();
   const { push } = useRouter();
-
-  console.log('useParaInchCreateSwap');
-  console.log('network', network);
-  console.log('isApprovalNeeded', isApprovalNeeded);
-  console.log('swapQuote', swapQuote);
 
   return useMemo(() => {
     return {
       isApprovalNeeded,
       approve,
+      isSpApprovalNeeded,
+      spApprove,
       createSwap: async () => {
-        console.log('createSwap', createSwap);
         if (!swapQuote) {
           throw new Error('No swap quote available to create a new swap');
         }
@@ -61,7 +66,6 @@ export const useParaInchCreateSwap = () => {
         const callCreateSwap = async (
           params: Pick<CreateSwapMutationVariables, 'skypoolsTransactionHash' | 'skybridgeSwapId'>,
         ) => {
-          console.log('callCreateSwap');
           const { data: swap } = await createSwap({
             variables: {
               ...params,
@@ -77,17 +81,14 @@ export const useParaInchCreateSwap = () => {
           if (!swap) {
             throw new Error(`Could not create swap in DB`);
           }
-          console.log('swap', swap);
 
           return push(`/swap/${swap.createSwap.id}`);
         };
 
         const web3 = new Web3(wallet.provider);
-        const skypools = CONTRACT_SKYPOOLS[network];
         const contract = new web3.eth.Contract(ABI as AbiItem[], skypools);
 
         if (isFakeBtcToken(swapQuote.srcToken.address)) {
-          console.log('swap from fakeBtc');
           const context = await buildContext({
             mode: network === Network.ROPSTEN ? 'test' : 'production',
           });
@@ -103,31 +104,37 @@ export const useParaInchCreateSwap = () => {
 
           return callCreateSwap({ skybridgeSwapId: hash });
         } else if (isFakeBtcToken(swapQuote.destToken.address)) {
-          console.log('token to BTC');
-          console.log('token', swapQuote.srcToken.address);
-          console.log(
-            'amount',
-            web3.utils.toHex(new Big(swapQuote.srcTokenAmount).times(`1e${18}`).toFixed()),
-          );
+          const isNativeToken = isFakeNativeToken(swapQuote.srcToken.address);
+          const srcTokenDecimals = !isNativeToken
+            ? await getDecimals({
+                token: swapQuote.srcToken.address,
+                provider: wallet.provider,
+              })
+            : 18;
+
+          const value = isNativeToken ? web3.utils.toWei(swapQuote.srcTokenAmount) : '0x0';
+
+          const data = contract.methods
+            .spDeposit(
+              swapQuote.srcToken.address,
+              isNativeToken
+                ? '0'
+                : web3.utils.toHex(
+                    new Big(swapQuote.srcTokenAmount).times(`1e${srcTokenDecimals}`).toFixed(),
+                  ),
+            )
+            .encodeABI();
 
           const transaction: TransactionConfig = {
             nonce: await web3.eth.getTransactionCount(address),
-            value: '0x0',
+            value,
             from: address,
             to: skypools,
-            data: contract.methods
-              .spDeposit(
-                swapQuote.srcToken.address,
-                web3.utils.toHex(new Big(swapQuote.srcTokenAmount).times(`1e${18}`).toFixed()),
-              )
-              .encodeABI(),
+            data,
           };
-
-          console.log('transaction', transaction);
 
           const gasPrice = await web3.eth.getGasPrice();
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-
           if (!gas) {
             logger.warn(transaction, 'Did not get any value from estimateGas(): %s', gas);
           } else {
@@ -145,8 +152,7 @@ export const useParaInchCreateSwap = () => {
             gas,
           });
 
-          console.log('spDepositResult', spDepositResult);
-
+          // Todo
           return spDepositResult;
           // return web3.eth
           //   .sendTransaction({ ...transaction, gasPrice, gas })
@@ -154,7 +160,6 @@ export const useParaInchCreateSwap = () => {
           //     return callCreateSwap({ skypoolsTransactionHash: hash });
           //   });
         } else {
-          console.log('token to token');
           const web3 = new Web3(wallet.provider);
           const transaction: TransactionConfig = {
             // TODO
@@ -183,5 +188,8 @@ export const useParaInchCreateSwap = () => {
     push,
     swapQuote,
     wallet,
+    skypools,
+    isSpApprovalNeeded,
+    spApprove,
   ]);
 };

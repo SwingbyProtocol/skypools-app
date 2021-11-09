@@ -1,4 +1,5 @@
 import { Network } from '../networks';
+export { getDecimals } from './utils';
 
 export const getScanApiUrl = ({ network }: { network: Network }) => {
   switch (network) {
