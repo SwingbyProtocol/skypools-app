@@ -26,6 +26,7 @@ query SwapQuote(
     srcTokenPriceUsd
     destTokenPriceUsd
     srcTokenAmountUsd
+    rawRouteData
     bestRoute {
       spender
       destTokenAmount

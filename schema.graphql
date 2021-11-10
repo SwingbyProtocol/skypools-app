@@ -84,7 +84,7 @@ type Mutation {
     destTokenId: ID!
     initiatorAddress: String!
     network: Network!
-    paraSwapRate: String!
+    rawRouteData: String!
     skybridgeSwapId: String
     skypoolsTransactionHash: String
     srcAmount: Decimal!
@@ -226,7 +226,7 @@ type Swap {
   id: ID!
   initiatorAddress: String!
   network: Network!
-  paraSwapRate: String!
+  rawRouteData: String!
   skybridgeSwapId: String
   skypoolsTransactionHashes: [String!]!
   srcAmount: Decimal!
@@ -241,6 +241,7 @@ type SwapQuote {
   destTokenPriceUsd: Decimal!
   nativeTokenPriceUsd: Decimal!
   otherExchanges: [SwapQuoteOtherExchange!]!
+  rawRouteData: String!
   srcToken: Token!
   srcTokenAmount: Decimal!
   srcTokenAmountUsd: Decimal!

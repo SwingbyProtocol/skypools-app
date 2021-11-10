@@ -132,6 +132,7 @@ export const getSwapQuote = async ({
     ...paraSwapQuote,
     srcToken,
     destToken,
+    rawRouteData: paraSwapQuote.rawRouteData,
     bestRoute: {
       ...paraSwapQuote.bestRoute,
       path: paraSwapQuote.bestRoute.path.map((it) => {

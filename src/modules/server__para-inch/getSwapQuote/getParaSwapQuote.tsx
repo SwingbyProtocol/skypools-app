@@ -147,6 +147,7 @@ export const getParaSwapQuote = async ({
     srcTokenAmount,
     srcTokenAmountUsd: new Prisma.Decimal(result.srcUSD),
 
+    rawRouteData: JSON.stringify(result),
     bestRoute,
 
     otherExchanges: (result.others ?? [])

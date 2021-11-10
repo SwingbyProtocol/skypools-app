@@ -2,7 +2,7 @@ mutation CreateSwap(
   $network: Network!
   $beneficiaryAddress: String!
   $initiatorAddress: String!
-  $paraSwapRate: String!
+  $rawRouteData: String!
   $srcAmount: Decimal!
   $destTokenId: ID!
   $srcTokenId: ID!
@@ -13,7 +13,7 @@ mutation CreateSwap(
     network: $network
     beneficiaryAddress: $beneficiaryAddress
     initiatorAddress: $initiatorAddress
-    paraSwapRate: $paraSwapRate
+    rawRouteData: $rawRouteData
     srcAmount: $srcAmount
     destTokenId: $destTokenId
     srcTokenId: $srcTokenId
@@ -38,7 +38,7 @@ mutation CreateSwap(
       logoUri
       address
     }
-    paraSwapRate
+    rawRouteData
     skybridgeSwapId
     skypoolsTransactionHashes
     createdAt

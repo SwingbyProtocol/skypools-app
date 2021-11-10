@@ -19,7 +19,7 @@ query Swap($id: ID!) {
       logoUri
       address
     }
-    paraSwapRate
+    rawRouteData
     skybridgeSwapId
     skypoolsTransactionHashes
     createdAt

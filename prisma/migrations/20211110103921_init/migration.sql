@@ -54,7 +54,7 @@ CREATE TABLE "Swap" (
     "srcAmount" DECIMAL(65,20) NOT NULL,
     "destTokenId" TEXT NOT NULL,
     "destAmount" DECIMAL(65,20) NOT NULL,
-    "paraSwapRate" TEXT NOT NULL,
+    "rawRouteData" TEXT NOT NULL,
     "skypoolsTransactionHashes" TEXT[],
     "skybridgeSwapId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
