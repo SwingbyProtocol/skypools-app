@@ -28,13 +28,11 @@ export const useParaInchCreateSwap = () => {
   const skypoolsSpender = CONTRACT_SKYPOOLS[network];
   const paraswapSpender = swapQuote?.bestRoute.spender;
 
-  const isSkypoolContract =
-    (swapQuote && isFakeBtcToken(swapQuote.srcToken.address)) ||
-    (swapQuote && isFakeBtcToken(swapQuote.destToken.address));
+  const isSkypoolsContract = swapQuote && isFakeBtcToken(swapQuote.destToken.address);
 
   const { isApprovalNeeded, approve } = useParaInchSwapApproval({
     token: swapQuote?.srcToken.address,
-    spender: isSkypoolContract ? skypoolsSpender : paraswapSpender,
+    spender: isSkypoolsContract ? skypoolsSpender : paraswapSpender,
     network,
   });
 
