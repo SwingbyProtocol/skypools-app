@@ -73,6 +73,7 @@ const SwapQuote = objectType({
     t.nonNull.field('srcTokenAmount', { type: 'Decimal' });
     t.nonNull.field('srcTokenAmountUsd', { type: 'Decimal' });
     t.nonNull.field('destTokenPriceUsd', { type: 'Decimal' });
+    t.nonNull.field('rawRouteData', { type: 'String' });
     t.nonNull.field('bestRoute', { type: SwapQuoteBestRoute });
     t.nonNull.list.nonNull.field('otherExchanges', { type: SwapQuoteOtherExchange });
   },

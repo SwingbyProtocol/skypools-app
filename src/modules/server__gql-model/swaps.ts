@@ -22,7 +22,7 @@ export const Swap = objectType({
     t.nonNull.field('destToken', { type: 'Token' });
     t.model.destAmount();
 
-    t.model.paraSwapRate();
+    t.model.rawRouteData();
 
     t.model.skybridgeSwapId();
     t.model.skypoolsTransactionHashes();
@@ -84,7 +84,7 @@ export const CreateSwapMutation = extendType({
         network: nonNull('Network'),
         beneficiaryAddress: nonNull('String'),
         initiatorAddress: nonNull('String'),
-        paraSwapRate: nonNull('String'),
+        rawRouteData: nonNull('String'),
         srcAmount: nonNull('Decimal'),
         destTokenId: nonNull('ID'),
         srcTokenId: nonNull('ID'),
@@ -146,7 +146,7 @@ export const CreateSwapMutation = extendType({
           'utf-8',
         ).toString('base64');
 
-        const paraSwapData = JSON.parse(args.paraSwapRate) as OptimalRate;
+        const paraSwapData = JSON.parse(args.rawRouteData) as OptimalRate;
 
         return ctx.prisma.swap.create({
           include: { srcToken: true, destToken: true },
@@ -155,7 +155,7 @@ export const CreateSwapMutation = extendType({
             network: args.network,
             beneficiaryAddress: args.beneficiaryAddress,
             initiatorAddress: args.initiatorAddress,
-            paraSwapRate: args.paraSwapRate,
+            rawRouteData: args.rawRouteData,
             srcAmount: args.srcAmount,
             destAmount: new Prisma.Decimal(paraSwapData.destAmount).div(
               `1e${paraSwapData.destDecimals}`,

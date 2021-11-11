@@ -75,7 +75,7 @@ export const useParaInchCreateSwap = () => {
               initiatorAddress: address,
               destTokenId: swapQuote.destToken.id,
               srcTokenId: swapQuote.srcToken.id,
-              paraSwapRate: JSON.stringify(swapQuote),
+              rawRouteData: swapQuote.rawRouteData,
               srcAmount: swapQuote.srcTokenAmount,
               beneficiaryAddress: address,
             },

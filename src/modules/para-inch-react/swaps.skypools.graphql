@@ -21,7 +21,7 @@ query Swaps($where: SwapWhereInput) {
           logoUri
           address
         }
-        paraSwapRate
+        rawRouteData
         skybridgeSwapId
         skypoolsTransactionHashes
         createdAt

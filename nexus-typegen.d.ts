@@ -177,7 +177,7 @@ export interface NexusGenObjects {
     id: string; // ID!
     initiatorAddress: string; // String!
     network: NexusGenEnums['Network']; // Network!
-    paraSwapRate: string; // String!
+    rawRouteData: string; // String!
     skybridgeSwapId?: string | null; // String
     skypoolsTransactionHashes: string[]; // [String!]!
     srcAmount: NexusGenScalars['Decimal']; // Decimal!
@@ -192,6 +192,7 @@ export interface NexusGenObjects {
     destTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     nativeTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     otherExchanges: NexusGenRootTypes['SwapQuoteOtherExchange'][]; // [SwapQuoteOtherExchange!]!
+    rawRouteData: string; // String!
     srcToken: NexusGenRootTypes['Token']; // Token!
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     srcTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
@@ -314,7 +315,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     initiatorAddress: string; // String!
     network: NexusGenEnums['Network']; // Network!
-    paraSwapRate: string; // String!
+    rawRouteData: string; // String!
     skybridgeSwapId: string | null; // String
     skypoolsTransactionHashes: string[]; // [String!]!
     srcAmount: NexusGenScalars['Decimal']; // Decimal!
@@ -329,6 +330,7 @@ export interface NexusGenFieldTypes {
     destTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     nativeTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
     otherExchanges: NexusGenRootTypes['SwapQuoteOtherExchange'][]; // [SwapQuoteOtherExchange!]!
+    rawRouteData: string; // String!
     srcToken: NexusGenRootTypes['Token']; // Token!
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     srcTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
@@ -443,7 +445,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID';
     initiatorAddress: 'String';
     network: 'Network';
-    paraSwapRate: 'String';
+    rawRouteData: 'String';
     skybridgeSwapId: 'String';
     skypoolsTransactionHashes: 'String';
     srcAmount: 'Decimal';
@@ -458,6 +460,7 @@ export interface NexusGenFieldTypeNames {
     destTokenPriceUsd: 'Decimal';
     nativeTokenPriceUsd: 'Decimal';
     otherExchanges: 'SwapQuoteOtherExchange';
+    rawRouteData: 'String';
     srcToken: 'Token';
     srcTokenAmount: 'Decimal';
     srcTokenAmountUsd: 'Decimal';
@@ -544,7 +547,7 @@ export interface NexusGenArgTypes {
       destTokenId: string; // ID!
       initiatorAddress: string; // String!
       network: NexusGenEnums['Network']; // Network!
-      paraSwapRate: string; // String!
+      rawRouteData: string; // String!
       skybridgeSwapId?: string | null; // String
       skypoolsTransactionHash?: string | null; // String
       srcAmount: NexusGenScalars['Decimal']; // Decimal!

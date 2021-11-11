@@ -86,7 +86,7 @@ model Swap {
   destToken   Token   @relation("SwapDestToken", fields: [destTokenId], references: [id])
   destAmount  Decimal @db.Decimal(65, 20)
 
-  paraSwapRate String
+  rawRouteData String
 
   skypoolsTransactionHashes String[]
   skybridgeSwapId           String?
