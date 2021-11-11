@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 import { Big } from 'big.js';
+import { ParaSwap } from 'paraswap';
 
 import ABI from '../../abi/skypools.json'; // eslint-disable-line import/no-internal-modules
 import {
@@ -29,6 +30,7 @@ export const useParaInchCreateSwap = () => {
     spender: swapQuote?.bestRoute.spender,
     network,
   });
+  console.log('swapQuote', swapQuote);
 
   const skypools = CONTRACT_SKYPOOLS[network];
   const { isApprovalNeeded: isSpApprovalNeeded, approve: spApprove } = useParaInchSwapApproval({
@@ -146,21 +148,25 @@ export const useParaInchCreateSwap = () => {
             );
           }
 
-          const spDepositResult = await web3.eth.sendTransaction({
-            ...transaction,
-            gasPrice,
-            gas,
-          });
-
-          // Todo
-          return spDepositResult;
-          // return web3.eth
-          //   .sendTransaction({ ...transaction, gasPrice, gas })
-          //   .once('transactionHash', async (hash) => {
-          //     return callCreateSwap({ skypoolsTransactionHash: hash });
-          //   });
+          return web3.eth
+            .sendTransaction({ ...transaction, gasPrice, gas })
+            .once('transactionHash', async (hash) => {
+              return callCreateSwap({ skypoolsTransactionHash: hash });
+            });
         } else {
           const web3 = new Web3(wallet.provider);
+          const paraSwap = new ParaSwap();
+          // const txParams = await paraSwap.buildTx(
+          //   swapQuote?.srcToken.address,
+          //   swapQuote?.destToken.address,
+          //   swapQuote?.srcTokenAmount,
+          //   // destAmount: swapQuote?.,
+          //   priceRoute,
+          //   address,
+          //   'skypools',
+          // );
+          // console.log('txParams', txParams);
+
           const transaction: TransactionConfig = {
             // TODO
             nonce: await web3.eth.getTransactionCount(address),
