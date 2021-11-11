@@ -161,6 +161,17 @@ export const useParaInchCreateSwap = () => {
           const gasPrice = await web3.eth.getGasPrice();
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
 
+          if (!gas) {
+            logger.warn(transaction, 'Did not get any value from estimateGas(): %s', gas);
+          } else {
+            logger.debug(
+              transaction,
+              'Estimated gas that will be spent %s (price: %s ETH)',
+              gas,
+              web3.utils.fromWei(gasPrice, 'ether'),
+            );
+          }
+
           return web3.eth
             .sendTransaction({ ...transaction, gasPrice, gas })
             .once('transactionHash', async (hash) => {
