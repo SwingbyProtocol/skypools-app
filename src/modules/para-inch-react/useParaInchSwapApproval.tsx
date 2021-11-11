@@ -7,6 +7,7 @@ import { Big } from 'big.js';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
 import { getWrappedBtcAddress, isFakeBtcToken, isFakeNativeToken } from '../para-inch';
+import { logger } from '../logger';
 
 const MAX_ALLOWANCE = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
@@ -39,13 +40,18 @@ export const useParaInchSwapApproval = ({
         return false;
       }
 
-      const web3 = new Web3(wallet.provider);
-      const contract = new web3.eth.Contract(ABI, token);
+      try {
+        const web3 = new Web3(wallet.provider);
+        const contract = new web3.eth.Contract(ABI, token);
 
-      const allowance = new Big(await contract.methods.allowance(address, spender).call());
-      const maxAllowance = new Big(MAX_ALLOWANCE.toString(10));
+        const allowance = new Big(await contract.methods.allowance(address, spender).call());
+        const maxAllowance = new Big(MAX_ALLOWANCE.toString(10));
 
-      return allowance.lt(maxAllowance);
+        return allowance.lt(maxAllowance);
+      } catch (err) {
+        logger.error({ err }, 'Failed to check allowance');
+        return null;
+      }
     };
 
     const checkPeriodically = async () => {
