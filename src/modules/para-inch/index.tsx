@@ -7,4 +7,6 @@ export {
   getWrappedBtcAddress,
 } from './isFakeToken';
 
+export { buildParaTxData } from './buildParaData';
+
 export type { ParaInchToken } from './ParaInchToken';

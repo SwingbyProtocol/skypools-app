@@ -5,7 +5,6 @@ import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 import { AbiItem } from 'web3-utils';
 import { Big } from 'big.js';
-import { ParaSwap } from 'paraswap';
 
 import ABI from '../../abi/skypools.json'; // eslint-disable-line import/no-internal-modules
 import {
@@ -13,7 +12,7 @@ import {
   CreateSwapMutationVariables,
 } from '../../generated/skypools-graphql';
 import { useOnboard } from '../onboard';
-import { isFakeBtcToken, isFakeNativeToken } from '../para-inch';
+import { isFakeBtcToken, isFakeNativeToken, buildParaTxData } from '../para-inch';
 import { Network } from '../networks';
 import { CONTRACT_SKYPOOLS } from '../env';
 import { logger } from '../logger';
@@ -24,18 +23,18 @@ import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useParaInchCreateSwap = () => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
-  const { swapQuote, network } = useParaInchForm();
+  const { swapQuote, network, slippage } = useParaInchForm();
+
+  const skypoolsSpender = CONTRACT_SKYPOOLS[network];
+  const paraswapSpender = swapQuote?.bestRoute.spender;
+
+  const isSkypoolContract =
+    (swapQuote && isFakeBtcToken(swapQuote.srcToken.address)) ||
+    (swapQuote && isFakeBtcToken(swapQuote.destToken.address));
+
   const { isApprovalNeeded, approve } = useParaInchSwapApproval({
     token: swapQuote?.srcToken.address,
-    spender: swapQuote?.bestRoute.spender,
-    network,
-  });
-  console.log('swapQuote', swapQuote);
-
-  const skypools = CONTRACT_SKYPOOLS[network];
-  const { isApprovalNeeded: isSpApprovalNeeded, approve: spApprove } = useParaInchSwapApproval({
-    token: swapQuote?.srcToken.address,
-    spender: skypools,
+    spender: isSkypoolContract ? skypoolsSpender : paraswapSpender,
     network,
   });
 
@@ -46,8 +45,6 @@ export const useParaInchCreateSwap = () => {
     return {
       isApprovalNeeded,
       approve,
-      isSpApprovalNeeded,
-      spApprove,
       createSwap: async () => {
         if (!swapQuote) {
           throw new Error('No swap quote available to create a new swap');
@@ -88,7 +85,7 @@ export const useParaInchCreateSwap = () => {
         };
 
         const web3 = new Web3(wallet.provider);
-        const contract = new web3.eth.Contract(ABI as AbiItem[], skypools);
+        const contract = new web3.eth.Contract(ABI as AbiItem[], skypoolsSpender);
 
         if (isFakeBtcToken(swapQuote.srcToken.address)) {
           const context = await buildContext({
@@ -131,7 +128,7 @@ export const useParaInchCreateSwap = () => {
             nonce: await web3.eth.getTransactionCount(address),
             value,
             from: address,
-            to: skypools,
+            to: skypoolsSpender,
             data,
           };
 
@@ -154,28 +151,18 @@ export const useParaInchCreateSwap = () => {
               return callCreateSwap({ skypoolsTransactionHash: hash });
             });
         } else {
+          const data = await buildParaTxData({
+            priceRoute: JSON.parse(swapQuote.rawRouteData),
+            slippage,
+            userAddress: address,
+            contract: 'paraswap',
+          });
           const web3 = new Web3(wallet.provider);
-          const paraSwap = new ParaSwap();
-          // const txParams = await paraSwap.buildTx(
-          //   swapQuote?.srcToken.address,
-          //   swapQuote?.destToken.address,
-          //   swapQuote?.srcTokenAmount,
-          //   // destAmount: swapQuote?.,
-          //   priceRoute,
-          //   address,
-          //   'skypools',
-          // );
-          // console.log('txParams', txParams);
-
-          const transaction: TransactionConfig = {
-            // TODO
-            nonce: await web3.eth.getTransactionCount(address),
-            value: '0x0',
-            from: address,
-          };
+          const transaction: TransactionConfig = await web3.eth.sendTransaction({ ...data });
 
           const gasPrice = await web3.eth.getGasPrice();
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
+
           return web3.eth
             .sendTransaction({ ...transaction, gasPrice, gas })
             .once('transactionHash', async (hash) => {
@@ -194,8 +181,7 @@ export const useParaInchCreateSwap = () => {
     push,
     swapQuote,
     wallet,
-    skypools,
-    isSpApprovalNeeded,
-    spApprove,
+    slippage,
+    skypoolsSpender,
   ]);
 };

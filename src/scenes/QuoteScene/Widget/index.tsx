@@ -32,9 +32,7 @@ export const Widget = () => {
     isAmountValid,
     swapQuote,
   } = useParaInchForm();
-  const { isApprovalNeeded, approve, createSwap, spApprove, isSpApprovalNeeded } =
-    useParaInchCreateSwap();
-  console.log('isSpApprovalNeeded', isSpApprovalNeeded);
+  const { isApprovalNeeded, approve, createSwap } = useParaInchCreateSwap();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -112,7 +110,6 @@ export const Widget = () => {
         }}
       />
 
-      {/* {!isApprovalNeeded && !isSpApprovalNeeded && ( */}
       {!isApprovalNeeded && (
         <Button
           variant="primary"
@@ -126,14 +123,9 @@ export const Widget = () => {
       )}
       {!!isApprovalNeeded && (
         <Button variant="primary" size="state" css={swapButton} onClick={approve}>
-          <FormattedMessage id="widget.approve.paraswap" />
+          <FormattedMessage id="widget.approve" />
         </Button>
       )}
-      {/* {!!isSpApprovalNeeded && (
-        <Button variant="primary" size="state" css={swapButton} onClick={spApprove}>
-          <FormattedMessage id="widget.approve.skypools" />
-        </Button>
-      )} */}
 
       {isAmountValid && swapQuote && (
         <table css={info}>
