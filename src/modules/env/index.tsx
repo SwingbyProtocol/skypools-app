@@ -6,10 +6,3 @@ export const graphqlEndpoint = '/api/v1/graphql';
 
 export const blocknativeApiKey = process.env.NEXT_PUBLIC_BLOCKNATIVE_KEY || undefined;
 export const infuraApiKey = process.env.NEXT_PUBLIC_INFURA_KEY || undefined;
-
-// Todo
-export const CONTRACT_SKYPOOLS = {
-  ETHEREUM: '',
-  ROPSTEN: '0xf73d63c3eb97389cb5a28c4ad5e8ac428cb16417',
-  BSC: '',
-};

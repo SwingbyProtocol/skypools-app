@@ -1,38 +1,35 @@
 import { buildContext, createSwap as createSkybridgeSwap } from '@swingby-protocol/sdk';
+import { Big } from 'big.js';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
-import { Big } from 'big.js';
 
-import ABI from '../../abi/skypools.json'; // eslint-disable-line import/no-internal-modules
 import {
-  useCreateSwapMutation,
   CreateSwapMutationVariables,
+  useCreateSwapMutation,
 } from '../../generated/skypools-graphql';
-import { useOnboard } from '../onboard';
-import { isFakeBtcToken, isFakeNativeToken, buildParaTxData } from '../para-inch';
-import { Network } from '../networks';
-import { CONTRACT_SKYPOOLS } from '../env';
 import { logger } from '../logger';
-import { getDecimals } from '../web3';
+import { Network } from '../networks';
+import { useOnboard } from '../onboard';
+import { buildParaTxData, isFakeBtcToken, isFakeNativeToken } from '../para-inch';
+import { buildSkypoolsContract, getSkypoolsContractAddress } from '../skypools';
 
 import { useParaInchForm } from './useParaInchForm';
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useParaInchCreateSwap = () => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
-  const { swapQuote, network, slippage } = useParaInchForm();
+  const { swapQuote, network, slippage, fromToken } = useParaInchForm();
 
-  const skypoolsSpender = CONTRACT_SKYPOOLS[network];
-  const paraswapSpender = swapQuote?.bestRoute.spender;
+  const skypoolsContractAddress = getSkypoolsContractAddress(network);
+  const paraSwapContractAddress = swapQuote?.bestRoute.spender;
 
   const isSkypoolsContract = swapQuote && isFakeBtcToken(swapQuote.destToken.address);
 
   const { isApprovalNeeded, approve } = useParaInchSwapApproval({
     token: swapQuote?.srcToken.address,
-    spender: isSkypoolsContract ? skypoolsSpender : paraswapSpender,
+    spender: isSkypoolsContract ? skypoolsContractAddress : paraSwapContractAddress,
     network,
   });
 
@@ -82,9 +79,6 @@ export const useParaInchCreateSwap = () => {
           return push(`/swap/${swap.createSwap.id}`);
         };
 
-        const web3 = new Web3(wallet.provider);
-        const contract = new web3.eth.Contract(ABI as AbiItem[], skypoolsSpender);
-
         if (isFakeBtcToken(swapQuote.srcToken.address)) {
           const context = await buildContext({
             mode: network === Network.ROPSTEN ? 'test' : 'production',
@@ -101,13 +95,11 @@ export const useParaInchCreateSwap = () => {
 
           return callCreateSwap({ skybridgeSwapId: hash });
         } else if (isFakeBtcToken(swapQuote.destToken.address)) {
+          const web3 = new Web3(wallet.provider);
+          const contract = buildSkypoolsContract({ provider: skypoolsContractAddress, network });
           const isNativeToken = isFakeNativeToken(swapQuote.srcToken.address);
-          const srcTokenDecimals = !isNativeToken
-            ? await getDecimals({
-                token: swapQuote.srcToken.address,
-                provider: wallet.provider,
-              })
-            : 18;
+
+          const srcTokenDecimals = fromToken?.decimals;
 
           const value = isNativeToken ? web3.utils.toWei(swapQuote.srcTokenAmount) : '0x0';
 
@@ -126,22 +118,13 @@ export const useParaInchCreateSwap = () => {
             nonce: await web3.eth.getTransactionCount(address),
             value,
             from: address,
-            to: skypoolsSpender,
+            to: skypoolsContractAddress,
             data,
           };
 
           const gasPrice = await web3.eth.getGasPrice();
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-          if (!gas) {
-            logger.warn(transaction, 'Did not get any value from estimateGas(): %s', gas);
-          } else {
-            logger.debug(
-              transaction,
-              'Estimated gas that will be spent %s (price: %s ETH)',
-              gas,
-              web3.utils.fromWei(gasPrice, 'ether'),
-            );
-          }
+          logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
           return web3.eth
             .sendTransaction({ ...transaction, gasPrice, gas })
@@ -149,31 +132,20 @@ export const useParaInchCreateSwap = () => {
               return callCreateSwap({ skypoolsTransactionHash: hash });
             });
         } else {
-          const data = await buildParaTxData({
+          const paraTx: TransactionConfig = await buildParaTxData({
             priceRoute: JSON.parse(swapQuote.rawRouteData),
             slippage,
             userAddress: address,
-            contract: 'paraswap',
           });
+
           const web3 = new Web3(wallet.provider);
-          const transaction: TransactionConfig = await web3.eth.sendTransaction({ ...data });
-
           const gasPrice = await web3.eth.getGasPrice();
+          const { chainId, ...transaction } = paraTx;
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-
-          if (!gas) {
-            logger.warn(transaction, 'Did not get any value from estimateGas(): %s', gas);
-          } else {
-            logger.debug(
-              transaction,
-              'Estimated gas that will be spent %s (price: %s ETH)',
-              gas,
-              web3.utils.fromWei(gasPrice, 'ether'),
-            );
-          }
+          logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
           return web3.eth
-            .sendTransaction({ ...transaction, gasPrice, gas })
+            .sendTransaction({ ...transaction, gas, gasPrice })
             .once('transactionHash', async (hash) => {
               return callCreateSwap({ skypoolsTransactionHash: hash });
             });
@@ -191,6 +163,7 @@ export const useParaInchCreateSwap = () => {
     swapQuote,
     wallet,
     slippage,
-    skypoolsSpender,
+    skypoolsContractAddress,
+    fromToken,
   ]);
 };
