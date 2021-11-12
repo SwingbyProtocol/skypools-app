@@ -56,7 +56,7 @@ export const ParaInchTokenProvider = ({
   const { address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
-  const [slippage, setSlippage] = useState<string>('');
+  const [slippage, setSlippage] = useState<string>('1');
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
   const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteLazyQuery();

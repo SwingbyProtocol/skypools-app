@@ -21,7 +21,7 @@ const percentageProps = {
   maximumFractionDigits: 1,
 } as const;
 
-const DEFAULT_SLIPPAGES = ['0.1', '0.5', '3'];
+const DEFAULT_SLIPPAGES = ['0.5', '1', '3'];
 
 export const Slippage = () => {
   const { slippage, setSlippage } = useParaInchForm();
