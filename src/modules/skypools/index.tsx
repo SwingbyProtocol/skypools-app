@@ -8,7 +8,7 @@ import { Network } from '.prisma/client';
 // Todo
 export const CONTRACT_SKYPOOLS = {
   ETHEREUM: '',
-  ROPSTEN: '0xf73d63c3eb97389cb5a28c4ad5e8ac428cb16417',
+  ROPSTEN: '0x42da142C8FAfA8C31701973607990B6d5e92118f',
   BSC: '',
 };
 
