@@ -22,14 +22,14 @@ export const useParaInchCreateSwap = () => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
   const { swapQuote, network, slippage, fromToken } = useParaInchForm();
 
-  const skypoolsContractAddress = getSkypoolsContractAddress(network);
-  const paraSwapContractAddress = swapQuote?.bestRoute.spender;
-
-  const isSkypoolsContract = swapQuote && isFakeBtcToken(swapQuote.destToken.address);
+  const contractAddress =
+    swapQuote && isFakeBtcToken(swapQuote.destToken.address)
+      ? getSkypoolsContractAddress(network)
+      : swapQuote?.bestRoute.spender;
 
   const { isApprovalNeeded, approve } = useParaInchSwapApproval({
     token: swapQuote?.srcToken.address,
-    spender: isSkypoolsContract ? skypoolsContractAddress : paraSwapContractAddress,
+    spender: contractAddress,
     network,
   });
 
@@ -101,8 +101,6 @@ export const useParaInchCreateSwap = () => {
 
           const srcTokenDecimals = fromToken?.decimals;
 
-          const value = isNativeToken ? web3.utils.toWei(swapQuote.srcTokenAmount) : '0x0';
-
           const data = contract.methods
             .spDeposit(
               swapQuote.srcToken.address,
@@ -116,9 +114,9 @@ export const useParaInchCreateSwap = () => {
 
           const transaction: TransactionConfig = {
             nonce: await web3.eth.getTransactionCount(address),
-            value,
+            value: isNativeToken ? web3.utils.toWei(swapQuote.srcTokenAmount) : '0x0',
             from: address,
-            to: skypoolsContractAddress,
+            to: contractAddress,
             data,
           };
 
@@ -132,23 +130,16 @@ export const useParaInchCreateSwap = () => {
               return callCreateSwap({ skypoolsTransactionHash: hash });
             });
         } else {
-          const paraTx: TransactionConfig = await buildParaTxData({
+          const web3 = new Web3(wallet.provider);
+          const transaction: TransactionConfig = await buildParaTxData({
             priceRoute: JSON.parse(swapQuote.rawRouteData),
             slippage,
             userAddress: address,
           });
 
-          const web3 = new Web3(wallet.provider);
-          const gasPrice = await web3.eth.getGasPrice();
-          const { chainId, ...transaction } = paraTx;
-          const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-          logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
-
-          return web3.eth
-            .sendTransaction({ ...transaction, gas, gasPrice })
-            .once('transactionHash', async (hash) => {
-              return callCreateSwap({ skypoolsTransactionHash: hash });
-            });
+          return web3.eth.sendTransaction(transaction).once('transactionHash', async (hash) => {
+            return callCreateSwap({ skypoolsTransactionHash: hash });
+          });
         }
       },
     };
@@ -163,7 +154,7 @@ export const useParaInchCreateSwap = () => {
     swapQuote,
     wallet,
     slippage,
-    skypoolsContractAddress,
+    contractAddress,
     fromToken,
   ]);
 };
