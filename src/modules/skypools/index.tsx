@@ -1,12 +1,12 @@
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 
-import ABI from './abi/skypools.json'; // eslint-disable-line import/no-internal-modules
+import ABI from './abi-skypools.json';
 
 import { Network } from '.prisma/client';
 
 // Todo
-export const CONTRACT_SKYPOOLS = {
+const CONTRACT_SKYPOOLS = {
   ETHEREUM: '',
   ROPSTEN: '0x42da142C8FAfA8C31701973607990B6d5e92118f',
   BSC: '',

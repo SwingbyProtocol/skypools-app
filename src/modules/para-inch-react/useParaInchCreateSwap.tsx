@@ -99,15 +99,13 @@ export const useParaInchCreateSwap = () => {
           const contract = buildSkypoolsContract({ provider: wallet.provider, network });
           const isNativeToken = isFakeNativeToken(swapQuote.srcToken.address);
 
-          const srcTokenDecimals = fromToken?.decimals;
-
           const data = contract.methods
             .spDeposit(
               swapQuote.srcToken.address,
               isNativeToken
                 ? '0'
                 : web3.utils.toHex(
-                    new Big(swapQuote.srcTokenAmount).times(`1e${srcTokenDecimals}`).toFixed(),
+                    new Big(swapQuote.srcTokenAmount).times(`1e${fromToken?.decimals}`).toFixed(),
                   ),
             )
             .encodeABI();
