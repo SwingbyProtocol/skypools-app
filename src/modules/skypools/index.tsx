@@ -5,7 +5,6 @@ import ABI from './abi-skypools.json';
 
 import { Network } from '.prisma/client';
 
-// Todo
 const CONTRACT_SKYPOOLS = {
   ETHEREUM: '',
   ROPSTEN: '0x42da142C8FAfA8C31701973607990B6d5e92118f',
