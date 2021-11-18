@@ -7,7 +7,7 @@ import { SwapScene } from '../../scenes/SwapScene';
 type Props = { swapId: string };
 
 export default function SwapPage({ swapId }: Props) {
-  return <SwapScene />;
+  return <SwapScene swapId={swapId} />;
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {

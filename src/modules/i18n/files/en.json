@@ -28,5 +28,9 @@
   "history.status.CONFIRMED": "Confirmed",
   "history.status.SENT": "Sent",
   "history.status.FAILED": "Failed",
-  "comparison.match": "MATCH"
+  "history.status.PENDING": "Pending",
+  "comparison.match": "MATCH",
+  "swap.deposit-confirmed": "{value} Deposit Confirmed",
+  "swap.claim": "Claim {value}",
+  "swap.button.claim": "Claim"
 }
