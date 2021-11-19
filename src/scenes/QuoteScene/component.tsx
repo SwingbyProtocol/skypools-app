@@ -84,6 +84,7 @@ export const QuoteScene = () => {
 
   return (
     <Layout
+      isSkybridgeWidget={false}
       afterPriceChart={
         <>
           <div css={swapPathContainer}>
