@@ -1,9 +1,9 @@
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
-import { useSkypools } from '../../../modules/para-inch-react';
+import { useSkypools, useSkypoolsDepositBal } from '../../../modules/para-inch-react';
 
-import { claim, claimNote, confirmed, container } from './styles';
+import { claim, confirmed, container, details, row } from './styles';
 
 export const SkypoolsSwap = ({
   destToken,
@@ -14,7 +14,9 @@ export const SkypoolsSwap = ({
   srcToken: string;
   swapId: string;
 }) => {
-  const { handleClaim } = useSkypools(swapId);
+  // Todo: Get data from slippage UI
+  const { handleClaim, wbtcSrcAmount, minAmount } = useSkypools({ swapId, slippage: '1' });
+  const { depositBalance } = useSkypoolsDepositBal(swapId);
 
   return (
     <div css={container}>
@@ -22,19 +24,54 @@ export const SkypoolsSwap = ({
         <FormattedMessage id="swap.deposit-confirmed" values={{ value: srcToken }} />
       </div>
       <div css={claim}>
-        <div css={claimNote}>
-          <FormattedMessage id="swap.claim" values={{ value: destToken }} />
-        </div>
-
         <Button
           variant="primary"
           size="city"
-          // Todo
-          // disabled={}
+          disabled={Number(wbtcSrcAmount) > Number(depositBalance.balance)}
           onClick={handleClaim ?? undefined}
         >
-          <FormattedMessage id="swap.button.claim" />
+          <FormattedMessage id="swap.claim" values={{ value: destToken }} />
         </Button>
+      </div>
+      <div css={details}>
+        <div css={row}>
+          <div>
+            <FormattedMessage id="swap.total-deposited-balance" />
+          </div>
+          <div>
+            {depositBalance.balance} {depositBalance.token}
+          </div>
+        </div>
+        <div css={row}>
+          <div>
+            <FormattedMessage id="swap.swap-src-amount" />
+          </div>
+          <div>
+            <FormattedMessage
+              id="token-amount"
+              values={{
+                amount: <FormattedNumber value={Number(wbtcSrcAmount)} maximumFractionDigits={8} />,
+                token: 'WBTC',
+              }}
+            />
+          </div>
+        </div>
+        <div css={row}>
+          <div>
+            <FormattedMessage id="swap.min-receiving-amount" />
+          </div>
+          <div>
+            <FormattedMessage
+              id="token-amount"
+              values={{
+                amount: (
+                  <FormattedNumber value={Number(minAmount.amount)} maximumFractionDigits={8} />
+                ),
+                token: minAmount.token,
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

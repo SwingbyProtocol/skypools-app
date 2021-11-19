@@ -32,5 +32,9 @@
   "comparison.match": "MATCH",
   "swap.deposit-confirmed": "{value} Deposit Confirmed",
   "swap.claim": "Claim {value}",
-  "swap.button.claim": "Claim"
+  "swap.button.claim": "Claim",
+  "swap.total-deposited-balance": "Total Deposited Balance:",
+  "swap.swap-src-amount": "Swap Source Amount:",
+  "swap.min-receiving-amount": "Min Receiving Amount:",
+  "token-amount": "{amount} {token}"
 }

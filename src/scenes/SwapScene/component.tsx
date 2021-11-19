@@ -1,5 +1,5 @@
 import { Layout } from '../../components/Layout';
-import { SwapDocument, SwapStatus, useSwapQuery } from '../../generated/skypools-graphql';
+import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { useSkybridgeSwap } from '../../modules/skypools';
 
 import { SkybridgeWidget } from './SkybridgeWidget';
@@ -16,23 +16,23 @@ export const SwapScene = ({ swapId }: { swapId: string }) => {
   const isSwapFromBtc = swap?.srcToken.symbol === 'BTC';
   const skybridgeId = swap?.skybridgeSwapId ?? '';
   const { status } = useSkybridgeSwap(skybridgeId);
+  const isSkybridgeWidget = status !== 'COMPLETED';
 
-  const fromBtc =
-    status === 'COMPLETED'
-      ? swap && (
-          <SkypoolsSwap
-            destToken={swap.destToken.symbol}
-            srcToken={swap.srcToken.symbol}
-            swapId={swapId}
-          />
-        )
-      : swap && (
-          <SkybridgeWidget
-            src={`https://widget.skybridge.exchange/${
-              swap?.network === 'ROPSTEN' ? 'test' : 'production'
-            }/swap/${swap?.skybridgeSwapId}`}
-          />
-        );
+  const fromBtc = isSkybridgeWidget
+    ? swap && (
+        <SkybridgeWidget
+          src={`https://widget.skybridge.exchange/${
+            swap?.network === 'ROPSTEN' ? 'test' : 'production'
+          }/swap/${swap?.skybridgeSwapId}`}
+        />
+      )
+    : swap && (
+        <SkypoolsSwap
+          destToken={swap.destToken.symbol}
+          srcToken={swap.srcToken.symbol}
+          swapId={swapId}
+        />
+      );
 
   const widget = swap && isSwapFromBtc ? fromBtc : <div>ERC20 token to BTC</div>;
 
@@ -40,7 +40,7 @@ export const SwapScene = ({ swapId }: { swapId: string }) => {
     <Layout
       priceHistory={null}
       widgetContent={widget}
-      isSkybridgeWidget={isSwapFromBtc && status === SwapStatus.Pending}
+      isSkybridgeWidget={isSwapFromBtc && isSkybridgeWidget}
     />
   );
 };

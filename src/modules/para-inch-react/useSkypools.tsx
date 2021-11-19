@@ -1,32 +1,77 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
+import { ethers } from 'ethers';
 
-import { useSwapQuery, SwapDocument } from '../../generated/skypools-graphql';
+import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
 import {
-  useSkybridgeSwap,
-  getSkypoolsContractAddress,
   buildSkypoolsContract,
   dataSpParaSwapBTC2Token,
+  getSkypoolsContractAddress,
+  simpleSwapPriceRoute,
+  useSkybridgeSwap,
 } from '../skypools';
 
-export const useSkypools = (swapId: string) => {
+export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
+
   const { data } = useSwapQuery({
     query: SwapDocument,
     variables: { id: swapId },
   });
-  const { claimableWbtc } = useSkybridgeSwap(data?.swap.skybridgeSwapId ?? '');
+
+  const { wbtcSrcAmount } = useSkybridgeSwap(data?.swap.skybridgeSwapId ?? '');
+
+  const [minAmount, setMiniAmount] = useState<{ amount: string; token: string }>({
+    amount: '',
+    token: '',
+  });
+
+  const isBtcToToken = data?.swap.srcToken.symbol === 'BTC';
+
+  const getMinSwapAmount = useCallback(async () => {
+    if (!wallet || !address || !data) return;
+    try {
+      const { minAmount, priceRoute } = await simpleSwapPriceRoute({
+        swapQuery: data,
+        wbtcSrcAmount,
+        slippage,
+      });
+      const amount = ethers.utils.formatUnits(minAmount, priceRoute.destDecimals);
+      setMiniAmount({
+        amount,
+        token: data.swap.destToken.symbol,
+      });
+    } catch (error) {
+      logger.error(error);
+      setMiniAmount({
+        amount: '',
+        token: '',
+      });
+    }
+  }, [wallet, data, address, slippage, wbtcSrcAmount]);
+
+  useEffect(() => {
+    getMinSwapAmount();
+
+    const interval = setInterval(() => {
+      getMinSwapAmount();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [getMinSwapAmount]);
 
   return useMemo(() => {
     return {
+      wbtcSrcAmount,
+      minAmount,
       handleClaim: async () => {
         if (!data || !data.swap) {
           return;
         }
-        const { network, srcToken, initiatorAddress } = data.swap;
+        const { network, initiatorAddress } = data.swap;
         if (!address || !wallet || !wallet.provider) {
           throw new Error('No wallet connected');
         }
@@ -39,16 +84,14 @@ export const useSkypools = (swapId: string) => {
         const web3 = new Web3(wallet.provider);
         const contractAddress = network && getSkypoolsContractAddress(network);
         const contract = buildSkypoolsContract({ provider: wallet.provider, network });
-        const isBtcToToken = srcToken.symbol === 'BTC';
         if (isBtcToToken) {
-          // Let's get from db
-          const slippage = '1';
           const arg = await dataSpParaSwapBTC2Token({
             slippage,
-            claimableWbtc,
+            wbtcSrcAmount,
             userAddress: initiatorAddress,
             swapQuery: data,
           });
+
           const transaction: TransactionConfig = {
             nonce: await web3.eth.getTransactionCount(address),
             value: '0x0',
@@ -56,6 +99,7 @@ export const useSkypools = (swapId: string) => {
             to: contractAddress,
             data: contract.methods.spParaSwapBTC2Token(arg).encodeABI(),
           };
+
           const gasPrice = await web3.eth.getGasPrice();
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
           logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
@@ -67,5 +111,5 @@ export const useSkypools = (swapId: string) => {
         }
       },
     };
-  }, [address, onboardNetwork, wallet, data, claimableWbtc]);
+  }, [address, onboardNetwork, wallet, data, wbtcSrcAmount, isBtcToToken, slippage, minAmount]);
 };

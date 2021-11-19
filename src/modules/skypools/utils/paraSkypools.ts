@@ -1,6 +1,6 @@
 import { Network } from '@prisma/client';
 import Big from 'big.js';
-import { APIError, ContractMethod, NetworkID, ParaSwap, SwapSide } from 'paraswap';
+import { ContractMethod, NetworkID, ParaSwap, SwapSide } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
 
 import { SwapQuery } from '../../../generated/skypools-graphql';
@@ -12,11 +12,13 @@ import { swapMinAmount } from '.';
 // Ref: https://github.com/SwingbyProtocol/skybridge-contract/blob/skypools/scripts/paraswap.js#L62
 export const simpleSwapPriceRoute = async ({
   swapQuery,
-  claimableWbtc,
+  wbtcSrcAmount,
+  slippage,
 }: {
   swapQuery: SwapQuery;
-  claimableWbtc: string;
-}): Promise<OptimalRate | APIError> => {
+  wbtcSrcAmount: string;
+  slippage: string;
+}): Promise<{ priceRoute: OptimalRate; minAmount: string }> => {
   const {
     swap: { network, destToken, rawRouteData, initiatorAddress },
   } = swapQuery;
@@ -45,43 +47,46 @@ export const simpleSwapPriceRoute = async ({
           includeContractMethods: [ContractMethod.simpleSwap],
         };
 
-  const result = await paraSwap.getRate(
+  const result = (await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
-    new Big(claimableWbtc).times(`1e${srcDecimals}`).toFixed(0),
+    new Big(wbtcSrcAmount).times(`1e${srcDecimals}`).toFixed(0),
     initiatorAddress,
     SwapSide.SELL,
     option,
     srcDecimals,
     rawPriceRoute.destDecimals,
-  );
+  )) as OptimalRate;
+
   if (!result) {
     throw Error('No route for this swap');
   }
 
-  return result;
+  const minAmount = swapMinAmount({ destAmount: result.destAmount, slippage });
+
+  return { priceRoute: result, minAmount };
 };
 
 export const dataSpParaSwapBTC2Token = async ({
   slippage,
   userAddress,
   swapQuery,
-  claimableWbtc,
+  wbtcSrcAmount,
 }: {
   slippage: string;
   userAddress: string;
-  claimableWbtc: string;
+  wbtcSrcAmount: string;
   swapQuery: SwapQuery;
 }) => {
-  const priceRoute = (await simpleSwapPriceRoute({
+  const { priceRoute, minAmount } = await simpleSwapPriceRoute({
     swapQuery,
-    claimableWbtc,
-  })) as OptimalRate;
-  const { network, srcToken, destToken, srcAmount, destAmount } = priceRoute;
+    wbtcSrcAmount,
+    slippage,
+  });
+
+  const { network, srcToken, destToken, srcAmount } = priceRoute;
 
   const referrer = 'skypools';
-
-  const minAmount = swapMinAmount({ destAmount, slippage });
 
   const paraSwap = new ParaSwap(network as NetworkID);
   const data = (await paraSwap.buildTx(

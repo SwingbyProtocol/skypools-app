@@ -67,6 +67,22 @@ export const loadingPulseAnimation = css`
   filter: saturate(0%);
 `;
 
+export const skybridgeWidgetCard = css`
+  grid-area: widget;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  justify-self: stretch;
+  border: none;
+  z-index: 2;
+
+  @media (prefers-color-scheme: dark) {
+    box-shadow: none;
+    overflow: hidden;
+    border: 1px solid hsl(var(--sp-color-border-normal));
+  }
+`;
+
 export const widgetCard = css`
   grid-area: widget;
   display: flex;

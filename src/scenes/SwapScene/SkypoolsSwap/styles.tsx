@@ -12,21 +12,33 @@ export const container = css`
   grid-template-rows: repeat(2, min-content);
   grid-template-areas:
     'confirmed'
-    'claim';
+    'claim'
+    'details';
 `;
 
 export const confirmed = css`
   grid-area: confirmed;
   font-weight: 700;
   color: hsl(var(--sp-color-primary-normal));
-  margin-bottom: ${rem(size.drawer)};
+  margin-block-end: ${rem(size.drawer)};
 `;
 
 export const claim = css`
   grid-area: claim;
   width: 100%;
+  margin-block-end: ${rem(size.drawer)};
 `;
 
-export const claimNote = css`
-  margin-bottom: ${rem(size.drawer)};
+export const details = css`
+  grid-area: details;
+  width: 100%;
+  margin-block-end: ${rem(size.drawer)};
+  display: flex;
+  flex-direction: column;
+  row-gap: ${rem(size.drawer)};
+`;
+
+export const row = css`
+  display: flex;
+  justify-content: space-between;
 `;

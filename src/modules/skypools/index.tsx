@@ -5,7 +5,7 @@ import ABI from './abi-skypools.json';
 
 import { Network } from '.prisma/client';
 export { dataSpParaSwapBTC2Token } from './utils';
-export { swapMinAmount } from './utils';
+export { swapMinAmount, simpleSwapPriceRoute } from './utils';
 export { useSkybridgeSwap } from './useSkybridgeSwap';
 
 const CONTRACT_SKYPOOLS = {

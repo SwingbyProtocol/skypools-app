@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSkybridgeSwapInfoLazyQuery } from '../../generated/skybridge-graphql';
 
 export const useSkybridgeSwap = (skybridgeId: string) => {
-  const [claimableWbtc, setClaimableWbtc] = useState<string>('0');
+  const [wbtcSrcAmount, setwbtcSrcAmount] = useState<string>('0');
   const [status, setStatus] = useState<string>('WAITING');
 
   const [getSwaps, result] = useSkybridgeSwapInfoLazyQuery();
@@ -23,13 +23,13 @@ export const useSkybridgeSwap = (skybridgeId: string) => {
     console.log('result', result.data);
 
     setStatus(result.data.transaction.status);
-    setClaimableWbtc(result.data.transaction.receivingAmount);
+    setwbtcSrcAmount(result.data.transaction.receivingAmount);
   }, [result]);
 
   return useMemo(() => {
     return {
-      claimableWbtc,
+      wbtcSrcAmount,
       status,
     };
-  }, [claimableWbtc, status]);
+  }, [wbtcSrcAmount, status]);
 };
