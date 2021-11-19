@@ -3778,10 +3778,10 @@
   resolved "https://registry.yarnpkg.com/@swingby-protocol/prettier-config/-/prettier-config-1.0.2.tgz#ff4c03ac7ad3dab1d02a914d31debcf9441fa3e8"
   integrity sha512-ROirdMQDD6PxHTC+4J7pFH4ik8Yf3frLwf6XDBjuFKKfKCqvpqkHWHnYCJG1PS5uODmMCiH+m1JoIYr/vDfnAA==
 
-"@swingby-protocol/sdk@^1.0.0-alpha.109":
-  version "1.0.0-alpha.109"
-  resolved "https://registry.yarnpkg.com/@swingby-protocol/sdk/-/sdk-1.0.0-alpha.109.tgz#09c761411612faff716e07acd8b7ef0388ea109a"
-  integrity sha512-xiHC8ZcRnS8oc9RmCjywJMd/6553UJ3UNNUvQWoYqaYSPA1fCb82MJFDcTt/W+s5krAH7RTXkxo1xrUn8Gp7jw==
+"@swingby-protocol/sdk@^1.0.0-alpha.113":
+  version "1.0.0-alpha.113"
+  resolved "https://registry.yarnpkg.com/@swingby-protocol/sdk/-/sdk-1.0.0-alpha.113.tgz#7b8c49c773a08a5859a38afdd6c81814bb404b45"
+  integrity sha512-mSuOOTcBXsvmGpgyBsbbMKy5B7fqmQ/pWAMa2faNRfeQ7XkJiJf1PdvrEtLBrP5sHUWbx21S4urdsKOPPSBNAQ==
   dependencies:
     "@typescript-eslint/eslint-plugin" "4.18.0"
     bech32 "^2.0.0"
