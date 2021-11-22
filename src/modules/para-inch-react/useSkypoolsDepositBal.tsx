@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Network, SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
+import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
 import { getWrappedBtcAddress } from '../para-inch';
@@ -29,19 +29,12 @@ export const useSkypoolsDepositBal = (swapId: string) => {
     (async () => {
       try {
         const contract = buildSkypoolsContract({ provider: wallet.provider, network });
-
-        // Memo: Not listed in the default option in the paraswap
-        const spRopstenWbtc = '0x442be68395613bdcd19778e761f03261ec46c06d';
-
-        const token =
-          network === Network.ROPSTEN ? spRopstenWbtc : getWrappedBtcAddress({ network });
-
+        const token = getWrappedBtcAddress({ network });
         const rawRouteData = JSON.parse(data.swap.rawRouteData);
-        const srcDecimals = rawRouteData.srcDecimals;
-
-        const decimals = isBtcToToken ? (network === 'ROPSTEN' ? 8 : srcDecimals) : srcDecimals;
-
         const rawBal = await contract.methods.balanceOf(token, address).call();
+
+        // Todo: Check the decimals as 8 as we use WBTC contract. Remove the comment once checked.
+        const decimals = rawRouteData.srcDecimals;
 
         const balance = ethers.utils.formatUnits(rawBal, decimals);
 

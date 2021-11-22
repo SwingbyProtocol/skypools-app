@@ -1,4 +1,3 @@
-import { Network } from '@prisma/client';
 import Big from 'big.js';
 import { ContractMethod, NetworkID, ParaSwap, SwapSide } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
@@ -24,18 +23,12 @@ export const simpleSwapPriceRoute = async ({
   } = swapQuery;
 
   const paraSwap = new ParaSwap(getNetworkId(network));
-
   const rawPriceRoute = JSON.parse(rawRouteData);
-
-  // Memo: Not listed in the default option in the paraswap
-  const spRopstenWbtc = '0x442be68395613bdcd19778e761f03261ec46c06d';
-
-  const srcTokenAddress =
-    network === Network.ROPSTEN ? spRopstenWbtc : getWrappedBtcAddress({ network });
+  const srcTokenAddress = getWrappedBtcAddress({ network });
   const destTokenAddress = destToken.address;
 
-  // Memo: used Dai(18) when got the quote
-  const srcDecimals = network === 'ROPSTEN' ? 8 : rawPriceRoute.srcDecimals;
+  // Todo: Check the decimals as 8 as we use WBTC contract. Remove the comment once checked.
+  const srcDecimals = rawPriceRoute.srcDecimals;
 
   const option =
     network === 'ROPSTEN'
