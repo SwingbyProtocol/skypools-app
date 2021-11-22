@@ -36,6 +36,11 @@ export const details = css`
   display: flex;
   flex-direction: column;
   row-gap: ${rem(size.drawer)};
+  border: 2px dashed hsl(var(--sp-color-border-normal));
+  border-radius: ${rem(size.closet)};
+  padding: ${rem(size.drawer)};
+  font-size: ${rem(size.closet)};
+  color: hsl(var(--sp-color-text-masked));
 `;
 
 export const row = css`
