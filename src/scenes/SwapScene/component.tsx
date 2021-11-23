@@ -12,6 +12,7 @@ export const SwapScene = ({ swapId }: { swapId: string }) => {
   });
 
   const swap = data?.swap;
+  console.log('swap', swap);
 
   const isSwapFromBtc = swap?.srcToken.symbol === 'BTC';
   const skybridgeId = swap?.skybridgeSwapId ?? '';
