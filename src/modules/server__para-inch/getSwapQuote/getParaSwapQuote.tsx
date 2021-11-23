@@ -2,10 +2,10 @@ import { Prisma } from '@prisma/client';
 import { ParaSwap } from 'paraswap';
 import Web3 from 'web3';
 
-import { getNetworkId } from '../../networks';
-import { isParaSwapApiError } from '../isParaSwapApiError';
-import { prisma } from '../../server__env';
 import { logger } from '../../logger';
+import { getNetworkId } from '../../networks';
+import { prisma } from '../../server__env';
+import { isParaSwapApiError } from '../isParaSwapApiError';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
 
@@ -41,10 +41,15 @@ export const getParaSwapQuote = async ({
   })();
 
   const paraSwap = new ParaSwap(getNetworkId(network));
+
   const result = await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
     srcTokenAmountParam.times(`1e${srcToken.decimals}`).toFixed(0),
+    undefined,
+    undefined,
+    undefined,
+    srcToken.decimals,
   );
   if (isParaSwapApiError(result)) {
     logger.error({ err: result }, 'Failed to get rate from ParaSwap');
