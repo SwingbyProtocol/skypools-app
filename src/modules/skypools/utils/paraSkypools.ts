@@ -26,8 +26,6 @@ export const simpleSwapPriceRoute = async ({
   const rawPriceRoute = JSON.parse(rawRouteData);
   const srcTokenAddress = getWrappedBtcAddress({ network });
   const destTokenAddress = destToken.address;
-
-  // Todo: Check the decimals as 8 as we use WBTC contract. Remove the comment once checked.
   const srcDecimals = rawPriceRoute.srcDecimals;
 
   const option =

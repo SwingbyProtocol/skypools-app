@@ -32,10 +32,7 @@ export const useSkypoolsDepositBal = (swapId: string) => {
         const token = getWrappedBtcAddress({ network });
         const rawRouteData = JSON.parse(data.swap.rawRouteData);
         const rawBal = await contract.methods.balanceOf(token, address).call();
-
-        // Todo: Check the decimals as 8 as we use WBTC contract. Remove the comment once checked.
         const decimals = rawRouteData.srcDecimals;
-
         const balance = ethers.utils.formatUnits(rawBal, decimals);
 
         setDepositBalance({
