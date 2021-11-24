@@ -1,7 +1,7 @@
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
-import { useSkypools, useSkypoolsDepositBal } from '../../../modules/para-inch-react';
+import { useSkypools, useSkypoolsDepositBalance } from '../../../modules/para-inch-react';
 
 import { claim, confirmed, container, details, row } from './styles';
 
@@ -16,7 +16,7 @@ export const SkypoolsSwap = ({
 }) => {
   // Todo: Get data from slippage UI
   const { handleClaim, wbtcSrcAmount, minAmount } = useSkypools({ swapId, slippage: '1' });
-  const { depositBalance } = useSkypoolsDepositBal(swapId);
+  const { depositBalance } = useSkypoolsDepositBalance(swapId);
 
   return (
     <div css={container}>

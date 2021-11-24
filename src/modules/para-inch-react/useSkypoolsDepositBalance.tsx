@@ -7,7 +7,7 @@ import { useOnboard } from '../onboard';
 import { getWrappedBtcAddress } from '../para-inch';
 import { buildSkypoolsContract } from '../skypools';
 
-export const useSkypoolsDepositBal = (swapId: string) => {
+export const useSkypoolsDepositBalance = (swapId: string) => {
   const { address, wallet } = useOnboard();
 
   const { data } = useSwapQuery({
