@@ -41,7 +41,9 @@ export const Layout = ({
         {afterPriceChart}
       </Card>
 
-      <Card css={isSkybridgeWidget ? skybridgeWidgetCard : widgetCard}>{widgetContent}</Card>
+      <Card css={isSkybridgeWidget ? [widgetCard, skybridgeWidgetCard] : widgetCard}>
+        {widgetContent}
+      </Card>
 
       <div css={historyContainer}>
         <History css={historyCard} />
