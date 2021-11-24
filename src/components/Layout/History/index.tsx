@@ -5,7 +5,7 @@ import { useRef, useEffect, useCallback, useState, createContext, useContext } f
 import { stripUnit } from 'polished';
 import { Big } from 'big.js';
 import { DateTime } from 'luxon';
-import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 import { size } from '../../../modules/styles';
 import {
@@ -58,7 +58,6 @@ const Context = createContext<ParaInchHistoryItem[]>([]);
 const Row = ({ style, index }: ListChildComponentProps) => {
   const { network } = useParaInchForm();
   const { formatNumber } = useIntl();
-  const router = useRouter();
   const data = useContext(Context);
 
   const item = data[index];
@@ -82,9 +81,11 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         <SwapIcon />
       </div>
 
-      <div css={status} onClick={() => router.push(`/swap/${item.id}`)}>
-        <FormattedMessage id={`history.status.${item.status}`} />
-      </div>
+      <Link css={status} href={`/swap/${item.id}`} passHref>
+        <a href={`/swap/${item.id}`}>
+          <FormattedMessage id={`history.status.${item.status}`} />
+        </a>
+      </Link>
       <div css={time}>
         <FormattedDate
           value={DateTime.fromISO(item.createdAt).toJSDate()}
