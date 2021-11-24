@@ -25,6 +25,5 @@ export function getWrappedBtcAddress({ network }: { network: Network }) {
       return '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c';
   }
 
-  // Todo: Unreachable code. Please advise if I can delete this line
-  // throw new Error(`Unsupported network: "${network}"`);
+  throw new Error(`Unsupported network: "${network}"`);
 }
