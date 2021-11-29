@@ -13,6 +13,7 @@ import {
   simpleSwapPriceRoute,
   useSkybridgeSwap,
 } from '../skypools';
+import { getERC20Symbol } from '../para-inch';
 
 export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
@@ -36,7 +37,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
   const swapSrc = useMemo(
     () => ({
       amount: isBtcToToken ? wbtcSrcAmount : data?.swap.srcAmount,
-      token: isBtcToToken ? 'WBTC' : data?.swap.srcToken.symbol,
+      token: isBtcToToken ? 'WBTC' : getERC20Symbol(data?.swap.srcToken.symbol ?? ''),
     }),
     [data, isBtcToToken, wbtcSrcAmount],
   );
@@ -101,6 +102,8 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         }
         const web3 = new Web3(wallet.provider);
         const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+
+        // Todo: rename
         const arg = await dataSpParaSwapBTC2Token({
           slippage,
           wbtcSrcAmount,

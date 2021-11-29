@@ -5,6 +5,8 @@ export {
   FAKE_NATIVE_TOKEN_ADDRESS,
   FAKE_BTC_ADDRESS,
   getWrappedBtcAddress,
+  getERC20Address,
+  getERC20Symbol,
 } from './isFakeToken';
 
 export { buildParaTxData } from './buildParaTxData';

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getWrappedBtcAddress } from '../para-inch';
+import { getERC20Address, getWrappedBtcAddress } from '../para-inch';
 import { buildSkypoolsContract } from '../skypools';
 
 export const useSkypoolsDepositBalance = (swapId: string) => {
@@ -29,7 +29,9 @@ export const useSkypoolsDepositBalance = (swapId: string) => {
     (async () => {
       try {
         const contract = buildSkypoolsContract({ provider: wallet.provider, network });
-        const token = isBtcToToken ? getWrappedBtcAddress({ network }) : data.swap.srcToken.address;
+        const token = isBtcToToken
+          ? getWrappedBtcAddress({ network })
+          : getERC20Address({ network, tokenAddress: data.swap.srcToken.address });
         const rawRouteData = JSON.parse(data.swap.rawRouteData);
         const rawBal = await contract.methods.balanceOf(token, address).call();
         const decimals = rawRouteData.srcDecimals;

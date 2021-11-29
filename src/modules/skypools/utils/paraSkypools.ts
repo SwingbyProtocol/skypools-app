@@ -4,7 +4,7 @@ import { OptimalRate } from 'paraswap-core';
 
 import { SwapQuery } from '../../../generated/skypools-graphql';
 import { getNetworkId } from '../../networks';
-import { getWrappedBtcAddress } from '../../para-inch';
+import { getWrappedBtcAddress, getERC20Address } from '../../para-inch';
 
 import { swapMinAmount } from '.';
 
@@ -29,7 +29,9 @@ export const simpleSwapPriceRoute = async ({
   const paraSwap = new ParaSwap(getNetworkId(network));
   const rawPriceRoute = JSON.parse(rawRouteData);
   const srcDecimals = rawPriceRoute.srcDecimals;
-  const srcTokenAddress = isBtcToToken ? getWrappedBtcAddress({ network }) : srcToken.address;
+  const srcTokenAddress = isBtcToToken
+    ? getWrappedBtcAddress({ network })
+    : getERC20Address({ network, tokenAddress: srcToken.address });
   const destTokenAddress = isBtcToToken ? destToken.address : getWrappedBtcAddress({ network });
   const beneficiary = isBtcToToken ? initiatorAddress : skypoolsAddress;
   const srcAmount = isBtcToToken
