@@ -18,6 +18,14 @@ export const SwapScene = ({ swapId }: { swapId: string }) => {
   const { status } = useSkybridgeSwap(skybridgeId);
   const isSkybridgeWidget = status !== 'COMPLETED';
 
+  const skypoolsSwap = swap && (
+    <SkypoolsSwap
+      destToken={swap?.destToken.symbol}
+      srcToken={swap?.srcToken.symbol}
+      swapId={swapId}
+    />
+  );
+
   const fromBtc = isSkybridgeWidget
     ? swap && (
         <SkybridgeWidget
@@ -26,15 +34,9 @@ export const SwapScene = ({ swapId }: { swapId: string }) => {
           }/swap/${swap?.skybridgeSwapId}`}
         />
       )
-    : swap && (
-        <SkypoolsSwap
-          destToken={swap.destToken.symbol}
-          srcToken={swap.srcToken.symbol}
-          swapId={swapId}
-        />
-      );
+    : skypoolsSwap;
 
-  const widget = swap && isSwapFromBtc ? fromBtc : <div>ERC20 token to BTC</div>;
+  const widget = swap && isSwapFromBtc ? fromBtc : skypoolsSwap;
 
   return (
     <Layout

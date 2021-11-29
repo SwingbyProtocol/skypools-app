@@ -16,6 +16,7 @@ import {
 
 export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
+  const [btcAddress, setBtcAddress] = useState<string>('');
 
   const { data } = useSwapQuery({
     query: SwapDocument,
@@ -30,14 +31,25 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
   });
 
   const isBtcToToken = data?.swap.srcToken.symbol === 'BTC';
+  const contractAddress = onboardNetwork && getSkypoolsContractAddress(onboardNetwork);
+
+  const swapSrc = useMemo(
+    () => ({
+      amount: isBtcToToken ? wbtcSrcAmount : data?.swap.srcAmount,
+      token: isBtcToToken ? 'WBTC' : data?.swap.srcToken.symbol,
+    }),
+    [data, isBtcToToken, wbtcSrcAmount],
+  );
 
   const getMinSwapAmount = useCallback(async () => {
-    if (!wallet || !address || !data) return;
+    if (!wallet || !address || !data || !contractAddress) return;
     try {
       const { minAmount, priceRoute } = await simpleSwapPriceRoute({
         swapQuery: data,
         wbtcSrcAmount,
         slippage,
+        isBtcToToken,
+        skypoolsAddress: contractAddress,
       });
       const amount = ethers.utils.formatUnits(minAmount, priceRoute.destDecimals);
       setMiniAmount({
@@ -51,7 +63,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         token: '',
       });
     }
-  }, [wallet, data, address, slippage, wbtcSrcAmount]);
+  }, [wallet, data, address, slippage, wbtcSrcAmount, isBtcToToken, contractAddress]);
 
   useEffect(() => {
     getMinSwapAmount();
@@ -65,8 +77,11 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
 
   return useMemo(() => {
     return {
-      wbtcSrcAmount,
       minAmount,
+      isBtcToToken,
+      btcAddress,
+      setBtcAddress,
+      swapSrc,
       handleClaim: async () => {
         if (!data || !data.swap) {
           return;
@@ -81,35 +96,68 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         if (network !== onboardNetwork) {
           throw new Error("Swap network does not match wallet's network");
         }
+        if (!contractAddress) {
+          throw new Error('Contract address was not defined');
+        }
         const web3 = new Web3(wallet.provider);
-        const contractAddress = network && getSkypoolsContractAddress(network);
         const contract = buildSkypoolsContract({ provider: wallet.provider, network });
-        if (isBtcToToken) {
-          const arg = await dataSpParaSwapBTC2Token({
-            slippage,
-            wbtcSrcAmount,
-            userAddress: initiatorAddress,
-            swapQuery: data,
-          });
+        const arg = await dataSpParaSwapBTC2Token({
+          slippage,
+          wbtcSrcAmount,
+          userAddress: initiatorAddress,
+          swapQuery: data,
+          isBtcToToken,
+          skypoolsAddress: contractAddress,
+        });
+        let transaction: TransactionConfig;
 
-          const transaction: TransactionConfig = {
+        if (isBtcToToken) {
+          transaction = {
             nonce: await web3.eth.getTransactionCount(address),
             value: '0x0',
             from: address,
             to: contractAddress,
-            data: contract.methods.spParaSwapBTC2Token(arg).encodeABI(),
+            data: contract.methods.spFlow1SimpleSwap(arg).encodeABI(),
           };
-
-          const gasPrice = await web3.eth.getGasPrice();
-          const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-          logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
-          // Todo: Change swap.status from "PENDING" to "COMPLETED" once the transaction success
-          return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
         } else {
-          // Token to BTC
-          // Todo
+          console.log('function: spFlow2SimpleSwap');
+
+          const bytes32BtcAddress = web3.utils.toHex(btcAddress);
+          console.log('bytes32BtcAddress', bytes32BtcAddress);
+          console.log('arg', arg);
+
+          transaction = {
+            nonce: await web3.eth.getTransactionCount(address),
+            value: '0x0',
+            from: address,
+            to: contractAddress,
+            //Todo
+            data: contract.methods.spFlow2SimpleSwap(bytes32BtcAddress, arg).encodeABI(),
+          };
         }
+
+        console.log('transaction', transaction);
+        const gasPrice = await web3.eth.getGasPrice();
+
+        const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
+
+        logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
+        // Todo: Change swap.status from "PENDING" to "COMPLETED" once the transaction success
+        return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
       },
     };
-  }, [address, onboardNetwork, wallet, data, wbtcSrcAmount, isBtcToToken, slippage, minAmount]);
+  }, [
+    address,
+    onboardNetwork,
+    wallet,
+    data,
+    wbtcSrcAmount,
+    isBtcToToken,
+    slippage,
+    minAmount,
+    contractAddress,
+    setBtcAddress,
+    btcAddress,
+    swapSrc,
+  ]);
 };

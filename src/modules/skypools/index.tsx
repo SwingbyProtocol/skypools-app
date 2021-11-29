@@ -10,7 +10,8 @@ export { useSkybridgeSwap } from './useSkybridgeSwap';
 
 const CONTRACT_SKYPOOLS = {
   ETHEREUM: '',
-  ROPSTEN: '0x42da142C8FAfA8C31701973607990B6d5e92118f',
+  // ROPSTEN: '0x42da142C8FAfA8C31701973607990B6d5e92118f', V1 contract
+  ROPSTEN: '0x9dD3F00FfeC833B231374aaf042324973fD73335',
   BSC: '',
 };
 

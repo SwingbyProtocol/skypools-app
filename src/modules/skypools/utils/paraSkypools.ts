@@ -13,20 +13,28 @@ export const simpleSwapPriceRoute = async ({
   swapQuery,
   wbtcSrcAmount,
   slippage,
+  isBtcToToken,
+  skypoolsAddress,
 }: {
   swapQuery: SwapQuery;
   wbtcSrcAmount: string;
   slippage: string;
+  skypoolsAddress: string;
+  isBtcToToken: boolean;
 }): Promise<{ priceRoute: OptimalRate; minAmount: string }> => {
   const {
-    swap: { network, destToken, rawRouteData, initiatorAddress },
+    swap: { network, destToken, rawRouteData, initiatorAddress, srcToken },
   } = swapQuery;
 
   const paraSwap = new ParaSwap(getNetworkId(network));
   const rawPriceRoute = JSON.parse(rawRouteData);
-  const srcTokenAddress = getWrappedBtcAddress({ network });
-  const destTokenAddress = destToken.address;
   const srcDecimals = rawPriceRoute.srcDecimals;
+  const srcTokenAddress = isBtcToToken ? getWrappedBtcAddress({ network }) : srcToken.address;
+  const destTokenAddress = isBtcToToken ? destToken.address : getWrappedBtcAddress({ network });
+  const beneficiary = isBtcToToken ? initiatorAddress : skypoolsAddress;
+  const srcAmount = isBtcToToken
+    ? new Big(wbtcSrcAmount).times(`1e${srcDecimals}`).toFixed(0)
+    : rawPriceRoute.srcAmount;
 
   const option =
     network === 'ROPSTEN'
@@ -41,8 +49,8 @@ export const simpleSwapPriceRoute = async ({
   const result = (await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
-    new Big(wbtcSrcAmount).times(`1e${srcDecimals}`).toFixed(0),
-    initiatorAddress,
+    srcAmount,
+    beneficiary,
     SwapSide.SELL,
     option,
     srcDecimals,
@@ -63,16 +71,22 @@ export const dataSpParaSwapBTC2Token = async ({
   userAddress,
   swapQuery,
   wbtcSrcAmount,
+  isBtcToToken,
+  skypoolsAddress,
 }: {
   slippage: string;
   userAddress: string;
+  skypoolsAddress: string;
   wbtcSrcAmount: string;
   swapQuery: SwapQuery;
+  isBtcToToken: boolean;
 }) => {
   const { priceRoute, minAmount } = await simpleSwapPriceRoute({
     swapQuery,
     wbtcSrcAmount,
     slippage,
+    isBtcToToken,
+    skypoolsAddress,
   });
 
   const { network, srcToken, destToken, srcAmount } = priceRoute;
@@ -86,11 +100,11 @@ export const dataSpParaSwapBTC2Token = async ({
     srcAmount,
     minAmount,
     priceRoute,
-    userAddress,
+    isBtcToToken ? userAddress : skypoolsAddress,
     referrer,
     undefined,
     undefined,
-    userAddress,
+    isBtcToToken ? userAddress : skypoolsAddress,
     {
       ignoreChecks: true,
       onlyParams: true,
@@ -115,6 +129,7 @@ export const dataSpParaSwapBTC2Token = async ({
     data[0].deadline,
     data[0].uuid,
   ];
+  console.log('dataArray', dataArray);
 
   return dataArray;
 };

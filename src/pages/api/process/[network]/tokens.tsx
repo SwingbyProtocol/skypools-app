@@ -38,6 +38,8 @@ export default createEndpoint({
     if (network === 'ROPSTEN') {
       const web3 = new Web3();
       const wbtc = web3.utils.toChecksumAddress('0x442Be68395613bDCD19778e761f03261ec46C06D');
+      // new WBTC?
+      const wbtc2 = web3.utils.toChecksumAddress('0x848bd26985e7565c8c91621845576c88384ed0d5');
       await prisma.token.upsert({
         where: { network_address: { network, address: wbtc } },
         create: {
@@ -50,6 +52,24 @@ export default createEndpoint({
         },
         update: {
           address: wbtc,
+          decimals: 8,
+          logoUri: 'https://img.paraswap.network/WBTC.png',
+          symbol: 'WBTC',
+        },
+      });
+
+      await prisma.token.upsert({
+        where: { network_address: { network, address: wbtc2 } },
+        create: {
+          id: buildTokenId({ network, tokenAddress: wbtc2 }),
+          network,
+          address: wbtc2,
+          decimals: 8,
+          logoUri: 'https://img.paraswap.network/WBTC.png',
+          symbol: 'WBTC',
+        },
+        update: {
+          address: wbtc2,
           decimals: 8,
           logoUri: 'https://img.paraswap.network/WBTC.png',
           symbol: 'WBTC',

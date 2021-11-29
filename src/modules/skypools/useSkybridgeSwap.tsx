@@ -5,7 +5,6 @@ import { useSkybridgeSwapInfoLazyQuery } from '../../generated/skybridge-graphql
 export const useSkybridgeSwap = (skybridgeId: string) => {
   const [wbtcSrcAmount, setWbtcSrcAmount] = useState<string>('0');
   const [status, setStatus] = useState<string>('WAITING');
-
   const [getSwaps, result] = useSkybridgeSwapInfoLazyQuery();
 
   useEffect(() => {

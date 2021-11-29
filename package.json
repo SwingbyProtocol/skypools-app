@@ -26,6 +26,7 @@
     "apollo-server": "^3.4.0",
     "apollo-server-micro": "^3.4.0",
     "big.js": "^6.1.1",
+    "bitcoin-address-validation": "^2.1.1",
     "bnc-onboard": "1.35.2",
     "ethers": "^5.5.1",
     "graphql": "^15.7.1",

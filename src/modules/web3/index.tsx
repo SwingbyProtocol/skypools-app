@@ -4,8 +4,8 @@ export const getScanApiUrl = ({ network }: { network: Network }) => {
   switch (network) {
     case Network.ETHEREUM:
       return 'https://api.etherscan.io/api';
-    // case 5:
-    //   return 'https://api-goerli.etherscan.io/api';
+    case Network.ROPSTEN:
+      return 'https://api-ropsten.etherscan.io/api';
     case Network.BSC:
       return 'https://api.bscscan.com/api';
     // case 97:
@@ -25,8 +25,8 @@ export const buildLinkToTransaction = ({
   switch (network) {
     case Network.ETHEREUM:
       return `https://etherscan.io/tx/${transactionHash}`;
-    // case 5:
-    //   return `https://goerli.etherscan.io/tx/${transactionHash}`;
+    case Network.ROPSTEN:
+      return `https://ropsten.etherscan.io/tx/${transactionHash}`;
     case Network.BSC:
       return `https://bscscan.com/tx/${transactionHash}`;
     // case 97:
