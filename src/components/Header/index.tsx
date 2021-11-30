@@ -11,9 +11,9 @@ export const Header = ({ className }: Props) => {
   const isDarkMode = useMedia('(prefers-color-scheme: dark)', false);
   return (
     <header css={header} className={className}>
-      <div css={logo}>
+      <a css={logo} href="/">
         <Image src={`/logo-${isDarkMode ? 'dark' : 'light'}.svg`} alt="Skypools" layout="fill" />
-      </div>
+      </a>
       <ConnectWallet css={connect} />
     </header>
   );

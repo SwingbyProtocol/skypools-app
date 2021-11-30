@@ -27,15 +27,24 @@ export const SkypoolsSwap = ({
   swapId: string;
 }) => {
   // Todo: Get data from slippage UI
-  const { handleClaim, minAmount, isBtcToToken, btcAddress, setBtcAddress, swapSrc } = useSkypools({
-    swapId,
-    slippage: '1',
-  });
+  const { handleClaim, minAmount, isBtcToToken, btcAddress, setBtcAddress, swapSrc, status } =
+    useSkypools({
+      swapId,
+      slippage: '1',
+    });
+
   const { depositBalance } = useSkypoolsDepositBalance(swapId);
+
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
 
   const isDeposited = Number(depositBalance.balance) > Number(swapSrc.amount);
-  const isDisabledClaim = isBtcToToken ? !isDeposited : !isValidAddress || !isDeposited;
+
+  const spProgress =
+    status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';
+
+  const isDisabledClaim = isBtcToToken
+    ? !isDeposited
+    : !isValidAddress || !isDeposited || spProgress === 'completed';
 
   return (
     <div css={container}>
@@ -77,6 +86,14 @@ export const SkypoolsSwap = ({
         </Button>
       </div>
       <div css={details}>
+        <div css={row}>
+          <div>
+            <FormattedMessage id="swap.progress" />
+          </div>
+          <div>
+            <FormattedMessage id={`swap.progress.${spProgress}`} />
+          </div>
+        </div>
         <div css={row}>
           <div>
             <FormattedMessage id="swap.total-deposited-balance" />

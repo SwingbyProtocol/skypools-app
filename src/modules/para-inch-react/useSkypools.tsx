@@ -83,6 +83,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
       btcAddress,
       setBtcAddress,
       swapSrc,
+      status: data?.swap.status,
       handleClaim: async () => {
         if (!data || !data.swap) {
           return;
@@ -112,32 +113,23 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
           skypoolsAddress: contractAddress,
         });
 
-        let transaction: TransactionConfig;
-        if (isBtcToToken) {
-          transaction = {
-            nonce: await web3.eth.getTransactionCount(address),
-            value: '0x0',
-            from: address,
-            to: contractAddress,
-            data: contract.methods.spFlow1SimpleSwap(arg).encodeABI(),
-          };
-        } else {
-          const bytes32BtcAddress = web3.utils.toHex(btcAddress);
+        const bytes32BtcAddress = isBtcToToken ? '' : web3.utils.toHex(btcAddress);
 
-          transaction = {
-            nonce: await web3.eth.getTransactionCount(address),
-            value: '0x0',
-            from: address,
-            to: contractAddress,
-            data: contract.methods.spFlow2SimpleSwap(bytes32BtcAddress, arg).encodeABI(),
-          };
-        }
+        const transaction: TransactionConfig = {
+          nonce: await web3.eth.getTransactionCount(address),
+          value: '0x0',
+          from: address,
+          to: contractAddress,
+          data: isBtcToToken
+            ? contract.methods.spFlow1SimpleSwap(arg).encodeABI()
+            : contract.methods.spFlow2SimpleSwap(bytes32BtcAddress, arg).encodeABI(),
+        };
 
         const gasPrice = await web3.eth.getGasPrice();
         const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
         logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
-        // Todo: Change swap.status from "PENDING" to "COMPLETED" once the transaction success
+        // Todo: Change swap.status from "PENDING" to "COMPLETED" and store transaction hash to DB
         return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
       },
     };

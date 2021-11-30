@@ -34,6 +34,7 @@ export const logo = css`
   block-size: ${rem(size.state / 2)};
   inline-size: ${rem((size.state * (146 / 44)) / 2)};
   position: relative;
+  cursor: pointer;
 
   @media (min-width: ${rem(768)}) {
     block-size: ${rem(size.state)};
