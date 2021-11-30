@@ -8,7 +8,7 @@ import { logger } from '../logger';
 import { useOnboard } from '../onboard';
 import {
   buildSkypoolsContract,
-  dataSpParaSwapBTC2Token,
+  txDataSpSimpleSwap,
   getSkypoolsContractAddress,
   simpleSwapPriceRoute,
   useSkybridgeSwap,
@@ -103,8 +103,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         const web3 = new Web3(wallet.provider);
         const contract = buildSkypoolsContract({ provider: wallet.provider, network });
 
-        // Todo: rename
-        const arg = await dataSpParaSwapBTC2Token({
+        const arg = await txDataSpSimpleSwap({
           slippage,
           wbtcSrcAmount,
           userAddress: initiatorAddress,
@@ -112,8 +111,8 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
           isBtcToToken,
           skypoolsAddress: contractAddress,
         });
-        let transaction: TransactionConfig;
 
+        let transaction: TransactionConfig;
         if (isBtcToToken) {
           transaction = {
             nonce: await web3.eth.getTransactionCount(address),
@@ -123,28 +122,21 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
             data: contract.methods.spFlow1SimpleSwap(arg).encodeABI(),
           };
         } else {
-          console.log('function: spFlow2SimpleSwap');
-
           const bytes32BtcAddress = web3.utils.toHex(btcAddress);
-          console.log('bytes32BtcAddress', bytes32BtcAddress);
-          console.log('arg', arg);
 
           transaction = {
             nonce: await web3.eth.getTransactionCount(address),
             value: '0x0',
             from: address,
             to: contractAddress,
-            //Todo
             data: contract.methods.spFlow2SimpleSwap(bytes32BtcAddress, arg).encodeABI(),
           };
         }
 
-        console.log('transaction', transaction);
         const gasPrice = await web3.eth.getGasPrice();
-
         const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-
         logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
+
         // Todo: Change swap.status from "PENDING" to "COMPLETED" once the transaction success
         return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
       },

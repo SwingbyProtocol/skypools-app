@@ -68,7 +68,7 @@ export const simpleSwapPriceRoute = async ({
   return { priceRoute: result, minAmount };
 };
 
-export const dataSpParaSwapBTC2Token = async ({
+export const txDataSpSimpleSwap = async ({
   slippage,
   userAddress,
   swapQuery,
@@ -131,7 +131,6 @@ export const dataSpParaSwapBTC2Token = async ({
     data[0].deadline,
     data[0].uuid,
   ];
-  console.log('dataArray', dataArray);
 
   return dataArray;
 };
