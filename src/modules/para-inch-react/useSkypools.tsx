@@ -113,8 +113,6 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
           skypoolsAddress: contractAddress,
         });
 
-        const bytes32BtcAddress = isBtcToToken ? '' : web3.utils.toHex(btcAddress);
-
         const transaction: TransactionConfig = {
           nonce: await web3.eth.getTransactionCount(address),
           value: '0x0',
@@ -122,7 +120,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
           to: contractAddress,
           data: isBtcToToken
             ? contract.methods.spFlow1SimpleSwap(arg).encodeABI()
-            : contract.methods.spFlow2SimpleSwap(bytes32BtcAddress, arg).encodeABI(),
+            : contract.methods.spFlow2SimpleSwap(btcAddress, arg).encodeABI(),
         };
 
         const gasPrice = await web3.eth.getGasPrice();
