@@ -37,7 +37,7 @@ export const SkypoolsSwap = ({
 
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
 
-  const isDeposited = Number(depositBalance.balance) > Number(swapSrc.amount);
+  const isDeposited = Number(depositBalance.balance) >= Number(swapSrc.amount);
 
   const spProgress =
     status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';

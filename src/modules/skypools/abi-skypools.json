@@ -108,7 +108,7 @@
     "anonymous": false,
     "inputs": [
       { "indexed": false, "internalType": "bytes32", "name": "SwapID", "type": "bytes32" },
-      { "indexed": false, "internalType": "bytes32", "name": "DestAddr", "type": "bytes32" },
+      { "indexed": false, "internalType": "string", "name": "DestAddr", "type": "string" },
       { "indexed": false, "internalType": "address", "name": "RefundAddr", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "AmountWBTC", "type": "uint256" },
       { "indexed": false, "internalType": "uint256", "name": "Timestamp", "type": "uint256" }
@@ -262,13 +262,6 @@
   },
   {
     "inputs": [],
-    "name": "latestRemovedIndex",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "lockedLPTokensForNode",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -298,6 +291,13 @@
     "inputs": [],
     "name": "nodeRewardsRatio",
     "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "oldestActiveIndex",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -449,13 +449,13 @@
       { "internalType": "address[]", "name": "_path", "type": "address[]" }
     ],
     "name": "spFlow1Uniswap",
-    "outputs": [],
+    "outputs": [{ "internalType": "uint256", "name": "receivedAmount", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_destinationAddressForBTC", "type": "bytes32" },
+      { "internalType": "string", "name": "_destinationAddressForBTC", "type": "string" },
       {
         "components": [
           { "internalType": "address", "name": "fromToken", "type": "address" },
@@ -480,13 +480,13 @@
       }
     ],
     "name": "spFlow2SimpleSwap",
-    "outputs": [],
+    "outputs": [{ "internalType": "uint256", "name": "receivedAmount", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_destinationAddressForBTC", "type": "bytes32" },
+      { "internalType": "string", "name": "_destinationAddressForBTC", "type": "string" },
       { "internalType": "bool", "name": "_fork", "type": "bool" },
       { "internalType": "address", "name": "_factory", "type": "address" },
       { "internalType": "bytes32", "name": "_initCode", "type": "bytes32" },
@@ -495,7 +495,7 @@
       { "internalType": "address[]", "name": "_path", "type": "address[]" }
     ],
     "name": "spFlow2Uniswap",
-    "outputs": [],
+    "outputs": [{ "internalType": "uint256", "name": "receivedAmount", "type": "uint256" }],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -506,7 +506,7 @@
       {
         "components": [
           { "internalType": "bytes32", "name": "SwapID", "type": "bytes32" },
-          { "internalType": "bytes32", "name": "DestAddr", "type": "bytes32" },
+          { "internalType": "string", "name": "DestAddr", "type": "string" },
           { "internalType": "address", "name": "RefundAddr", "type": "address" },
           { "internalType": "uint256", "name": "AmountWBTC", "type": "uint256" },
           { "internalType": "uint256", "name": "Timestamp", "type": "uint256" }
@@ -524,7 +524,7 @@
     "name": "spPendingTXs",
     "outputs": [
       { "internalType": "bytes32", "name": "SwapID", "type": "bytes32" },
-      { "internalType": "bytes32", "name": "DestAddr", "type": "bytes32" },
+      { "internalType": "string", "name": "DestAddr", "type": "string" },
       { "internalType": "address", "name": "RefundAddr", "type": "address" },
       { "internalType": "uint256", "name": "AmountWBTC", "type": "uint256" },
       { "internalType": "uint256", "name": "Timestamp", "type": "uint256" }
