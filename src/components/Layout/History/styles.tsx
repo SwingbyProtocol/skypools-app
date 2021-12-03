@@ -76,6 +76,8 @@ export const status = css`
   grid-area: status;
   align-self: flex-start;
   color: hsl(var(--sp-color-text-masked));
+  cursor: pointer;
+  text-decoration: underline;
 `;
 
 export const time = css`

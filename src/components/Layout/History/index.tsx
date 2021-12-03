@@ -5,6 +5,7 @@ import { useRef, useEffect, useCallback, useState, createContext, useContext } f
 import { stripUnit } from 'polished';
 import { Big } from 'big.js';
 import { DateTime } from 'luxon';
+import Link from 'next/link';
 
 import { size } from '../../../modules/styles';
 import {
@@ -80,9 +81,11 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         <SwapIcon />
       </div>
 
-      <div css={status}>
-        <FormattedMessage id={`history.status.${item.status}`} />
-      </div>
+      <Link css={status} href={`/swap/${item.id}`} passHref>
+        <a href={`/swap/${item.id}`}>
+          <FormattedMessage id={`history.status.${item.status}`} />
+        </a>
+      </Link>
       <div css={time}>
         <FormattedDate
           value={DateTime.fromISO(item.createdAt).toJSDate()}

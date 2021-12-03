@@ -10,3 +10,7 @@ export {
 export { buildParaTxData } from './buildParaTxData';
 
 export type { ParaInchToken } from './ParaInchToken';
+
+export { swapMinAmount } from './swapMinAmount';
+export { buildSkypoolsContract } from './buildSkypoolsContract';
+export { getSkypoolsContractAddress } from './getSkypoolsContractAddress';

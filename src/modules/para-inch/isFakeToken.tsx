@@ -20,7 +20,7 @@ export function getWrappedBtcAddress({ network }: { network: Network }) {
     case Network.ETHEREUM:
       return '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599';
     case Network.ROPSTEN:
-      return '0xad6d458402f60fd3bd25163575031acdce07538d';
+      return '0x442be68395613bdcd19778e761f03261ec46c06d';
     case Network.BSC:
       return '0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c';
   }

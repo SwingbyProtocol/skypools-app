@@ -11,15 +11,22 @@ import {
   priceAndPathCard,
   swapScene,
   widgetCard,
+  skybridgeWidgetCard,
 } from './styles';
 
 type Props = {
   priceHistory?: React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null | undefined;
   afterPriceChart?: React.ReactNode;
   widgetContent?: React.ReactNode;
+  isSkybridgeWidget: boolean;
 };
 
-export const Layout = ({ priceHistory, afterPriceChart = null, widgetContent = null }: Props) => {
+export const Layout = ({
+  priceHistory,
+  afterPriceChart = null,
+  widgetContent = null,
+  isSkybridgeWidget = false,
+}: Props) => {
   return (
     <div css={swapScene}>
       <Header css={headerContainer} />
@@ -34,7 +41,9 @@ export const Layout = ({ priceHistory, afterPriceChart = null, widgetContent = n
         {afterPriceChart}
       </Card>
 
-      <Card css={widgetCard}>{widgetContent}</Card>
+      <Card css={isSkybridgeWidget ? [widgetCard, skybridgeWidgetCard] : widgetCard}>
+        {widgetContent}
+      </Card>
 
       <div css={historyContainer}>
         <History css={historyCard} />

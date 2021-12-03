@@ -12,8 +12,13 @@ import {
 import { logger } from '../logger';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
-import { buildParaTxData, isFakeBtcToken, isFakeNativeToken } from '../para-inch';
-import { buildSkypoolsContract, getSkypoolsContractAddress } from '../skypools';
+import {
+  buildParaTxData,
+  isFakeBtcToken,
+  isFakeNativeToken,
+  buildSkypoolsContract,
+  getSkypoolsContractAddress,
+} from '../para-inch';
 
 import { useParaInchForm } from './useParaInchForm';
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
@@ -35,10 +40,11 @@ export const useParaInchCreateSwap = () => {
 
   const [createSwap] = useCreateSwapMutation();
   const { push } = useRouter();
+  const isFromBtc = fromToken?.symbol === 'BTC';
 
   return useMemo(() => {
     return {
-      isApprovalNeeded,
+      isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
       approve,
       createSwap: async () => {
         if (!swapQuote) {
@@ -53,7 +59,7 @@ export const useParaInchCreateSwap = () => {
           throw new Error("Swap quote network does not match wallet's network");
         }
 
-        if (isApprovalNeeded) {
+        if (isApprovalNeeded && !isFromBtc) {
           throw new Error('Spender needs approval before creating a swap');
         }
 
@@ -154,5 +160,6 @@ export const useParaInchCreateSwap = () => {
     slippage,
     contractAddress,
     fromToken,
+    isFromBtc,
   ]);
 };
