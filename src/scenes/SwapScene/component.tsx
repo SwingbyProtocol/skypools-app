@@ -1,6 +1,6 @@
 import { Layout } from '../../components/Layout';
 import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
-import { useSkybridgeSwap } from '../../modules/skypools';
+import { useSkybridgeSwap } from '../../modules/para-inch-react';
 
 import { SkybridgeWidget } from './SkybridgeWidget';
 import { SkypoolsSwap } from './SkypoolsSwap';
