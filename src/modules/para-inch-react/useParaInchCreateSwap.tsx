@@ -21,6 +21,7 @@ import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 export const useParaInchCreateSwap = () => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
   const { swapQuote, network, slippage, fromToken } = useParaInchForm();
+  console.log('swapQuote', swapQuote);
 
   const contractAddress =
     swapQuote && isFakeBtcToken(swapQuote.destToken.address)
@@ -41,6 +42,7 @@ export const useParaInchCreateSwap = () => {
   return useMemo(() => {
     return {
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
+      isQuote: swapQuote ? true : false,
       isLoading,
       approve,
       createSwap: async () => {
