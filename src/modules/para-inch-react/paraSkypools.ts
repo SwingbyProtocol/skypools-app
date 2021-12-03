@@ -3,10 +3,8 @@ import { ContractMethod, NetworkID, ParaSwap, SwapSide } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
 
 import { SwapQuery } from '../../../generated/skypools-graphql';
-import { getNetworkId } from '../../networks';
-import { getWrappedBtcAddress } from '../../para-inch';
-
-import { swapMinAmount } from '.';
+import { getNetworkId } from '../networks';
+import { getWrappedBtcAddress, swapMinAmount } from '../para-inch';
 
 // Ref: https://github.com/SwingbyProtocol/skybridge-contract/blob/skypools/scripts/paraswap.js#L62
 export const simpleSwapPriceRoute = async ({
