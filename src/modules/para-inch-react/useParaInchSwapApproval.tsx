@@ -23,6 +23,11 @@ export const useParaInchSwapApproval = ({
   const { address, wallet } = useOnboard();
   const [isApprovalNeeded, setApprovalNeeded] = useState<boolean | null>(null);
 
+  console.log('useParaInchSwapApproval');
+  console.log('tokenParam', tokenParam);
+  console.log('spender', spender);
+  console.log('network', network);
+
   const token =
     network && tokenParam && isFakeBtcToken(tokenParam)
       ? getWrappedBtcAddress({ network })

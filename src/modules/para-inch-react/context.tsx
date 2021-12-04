@@ -53,6 +53,7 @@ export const ParaInchTokenProvider = ({
     push,
     query: { skybridgeSwap },
   } = useRouter();
+  console.log('ParaInchTokenProvider', ParaInchTokenProvider);
   const { address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);

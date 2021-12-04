@@ -19,13 +19,24 @@ import { useParaInchForm } from './useParaInchForm';
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useParaInchCreateSwap = () => {
+  console.log('useParaInchCreateSwap');
   const { address, wallet, network: onboardNetwork } = useOnboard();
   const { swapQuote, network, slippage, fromToken, amount } = useParaInchForm();
+
+  console.log('swapQuote', swapQuote);
+
+  console.log(
+    'should be true for send to BTC: swapQuote && isFakeBtcToken(swapQuote.destToken.address)',
+    swapQuote && isFakeBtcToken(swapQuote.destToken.address),
+  );
 
   const contractAddress =
     swapQuote && isFakeBtcToken(swapQuote.destToken.address)
       ? getSkypoolsContractAddress(network)
       : swapQuote?.bestRoute.spender;
+
+  console.log('swapQuote?.srcToken.address', swapQuote?.srcToken.address);
+  console.log('contractAddress', contractAddress);
 
   const { isApprovalNeeded, approve } = useParaInchSwapApproval({
     token: swapQuote?.srcToken.address,
