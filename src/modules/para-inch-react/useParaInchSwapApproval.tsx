@@ -27,6 +27,8 @@ export const useParaInchSwapApproval = ({
     network && tokenParam && isFakeBtcToken(tokenParam)
       ? getWrappedBtcAddress({ network })
       : tokenParam;
+  console.log('getWrappedBtcAddress({ network })', getWrappedBtcAddress({ network }));
+  console.log('token', token);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +60,7 @@ export const useParaInchSwapApproval = ({
       if (cancelled) return;
       const result = await check();
       if (cancelled) return;
-
+      console.log('checkPeriodically', result);
       setApprovalNeeded(result);
       setTimeout(checkPeriodically, 15000);
     };

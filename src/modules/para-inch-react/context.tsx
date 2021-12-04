@@ -60,6 +60,7 @@ export const ParaInchTokenProvider = ({
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
   const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteLazyQuery();
+  console.log('swapQuoteData', swapQuoteData);
 
   const setFromToken = useCallback(
     (newValue: string) => {
@@ -141,6 +142,21 @@ export const ParaInchTokenProvider = ({
     if (!fromToken || !toToken) {
       return;
     }
+
+    console.log('variable', {
+      srcTokenAddress: fromToken.address,
+      destTokenAddress: toToken.address,
+      initiatorAddress: address ?? '0x3A9077DE17DF9630C50A9fdcbf11a96015f20B5A',
+      network: valueProp.network,
+      srcTokenAmount: (() => {
+        try {
+          if (!amount) return '1';
+          return new Big(amount).toFixed();
+        } catch (e) {
+          return '1';
+        }
+      })(),
+    });
 
     getSwapQuote({
       variables: {
