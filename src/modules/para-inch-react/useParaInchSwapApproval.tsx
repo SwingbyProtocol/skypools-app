@@ -27,8 +27,12 @@ export const useParaInchSwapApproval = ({
     network && tokenParam && isFakeBtcToken(tokenParam)
       ? getWrappedBtcAddress({ network })
       : tokenParam;
-  console.log('getWrappedBtcAddress({ network })', getWrappedBtcAddress({ network }));
+  console.log('getWrappedBtcAddress({ network })', network && getWrappedBtcAddress({ network }));
   console.log('token', token);
+  console.log(
+    ' network && tokenParam && isFakeBtcToken(tokenParam)',
+    network && tokenParam && isFakeBtcToken(tokenParam),
+  );
 
   useEffect(() => {
     let cancelled = false;
