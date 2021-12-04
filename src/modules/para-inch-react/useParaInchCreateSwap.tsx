@@ -33,6 +33,9 @@ export const useParaInchCreateSwap = () => {
     network,
   });
 
+  console.log('isApprovalNeeded', isApprovalNeeded);
+  console.log('swapQuote', swapQuote);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [createSwap] = useCreateSwapMutation();
   const { push } = useRouter();
