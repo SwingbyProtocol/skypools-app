@@ -23,21 +23,10 @@ export const useParaInchSwapApproval = ({
   const { address, wallet } = useOnboard();
   const [isApprovalNeeded, setApprovalNeeded] = useState<boolean | null>(null);
 
-  console.log('useParaInchSwapApproval');
-  console.log('tokenParam', tokenParam);
-  console.log('spender', spender);
-  console.log('network', network);
-
   const token =
     network && tokenParam && isFakeBtcToken(tokenParam)
       ? getWrappedBtcAddress({ network })
       : tokenParam;
-  console.log('getWrappedBtcAddress({ network })', network && getWrappedBtcAddress({ network }));
-  console.log('token', token);
-  console.log(
-    ' network && tokenParam && isFakeBtcToken(tokenParam)',
-    network && tokenParam && isFakeBtcToken(tokenParam),
-  );
 
   useEffect(() => {
     let cancelled = false;
@@ -69,7 +58,6 @@ export const useParaInchSwapApproval = ({
       if (cancelled) return;
       const result = await check();
       if (cancelled) return;
-      console.log('checkPeriodically', result);
       setApprovalNeeded(result);
       setTimeout(checkPeriodically, 15000);
     };

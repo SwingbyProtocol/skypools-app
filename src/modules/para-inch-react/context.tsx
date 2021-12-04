@@ -53,7 +53,6 @@ export const ParaInchTokenProvider = ({
     push,
     query: { skybridgeSwap },
   } = useRouter();
-  console.log('ParaInchTokenProvider');
   const { address } = useOnboard();
 
   const [amount, setAmount] = useState<string | null>(null);
@@ -61,7 +60,6 @@ export const ParaInchTokenProvider = ({
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
   const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteLazyQuery();
-  console.log('swapQuoteData', swapQuoteData);
 
   const setFromToken = useCallback(
     (newValue: string) => {
