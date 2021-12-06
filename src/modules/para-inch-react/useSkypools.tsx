@@ -6,14 +6,10 @@ import { ethers } from 'ethers';
 import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import {
-  buildSkypoolsContract,
-  txDataSpSimpleSwap,
-  getSkypoolsContractAddress,
-  simpleSwapPriceRoute,
-  useSkybridgeSwap,
-} from '../skypools';
-import { getERC20Symbol } from '../para-inch';
+import { buildSkypoolsContract, getERC20Symbol, getSkypoolsContractAddress } from '../para-inch';
+
+import { simpleSwapPriceRoute, txDataSpSimpleSwap } from './paraSkypools';
+import { useSkybridgeSwap } from './useSkybridgeSwap';
 
 export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();

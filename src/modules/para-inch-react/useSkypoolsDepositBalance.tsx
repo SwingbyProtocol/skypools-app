@@ -4,8 +4,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
-import { getERC20Address, getWrappedBtcAddress } from '../para-inch';
-import { buildSkypoolsContract } from '../skypools';
+import { buildSkypoolsContract, getERC20Address, getWrappedBtcAddress } from '../para-inch';
 
 export const useSkypoolsDepositBalance = (swapId: string) => {
   const { address, wallet } = useOnboard();

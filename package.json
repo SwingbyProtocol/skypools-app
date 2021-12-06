@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "yarn -s gen-graphql && yarn -s generate && next dev | pino-pretty",
-    "gen-graphql": "yarn graphql-codegen --config codegen.yml",
-    "generate": "yarn prisma generate && yarn ts-node --transpile-only src/modules/server__gql-model",
+    "generate": "yarn prisma generate && yarn ts-node --transpile-only src/modules/server__gql-model && graphql-codegen --config codegen.yml",
     "clean": "rimraf graphql.schema.json nexus-typegen.d.ts *.log src/generated",
-    "build": "yarn -s gen-graphql && yarn -s generate && next build",
+    "build": "yarn -s generate && yarn -s generate && next build",
     "start": "next start",
     "lint": "eslint .",
     "test": "echo 'No tests here so far'",

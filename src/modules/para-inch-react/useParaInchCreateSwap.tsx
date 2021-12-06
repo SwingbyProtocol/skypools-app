@@ -12,8 +12,13 @@ import {
 import { logger } from '../logger';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
-import { buildParaTxData, isFakeBtcToken, isFakeNativeToken } from '../para-inch';
-import { buildSkypoolsContract, getSkypoolsContractAddress } from '../skypools';
+import {
+  buildParaTxData,
+  buildSkypoolsContract,
+  getSkypoolsContractAddress,
+  isFakeBtcToken,
+  isFakeNativeToken,
+} from '../para-inch';
 
 import { useParaInchForm } from './useParaInchForm';
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
