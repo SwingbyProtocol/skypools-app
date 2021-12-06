@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Layout } from '../../components/Layout';
 import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
 import { useSkybridgeSwap } from '../../modules/para-inch-react';

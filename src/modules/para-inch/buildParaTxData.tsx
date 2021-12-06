@@ -1,7 +1,7 @@
 import { NetworkID, ParaSwap } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
 
-import { swapMinAmount } from '.';
+import { swapMinAmount } from './swapMinAmount';
 
 export const buildParaTxData = async ({
   priceRoute,
