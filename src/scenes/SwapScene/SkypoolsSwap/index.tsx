@@ -15,6 +15,7 @@ import {
   labelAddress,
   row,
   invalidAddressFormat,
+  buttons,
 } from './styles';
 
 export const SkypoolsSwap = ({
@@ -33,7 +34,7 @@ export const SkypoolsSwap = ({
       slippage: '1',
     });
 
-  const { depositBalance } = useSkypoolsDepositBalance(swapId);
+  const { depositBalance, handleWithdraw } = useSkypoolsDepositBalance(swapId);
 
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
 
@@ -49,7 +50,7 @@ export const SkypoolsSwap = ({
   return (
     <div css={container}>
       <div css={confirmed}>
-        <FormattedMessage id="swap.deposit-confirmed" values={{ value: srcToken }} />
+        <FormattedMessage id={`swap.progress.${spProgress}`} />
       </div>
       {!isBtcToToken && (
         <div css={address}>
@@ -76,24 +77,26 @@ export const SkypoolsSwap = ({
         </div>
       )}
       <div css={claim}>
-        <Button
-          variant="primary"
-          size="city"
-          disabled={isDisabledClaim}
-          onClick={handleClaim ?? undefined}
-        >
-          <FormattedMessage id="swap.claim" values={{ value: destToken }} />
-        </Button>
+        <div css={buttons}>
+          <Button
+            variant="primary"
+            size="city"
+            disabled={isDisabledClaim}
+            onClick={handleClaim ?? undefined}
+          >
+            <FormattedMessage id="swap.claim" values={{ value: destToken }} />
+          </Button>
+          <Button
+            variant="secondary"
+            size="city"
+            disabled={!Number(depositBalance.balance)}
+            onClick={handleWithdraw ?? undefined}
+          >
+            <FormattedMessage id="swap.withdraw" values={{ value: swapSrc.token }} />
+          </Button>
+        </div>
       </div>
       <div css={details}>
-        <div css={row}>
-          <div>
-            <FormattedMessage id="swap.progress" />
-          </div>
-          <div>
-            <FormattedMessage id={`swap.progress.${spProgress}`} />
-          </div>
-        </div>
         <div css={row}>
           <div>
             <FormattedMessage id="swap.total-deposited-balance" />

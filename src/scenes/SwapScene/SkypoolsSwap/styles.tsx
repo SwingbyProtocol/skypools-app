@@ -30,6 +30,13 @@ export const claim = css`
   margin-block-end: ${rem(size.drawer)};
 `;
 
+export const buttons = css`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: center;
+  column-gap: ${rem(size.street)};
+`;
+
 export const details = css`
   grid-area: details;
   width: 100%;
