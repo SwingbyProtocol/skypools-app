@@ -18,15 +18,7 @@ import {
   buttons,
 } from './styles';
 
-export const SkypoolsSwap = ({
-  destToken,
-  srcToken,
-  swapId,
-}: {
-  destToken: string;
-  srcToken: string;
-  swapId: string;
-}) => {
+export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId: string }) => {
   // Todo: Get data from slippage UI
   const { handleClaim, minAmount, isBtcToToken, btcAddress, setBtcAddress, swapSrc, status } =
     useSkypools({
