@@ -43,9 +43,7 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
   const spProgress =
     status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';
 
-  const isDisabledClaim = isBtcToToken
-    ? !isDeposited || isFloatShortage
-    : !isValidAddress || !isDeposited || spProgress === 'completed' || isFloatShortage;
+  const isDisabledClaim = !isDeposited || isFloatShortage || spProgress === 'completed';
 
   return (
     <div css={container}>
@@ -81,7 +79,7 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
           <Button
             variant="primary"
             size="city"
-            disabled={isDisabledClaim}
+            disabled={isBtcToToken ? isDisabledClaim : isDisabledClaim || !isValidAddress}
             onClick={handleClaim ?? undefined}
           >
             <FormattedMessage id="swap.claim" values={{ value: destToken }} />

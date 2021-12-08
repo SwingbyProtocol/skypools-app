@@ -3,7 +3,12 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 
-import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
+import {
+  SwapDocument,
+  SwapStatus,
+  useSwapQuery,
+  useUpdateSwapMutation,
+} from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
 import {
@@ -16,6 +21,7 @@ import {
 export const useSkypoolsDeposit = (swapId: string) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
 
+  const [updateSwap] = useUpdateSwapMutation();
   const { data } = useSwapQuery({
     query: SwapDocument,
     variables: { id: swapId },
@@ -104,8 +110,18 @@ export const useSkypoolsDeposit = (swapId: string) => {
         const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
         logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
-        return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
+        return web3.eth
+          .sendTransaction({ ...transaction, gasPrice, gas })
+          .once('transactionHash', async (hash) => {
+            return updateSwap({
+              variables: {
+                id: swapId,
+                status: SwapStatus.Completed,
+                skypoolsTransactionHash: hash,
+              },
+            });
+          });
       },
     };
-  }, [depositBalance, address, depositInformation, onboardNetwork, wallet]);
+  }, [depositBalance, address, depositInformation, onboardNetwork, wallet, swapId, updateSwap]);
 };

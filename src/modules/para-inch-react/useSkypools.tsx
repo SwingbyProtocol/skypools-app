@@ -3,7 +3,12 @@ import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 import { ethers } from 'ethers';
 
-import { SwapDocument, useSwapQuery } from '../../generated/skypools-graphql';
+import {
+  SwapDocument,
+  SwapStatus,
+  useSwapQuery,
+  useUpdateSwapMutation,
+} from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
 import { buildSkypoolsContract, getERC20Symbol, getSkypoolsContractAddress } from '../para-inch';
@@ -17,6 +22,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
   const { address, wallet, network: onboardNetwork } = useOnboard();
   const [btcAddress, setBtcAddress] = useState<string>('');
 
+  const [updateSwap] = useUpdateSwapMutation();
   const { data } = useSwapQuery({
     query: SwapDocument,
     variables: { id: swapId },
@@ -59,6 +65,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         token: data.swap.destToken.symbol,
       });
 
+      if (!floats) return;
       const skybridgeFloat = isBtcToToken ? floats.wrappedBtc : floats.btc;
       const spRequiredFloatAmount = isBtcToToken
         ? wbtcSrcAmount
@@ -136,8 +143,17 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
         logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
-        // Todo: Change swap.status from "PENDING" to "COMPLETED" and store transaction hash to DB
-        return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
+        return web3.eth
+          .sendTransaction({ ...transaction, gasPrice, gas })
+          .once('transactionHash', async (hash) => {
+            return updateSwap({
+              variables: {
+                id: swapId,
+                status: SwapStatus.Completed,
+                skypoolsTransactionHash: hash,
+              },
+            });
+          });
       },
     };
   }, [
@@ -154,5 +170,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
     btcAddress,
     swapSrc,
     isFloatShortage,
+    swapId,
+    updateSwap,
   ]);
 };

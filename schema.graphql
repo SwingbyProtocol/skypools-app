@@ -90,6 +90,7 @@ type Mutation {
     srcAmount: Decimal!
     srcTokenId: ID!
   ): Swap!
+  updateSwap(id: String!, skypoolsTransactionHash: String, status: SwapStatus!): Swap!
 }
 
 enum Network {

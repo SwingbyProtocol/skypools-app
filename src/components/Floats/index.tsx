@@ -20,14 +20,16 @@ export const Floats = () => {
   );
 
   return (
-    <div css={float}>
-      <div css={floatTitle}>
-        <FormattedMessage id="floats" />
+    floats && (
+      <div css={float}>
+        <div css={floatTitle}>
+          <FormattedMessage id="floats" />
+        </div>
+        <div css={floatRow}>
+          {floatItem(btcImage, floats.btc)}
+          {floatItem(wbtcImage, floats.wrappedBtc)}
+        </div>
       </div>
-      <div css={floatRow}>
-        {floatItem(btcImage, floats.btc)}
-        {floatItem(wbtcImage, floats.wrappedBtc)}
-      </div>
-    </div>
+    )
   );
 };
