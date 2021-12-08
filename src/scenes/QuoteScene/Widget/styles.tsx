@@ -68,3 +68,9 @@ export const infoValue = css`
 export const infoValueHighlight = css`
   color: hsl(var(--sp-color-text-normal));
 `;
+
+export const error = css`
+  margin-block-start: ${rem(size.drawer)};
+  font-size: ${rem(size.room)};
+  color: hsl(var(--sp-color-danger-normal));
+`;

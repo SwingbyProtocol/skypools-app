@@ -9,6 +9,8 @@ export {
   getERC20Symbol,
 } from './isFakeToken';
 
+export { formatQuoteError } from './formatQuoteError';
+
 export { buildParaTxData } from './buildParaTxData';
 export { buildSkypoolsContract } from './buildSkypoolsContract';
 export { getSkypoolsContractAddress } from './getSkypoolsContractAddress';

@@ -3,7 +3,7 @@ import { createContext, ReactNode, useState, useMemo, useCallback, useEffect } f
 import { Big } from 'big.js';
 import { stringifyUrl } from 'query-string';
 
-import type { ParaInchToken } from '../para-inch';
+import { formatQuoteError, ParaInchToken } from '../para-inch';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
 import { SwapQuoteQueryResult, useSwapQuoteLazyQuery } from '../../generated/skypools-graphql';
@@ -23,6 +23,7 @@ export type ParaInchContextValue = {
   toToken: ParaInchToken | null;
   isAmountValid: boolean;
   swapQuote: NonNullable<SwapQuoteQueryResult['data']>['swapQuote'] | null;
+  errorMsg: string;
 };
 
 export const ParaInchContext = createContext<ParaInchContextValue>({
@@ -40,6 +41,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
   toToken: null,
   isAmountValid: false,
   swapQuote: null,
+  errorMsg: '',
 });
 
 export const ParaInchTokenProvider = ({
@@ -59,7 +61,16 @@ export const ParaInchTokenProvider = ({
   const [slippage, setSlippage] = useState<string>('1');
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
-  const [getSwapQuote, { data: swapQuoteData }] = useSwapQuoteLazyQuery();
+  const [getSwapQuote, { data: swapQuoteData, error: quoteError }] = useSwapQuoteLazyQuery();
+  const [errorMsg, setErrorMsg] = useState<string>('1');
+
+  useEffect(() => {
+    if (quoteError) {
+      setErrorMsg(formatQuoteError(quoteError.message));
+    } else {
+      setErrorMsg('');
+    }
+  }, [quoteError]);
 
   const setFromToken = useCallback(
     (newValue: string) => {
@@ -173,6 +184,7 @@ export const ParaInchTokenProvider = ({
       setFromToken,
       setToToken,
       setNetwork,
+      errorMsg,
       isAmountValid: ((): boolean => {
         try {
           return !!amount && new Big(amount).gt(0);
@@ -196,6 +208,7 @@ export const ParaInchTokenProvider = ({
       setSlippage,
       swapQuoteData,
       unlinkSkybridgeSwap,
+      errorMsg,
     ],
   );
 

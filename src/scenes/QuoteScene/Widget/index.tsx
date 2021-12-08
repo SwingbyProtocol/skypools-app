@@ -18,6 +18,7 @@ import {
   infoLabel,
   infoValue,
   infoValueHighlight,
+  error,
 } from './styles';
 
 export const Widget = () => {
@@ -31,6 +32,7 @@ export const Widget = () => {
     setAmount,
     isAmountValid,
     swapQuote,
+    errorMsg,
   } = useParaInchForm();
   const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools } =
     useParaInchCreateSwap();
@@ -130,6 +132,8 @@ export const Widget = () => {
           <FormattedMessage id="widget.approve" />
         </Button>
       )}
+
+      {errorMsg && <div css={error}>{errorMsg}</div>}
 
       {isAmountValid && swapQuote && (
         <table css={info}>
