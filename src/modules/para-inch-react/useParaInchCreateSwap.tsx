@@ -25,7 +25,7 @@ import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useParaInchCreateSwap = () => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
-  const { swapQuote, network, slippage, fromToken, amount } = useParaInchForm();
+  const { swapQuote, network, slippage, fromToken, amount, toToken } = useParaInchForm();
 
   const contractAddress =
     swapQuote && isFakeBtcToken(swapQuote.destToken.address)
@@ -42,11 +42,13 @@ export const useParaInchCreateSwap = () => {
   const [createSwap] = useCreateSwapMutation();
   const { push } = useRouter();
   const isFromBtc = fromToken?.symbol === 'BTC';
+  const isToBtc = toToken?.symbol === 'BTC';
 
   return useMemo(() => {
     return {
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
       isQuote: amount && swapQuote ? true : false,
+      isSkypools: isToBtc || isFromBtc,
       isLoading,
       approve,
       createSwap: async () => {
@@ -176,5 +178,6 @@ export const useParaInchCreateSwap = () => {
     isFromBtc,
     isLoading,
     amount,
+    isToBtc,
   ]);
 };

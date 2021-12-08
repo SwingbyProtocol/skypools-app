@@ -17,6 +17,7 @@
   "widget.from": "From",
   "widget.to": "To",
   "widget.swap": "Swap",
+  "widget.deposit": "Deposit {value}",
   "widget.approve": "Approve",
   "widget.details.rate": "Rate",
   "widget.details.gas": "Estimated cost",
@@ -44,5 +45,7 @@
   "token-amount": "{amount} {token}",
   "btc-destination-address": "Bitcoin Destination Address",
   "invalid-address-format": "Invalid Address Format",
-  "floats": "Floats"
+  "floats": "Floats",
+  "floats.insufficient": "Skybridge doesn't have enough floats to claim {value}",
+  "floats.withdraw": "You may wait for incoming floats or withdraw in {value}"
 }

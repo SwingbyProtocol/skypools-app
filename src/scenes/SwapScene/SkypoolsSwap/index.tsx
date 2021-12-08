@@ -16,16 +16,24 @@ import {
   row,
   invalidAddressFormat,
   buttons,
+  shortage,
 } from './styles';
 
 export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId: string }) => {
   // Todo: Get data from slippage UI
-  const { handleClaim, minAmount, isBtcToToken, btcAddress, setBtcAddress, swapSrc, status } =
-    useSkypools({
-      swapId,
-      slippage: '1',
-    });
-
+  const {
+    handleClaim,
+    minAmount,
+    isBtcToToken,
+    btcAddress,
+    setBtcAddress,
+    swapSrc,
+    status,
+    isFloatShortage,
+  } = useSkypools({
+    swapId,
+    slippage: '1',
+  });
   const { depositBalance, handleWithdraw } = useSkypoolsDeposit(swapId);
 
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
@@ -36,8 +44,8 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
     status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';
 
   const isDisabledClaim = isBtcToToken
-    ? !isDeposited
-    : !isValidAddress || !isDeposited || spProgress === 'completed';
+    ? !isDeposited || isFloatShortage
+    : !isValidAddress || !isDeposited || spProgress === 'completed' || isFloatShortage;
 
   return (
     <div css={container}>
@@ -88,6 +96,16 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
           </Button>
         </div>
       </div>
+      {isFloatShortage && (
+        <div css={shortage}>
+          <div>
+            <FormattedMessage id="floats.insufficient" values={{ value: destToken }} />
+          </div>
+          <div>
+            <FormattedMessage id="floats.withdraw" values={{ value: swapSrc.token }} />
+          </div>
+        </div>
+      )}
       <div css={details}>
         <div css={row}>
           <div>

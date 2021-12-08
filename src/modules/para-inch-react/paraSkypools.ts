@@ -62,7 +62,6 @@ export const simpleSwapPriceRoute = async ({
   }
 
   const minAmount = swapMinAmount({ destAmount: result.destAmount, slippage });
-
   return { priceRoute: result, minAmount };
 };
 

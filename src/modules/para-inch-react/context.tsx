@@ -142,21 +142,6 @@ export const ParaInchTokenProvider = ({
       return;
     }
 
-    console.log('variable', {
-      srcTokenAddress: fromToken.address,
-      destTokenAddress: toToken.address,
-      initiatorAddress: address ?? '0x3A9077DE17DF9630C50A9fdcbf11a96015f20B5A',
-      network: valueProp.network,
-      srcTokenAmount: (() => {
-        try {
-          if (!amount) return '1';
-          return new Big(amount).toFixed();
-        } catch (e) {
-          return '1';
-        }
-      })(),
-    });
-
     getSwapQuote({
       variables: {
         srcTokenAddress: fromToken.address,

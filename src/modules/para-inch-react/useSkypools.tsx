@@ -11,6 +11,8 @@ import { buildSkypoolsContract, getERC20Symbol, getSkypoolsContractAddress } fro
 import { simpleSwapPriceRoute, txDataSpSimpleSwap } from './paraSkypools';
 import { useSkybridgeSwap } from './useSkybridgeSwap';
 
+import { useSkypoolsFloats } from '.';
+
 export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
   const [btcAddress, setBtcAddress] = useState<string>('');
@@ -27,6 +29,9 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
     token: '',
   });
 
+  const { floats } = useSkypoolsFloats();
+  const [isFloatShortage, setIsFloatShortage] = useState<boolean>(false);
+
   const isBtcToToken = data?.swap.srcToken.symbol === 'BTC';
   const contractAddress = onboardNetwork && getSkypoolsContractAddress(onboardNetwork);
 
@@ -38,7 +43,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
     [data, isBtcToToken, wbtcSrcAmount],
   );
 
-  const getMinSwapAmount = useCallback(async () => {
+  const getSwapAmount = useCallback(async () => {
     if (!wallet || !address || !data || !contractAddress) return;
     try {
       const { minAmount, priceRoute } = await simpleSwapPriceRoute({
@@ -48,11 +53,18 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         isBtcToToken,
         skypoolsAddress: contractAddress,
       });
-      const amount = ethers.utils.formatUnits(minAmount, priceRoute.destDecimals);
+
       setMiniAmount({
-        amount,
+        amount: ethers.utils.formatUnits(minAmount, priceRoute.destDecimals),
         token: data.swap.destToken.symbol,
       });
+
+      const skybridgeFloat = isBtcToToken ? floats.wrappedBtc : floats.btc;
+      const spRequiredFloatAmount = isBtcToToken
+        ? wbtcSrcAmount
+        : ethers.utils.formatUnits(priceRoute.destAmount, priceRoute.destDecimals);
+
+      setIsFloatShortage(Number(spRequiredFloatAmount) > Number(skybridgeFloat));
     } catch (error) {
       logger.error(error);
       setMiniAmount({
@@ -60,21 +72,22 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
         token: '',
       });
     }
-  }, [wallet, data, address, slippage, wbtcSrcAmount, isBtcToToken, contractAddress]);
+  }, [wallet, data, address, slippage, wbtcSrcAmount, isBtcToToken, contractAddress, floats]);
 
   useEffect(() => {
-    getMinSwapAmount();
+    getSwapAmount();
 
     const interval = setInterval(() => {
-      getMinSwapAmount();
+      getSwapAmount();
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [getMinSwapAmount]);
+  }, [getSwapAmount]);
 
   return useMemo(() => {
     return {
       minAmount,
+      isFloatShortage,
       isBtcToToken,
       btcAddress,
       setBtcAddress,
@@ -140,5 +153,6 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
     setBtcAddress,
     btcAddress,
     swapSrc,
+    isFloatShortage,
   ]);
 };

@@ -32,7 +32,8 @@ export const Widget = () => {
     isAmountValid,
     swapQuote,
   } = useParaInchForm();
-  const { isApprovalNeeded, approve, createSwap, isLoading, isQuote } = useParaInchCreateSwap();
+  const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools } =
+    useParaInchCreateSwap();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -118,7 +119,10 @@ export const Widget = () => {
           disabled={isApprovalNeeded === null || isLoading || !isQuote}
           onClick={createSwap ?? undefined}
         >
-          <FormattedMessage id="widget.swap" />
+          <FormattedMessage
+            id={isSkypools ? 'widget.deposit' : 'widget.swap'}
+            values={{ value: fromToken?.symbol }}
+          />
         </Button>
       )}
       {!!isApprovalNeeded && (

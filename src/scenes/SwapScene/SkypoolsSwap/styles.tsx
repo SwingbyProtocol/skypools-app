@@ -14,6 +14,7 @@ export const container = css`
     'confirmed'
     'address'
     'claim'
+    'shortage'
     'details';
 `;
 
@@ -73,6 +74,12 @@ export const invalidAddressFormat = css`
   margin-block-start: ${rem(size.box / 2)};
   position: absolute;
   text-align: left;
+  font-size: ${rem(size.room)};
+  color: hsl(var(--sp-color-danger-normal));
+`;
+
+export const shortage = css`
+  grid-area: shortage;
   font-size: ${rem(size.room)};
   color: hsl(var(--sp-color-danger-normal));
 `;
