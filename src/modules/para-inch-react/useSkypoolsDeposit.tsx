@@ -13,7 +13,7 @@ import {
   getWrappedBtcAddress,
 } from '../para-inch';
 
-export const useSkypoolsDepositBalance = (swapId: string) => {
+export const useSkypoolsDeposit = (swapId: string) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
 
   const { data } = useSwapQuery({

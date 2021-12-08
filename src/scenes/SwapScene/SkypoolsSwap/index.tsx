@@ -4,7 +4,7 @@ import { validate } from 'bitcoin-address-validation';
 
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
-import { useSkypools, useSkypoolsDepositBalance } from '../../../modules/para-inch-react';
+import { useSkypools, useSkypoolsDeposit } from '../../../modules/para-inch-react';
 
 import {
   address,
@@ -26,7 +26,7 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
       slippage: '1',
     });
 
-  const { depositBalance, handleWithdraw } = useSkypoolsDepositBalance(swapId);
+  const { depositBalance, handleWithdraw } = useSkypoolsDeposit(swapId);
 
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
 

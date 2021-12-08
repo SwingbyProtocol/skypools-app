@@ -43,5 +43,6 @@
   "swap.min-receiving-amount": "Min Receiving Amount:",
   "token-amount": "{amount} {token}",
   "btc-destination-address": "Bitcoin Destination Address",
-  "invalid-address-format": "Invalid Address Format"
+  "invalid-address-format": "Invalid Address Format",
+  "floats": "Floats"
 }
