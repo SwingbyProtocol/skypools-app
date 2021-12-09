@@ -1,7 +1,7 @@
 import { buildContext, createSwap as createSkybridgeSwap } from '@swingby-protocol/sdk';
 import { Big } from 'big.js';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 
@@ -44,6 +44,10 @@ export const useParaInchCreateSwap = () => {
   const { push } = useRouter();
   const isFromBtc = fromToken?.symbol === 'BTC';
   const isToBtc = toToken?.symbol === 'BTC';
+
+  useEffect(() => {
+    setCreateSwapError('');
+  }, [fromToken, amount, toToken]);
 
   return useMemo(() => {
     return {
@@ -93,7 +97,6 @@ export const useParaInchCreateSwap = () => {
         };
 
         try {
-          setCreateSwapError('');
           setIsLoading(true);
           if (isFakeBtcToken(swapQuote.srcToken.address)) {
             const context = await buildContext({
