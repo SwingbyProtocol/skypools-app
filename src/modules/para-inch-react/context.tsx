@@ -62,7 +62,7 @@ export const ParaInchTokenProvider = ({
   const [fromToken, setFromTokenState] = useState<ParaInchToken | null>(valueProp.fromToken);
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
   const [getSwapQuote, { data: swapQuoteData, error: quoteError }] = useSwapQuoteLazyQuery();
-  const [errorMsg, setErrorMsg] = useState<string>('1');
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
   useEffect(() => {
     if (quoteError) {

@@ -26,6 +26,7 @@ import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 export const useParaInchCreateSwap = () => {
   const { address, wallet, network: onboardNetwork } = useOnboard();
   const { swapQuote, network, slippage, fromToken, amount, toToken } = useParaInchForm();
+  const [createSwapError, setCreateSwapError] = useState<string>('');
 
   const contractAddress =
     swapQuote && isFakeBtcToken(swapQuote.destToken.address)
@@ -51,6 +52,7 @@ export const useParaInchCreateSwap = () => {
       isSkypools: isToBtc || isFromBtc,
       isLoading,
       approve,
+      createSwapError,
       createSwap: async () => {
         if (!swapQuote) {
           throw new Error('No swap quote available to create a new swap');
@@ -91,6 +93,7 @@ export const useParaInchCreateSwap = () => {
         };
 
         try {
+          setCreateSwapError('');
           setIsLoading(true);
           if (isFakeBtcToken(swapQuote.srcToken.address)) {
             const context = await buildContext({
@@ -155,14 +158,17 @@ export const useParaInchCreateSwap = () => {
               return callCreateSwap({ skypoolsTransactionHash: hash });
             });
           }
-        } catch (error) {
+        } catch (e) {
+          const error = e as unknown as Error;
           logger.error(error);
+          setCreateSwapError(error.message);
         } finally {
           setIsLoading(false);
         }
       },
     };
   }, [
+    createSwapError,
     address,
     approve,
     createSwap,

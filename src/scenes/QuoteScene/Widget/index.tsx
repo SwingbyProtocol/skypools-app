@@ -34,7 +34,7 @@ export const Widget = () => {
     swapQuote,
     errorMsg,
   } = useParaInchForm();
-  const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools } =
+  const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
     useParaInchCreateSwap();
 
   const from = useMemo(
@@ -134,6 +134,7 @@ export const Widget = () => {
       )}
 
       {errorMsg && <div css={error}>{errorMsg}</div>}
+      {createSwapError && <div css={error}>{createSwapError}</div>}
 
       {isAmountValid && swapQuote && (
         <table css={info}>
