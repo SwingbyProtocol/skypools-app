@@ -174,7 +174,8 @@
       { "internalType": "address", "name": "_destToken", "type": "address" },
       { "internalType": "uint256", "name": "_incomingAmount", "type": "uint256" },
       { "internalType": "uint256", "name": "_minerFee", "type": "uint256" },
-      { "internalType": "uint256", "name": "_rewardsAmount", "type": "uint256" }
+      { "internalType": "uint256", "name": "_rewardsAmount", "type": "uint256" },
+      { "internalType": "bool", "name": "_isUpdatelimitBTCForSPFlow2", "type": "bool" }
     ],
     "name": "collectSwapFeesForBTC",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
@@ -257,6 +258,13 @@
     "inputs": [{ "internalType": "bytes32", "name": "_txid", "type": "bytes32" }],
     "name": "isTxUsed",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "limitBTCForSPFlow2",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
