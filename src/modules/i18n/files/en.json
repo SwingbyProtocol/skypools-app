@@ -46,7 +46,7 @@
   "token-amount": "{amount} {token}",
   "btc-destination-address": "Bitcoin Destination Address",
   "invalid-address-format": "Invalid Address Format",
-  "floats": "Floats",
-  "floats.insufficient": "Skybridge doesn't have enough floats to claim {value}",
+  "floats": "Skybridge Liquidity",
+  "floats.insufficient": "Skybridge doesn't have enough liquidity to claim {value}",
   "floats.withdraw": "You may wait for incoming floats or withdraw in {value}"
 }

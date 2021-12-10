@@ -3,7 +3,7 @@ import { rem } from 'polished';
 
 import { size } from '../../modules/styles';
 
-export const float = css`
+export const floatsContainer = css`
   display: none;
   @media (min-width: ${rem(768)}) {
     display: flex;
@@ -14,18 +14,18 @@ export const float = css`
   }
 `;
 
-export const floatTitle = css`
-  font-size: ${rem(size.house)};
+export const floatsTitle = css`
+  font-size: ${rem(size.room)};
   white-space: nowrap;
 `;
 
-export const floatRow = css`
+export const floatsRow = css`
   display: flex;
   column-gap: ${rem(size.street)};
   align-items: center;
 `;
 
-export const floatColumn = css`
+export const floatsColumn = css`
   display: flex;
   flex-direction: column;
   align-items: center;
