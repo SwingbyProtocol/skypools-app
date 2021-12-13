@@ -1,0 +1,5 @@
+mutation UpdateSwap($id: String!, $status: SwapStatus!, $skypoolsTransactionHash: String) {
+  updateSwap(id: $id, status: $status, skypoolsTransactionHash: $skypoolsTransactionHash) {
+    status
+  }
+}

@@ -5,12 +5,14 @@ export {
   FAKE_NATIVE_TOKEN_ADDRESS,
   FAKE_BTC_ADDRESS,
   getWrappedBtcAddress,
+  getERC20Address,
+  getERC20Symbol,
 } from './isFakeToken';
 
+export { formatQuoteError } from './formatQuoteError';
+
 export { buildParaTxData } from './buildParaTxData';
-
-export type { ParaInchToken } from './ParaInchToken';
-
-export { swapMinAmount } from './swapMinAmount';
 export { buildSkypoolsContract } from './buildSkypoolsContract';
 export { getSkypoolsContractAddress } from './getSkypoolsContractAddress';
+export type { ParaInchToken } from './ParaInchToken';
+export { swapMinAmount } from './swapMinAmount';

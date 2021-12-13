@@ -56,7 +56,6 @@ export default createEndpoint({
         },
       });
     }
-
     res.status(StatusCodes.OK).json({ tokenCount: tokens.length, failed: failed.length });
   },
 });

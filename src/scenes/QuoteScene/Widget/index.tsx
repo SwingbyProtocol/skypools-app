@@ -4,6 +4,7 @@ import { Big } from 'big.js';
 
 import { Button } from '../../../components/Button';
 import { useParaInchForm, useParaInchCreateSwap } from '../../../modules/para-inch-react';
+import { useOnboard } from '../../../modules/onboard';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -18,6 +19,7 @@ import {
   infoLabel,
   infoValue,
   infoValueHighlight,
+  error,
 } from './styles';
 
 export const Widget = () => {
@@ -31,8 +33,11 @@ export const Widget = () => {
     setAmount,
     isAmountValid,
     swapQuote,
+    errorMsg,
   } = useParaInchForm();
-  const { isApprovalNeeded, approve, createSwap } = useParaInchCreateSwap();
+  const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
+    useParaInchCreateSwap();
+  const { address } = useOnboard();
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -115,10 +120,13 @@ export const Widget = () => {
           variant="primary"
           size="state"
           css={swapButton}
-          disabled={isApprovalNeeded === null}
+          disabled={isApprovalNeeded === null || isLoading || !isQuote || !address}
           onClick={createSwap ?? undefined}
         >
-          <FormattedMessage id="widget.swap" />
+          <FormattedMessage
+            id={isSkypools ? 'widget.deposit' : 'widget.swap'}
+            values={{ value: fromToken?.symbol }}
+          />
         </Button>
       )}
       {!!isApprovalNeeded && (
@@ -126,6 +134,9 @@ export const Widget = () => {
           <FormattedMessage id="widget.approve" />
         </Button>
       )}
+
+      {errorMsg && <div css={error}>{errorMsg}</div>}
+      {createSwapError && <div css={error}>{createSwapError}</div>}
 
       {isAmountValid && swapQuote && (
         <table css={info}>

@@ -13,6 +13,7 @@ export const container = css`
     'to-label'
     'to-input'
     'swap'
+    'error'
     'info';
 `;
 
@@ -67,4 +68,11 @@ export const infoValue = css`
 
 export const infoValueHighlight = css`
   color: hsl(var(--sp-color-text-normal));
+`;
+
+export const error = css`
+  grid-area: error;
+  margin-block-start: ${rem(size.drawer)};
+  font-size: ${rem(size.room)};
+  color: hsl(var(--sp-color-danger-normal));
 `;

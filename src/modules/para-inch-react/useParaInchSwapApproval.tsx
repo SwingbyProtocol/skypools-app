@@ -58,7 +58,6 @@ export const useParaInchSwapApproval = ({
       if (cancelled) return;
       const result = await check();
       if (cancelled) return;
-
       setApprovalNeeded(result);
       setTimeout(checkPeriodically, 15000);
     };

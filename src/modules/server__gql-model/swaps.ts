@@ -173,6 +173,40 @@ export const CreateSwapMutation = extendType({
   },
 });
 
+export const updateSwapMutation = extendType({
+  type: 'Mutation',
+  definition(t) {
+    t.nonNull.field('updateSwap', {
+      type: Swap,
+      args: {
+        id: nonNull('String'),
+        status: nonNull('SwapStatus'),
+        skypoolsTransactionHash: nullable('String'),
+      },
+      async resolve(source, args, ctx, info) {
+        const data = args.skypoolsTransactionHash
+          ? {
+              status: args.status,
+              skypoolsTransactionHashes: { push: args.skypoolsTransactionHash },
+            }
+          : {
+              status: args.status,
+            };
+
+        await ctx.prisma.swap.update({
+          where: { id: args.id },
+          data,
+        });
+        return ctx.prisma.swap.findUnique({
+          where: { id: args.id },
+          rejectOnNotFound: true,
+          include: { srcToken: true, destToken: true },
+        });
+      },
+    });
+  },
+});
+
 export const SwapsQuery = extendType({
   type: 'Query',
   definition(t) {

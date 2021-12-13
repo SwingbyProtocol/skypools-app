@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { ParaSwap } from 'paraswap';
+import { ContractMethod, ParaSwap, SwapSide } from 'paraswap';
 import Web3 from 'web3';
 
 import { logger } from '../../logger';
@@ -42,14 +42,25 @@ export const getParaSwapQuote = async ({
 
   const paraSwap = new ParaSwap(getNetworkId(network));
 
+  const option =
+    network === 'ROPSTEN'
+      ? {
+          includeContractMethods: [ContractMethod.simpleSwap],
+          maxImpact: 100,
+        }
+      : {
+          includeContractMethods: [ContractMethod.simpleSwap],
+        };
+
   const result = await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
     srcTokenAmountParam.times(`1e${srcToken.decimals}`).toFixed(0),
     undefined,
-    undefined,
-    undefined,
+    SwapSide.SELL,
+    option,
     srcToken.decimals,
+    destToken.decimals,
   );
   if (isParaSwapApiError(result)) {
     logger.error({ err: result }, 'Failed to get rate from ParaSwap');

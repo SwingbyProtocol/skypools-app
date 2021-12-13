@@ -8,9 +8,10 @@ export const header = css`
   grid-template-rows: min-content min-content;
   grid-template-areas:
     'logo'
-    'connect';
+    'info';
   align-items: center;
   align-content: center;
+  justify-content: space-between;
   justify-items: start;
   grid-row-gap: ${rem(size.box)};
   min-block-size: ${rem(80)};
@@ -25,7 +26,7 @@ export const header = css`
     grid-gap: ${rem(size.town)};
     grid-template-rows: none;
     grid-template-columns: 1fr min-content;
-    grid-template-areas: 'logo connect';
+    grid-template-areas: 'logo info';
   }
 `;
 
@@ -34,11 +35,19 @@ export const logo = css`
   block-size: ${rem(size.state / 2)};
   inline-size: ${rem((size.state * (146 / 44)) / 2)};
   position: relative;
+  cursor: pointer;
 
   @media (min-width: ${rem(768)}) {
     block-size: ${rem(size.state)};
     inline-size: ${rem(size.state * (146 / 44))};
   }
+`;
+
+export const info = css`
+  grid-area: info;
+  display: flex;
+  column-gap: ${rem(size.state)};
+  align-items: center;
 `;
 
 export const connect = css`

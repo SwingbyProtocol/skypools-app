@@ -290,6 +290,7 @@ export interface NexusGenFieldTypes {
   Mutation: {
     // field return type
     createSwap: NexusGenRootTypes['Swap']; // Swap!
+    updateSwap: NexusGenRootTypes['Swap']; // Swap!
   };
   PriceHistoricItem: {
     // field return type
@@ -420,6 +421,7 @@ export interface NexusGenFieldTypeNames {
   Mutation: {
     // field return type name
     createSwap: 'Swap';
+    updateSwap: 'Swap';
   };
   PriceHistoricItem: {
     // field return type name
@@ -552,6 +554,12 @@ export interface NexusGenArgTypes {
       skypoolsTransactionHash?: string | null; // String
       srcAmount: NexusGenScalars['Decimal']; // Decimal!
       srcTokenId: string; // ID!
+    };
+    updateSwap: {
+      // args
+      id: string; // String!
+      skypoolsTransactionHash?: string | null; // String
+      status: NexusGenEnums['SwapStatus']; // SwapStatus!
     };
   };
   Query: {

@@ -1,38 +1,109 @@
+import { useState } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { validate } from 'bitcoin-address-validation';
 
 import { Button } from '../../../components/Button';
-import { useSkypools, useSkypoolsDepositBalance } from '../../../modules/para-inch-react';
+import { TextInput } from '../../../components/TextInput';
+import { useSkypools, useSkypoolsDeposit } from '../../../modules/para-inch-react';
 
-import { claim, confirmed, container, details, row } from './styles';
+import {
+  address,
+  claim,
+  confirmed,
+  container,
+  details,
+  labelAddress,
+  row,
+  invalidAddressFormat,
+  buttons,
+  shortage,
+} from './styles';
 
-export const SkypoolsSwap = ({
-  destToken,
-  srcToken,
-  swapId,
-}: {
-  destToken: string;
-  srcToken: string;
-  swapId: string;
-}) => {
+export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId: string }) => {
   // Todo: Get data from slippage UI
-  const { handleClaim, wbtcSrcAmount, minAmount } = useSkypools({ swapId, slippage: '1' });
-  const { depositBalance } = useSkypoolsDepositBalance(swapId);
+  const {
+    handleClaim,
+    minAmount,
+    isBtcToToken,
+    btcAddress,
+    setBtcAddress,
+    swapSrc,
+    status,
+    isFloatShortage,
+  } = useSkypools({
+    swapId,
+    slippage: '1',
+  });
+  const { depositBalance, handleWithdraw } = useSkypoolsDeposit(swapId);
+
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
+
+  const isDeposited = Number(depositBalance.balance) >= Number(swapSrc.amount);
+
+  const spProgress =
+    status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';
+
+  const isDisabledClaim = !isDeposited || isFloatShortage || spProgress === 'completed';
 
   return (
     <div css={container}>
       <div css={confirmed}>
-        <FormattedMessage id="swap.deposit-confirmed" values={{ value: srcToken }} />
+        <FormattedMessage id={`swap.progress.${spProgress}`} />
       </div>
+      {!isBtcToToken && (
+        <div css={address}>
+          <div css={labelAddress}>
+            <FormattedMessage id="btc-destination-address" />
+          </div>
+          <TextInput
+            size="city"
+            value={btcAddress ?? ''}
+            onChange={(evt) => {
+              setBtcAddress(evt.target.value);
+              if (validate(evt.target.value)) {
+                setIsValidAddress(true);
+              } else {
+                setIsValidAddress(false);
+              }
+            }}
+          />
+          {btcAddress !== '' && !isValidAddress && (
+            <div css={invalidAddressFormat}>
+              <FormattedMessage id="invalid-address-format" />
+            </div>
+          )}
+        </div>
+      )}
       <div css={claim}>
-        <Button
-          variant="primary"
-          size="city"
-          disabled={Number(wbtcSrcAmount) > Number(depositBalance.balance)}
-          onClick={handleClaim ?? undefined}
-        >
-          <FormattedMessage id="swap.claim" values={{ value: destToken }} />
-        </Button>
+        <div css={buttons}>
+          <Button
+            variant="primary"
+            size="city"
+            disabled={isBtcToToken ? isDisabledClaim : isDisabledClaim || !isValidAddress}
+            onClick={handleClaim ?? undefined}
+          >
+            <FormattedMessage id="swap.claim" values={{ value: destToken }} />
+          </Button>
+          <Button
+            variant="secondary"
+            size="city"
+            disabled={!Number(depositBalance.balance)}
+            onClick={handleWithdraw ?? undefined}
+          >
+            <FormattedMessage id="swap.withdraw" values={{ value: swapSrc.token }} />
+          </Button>
+        </div>
       </div>
+      {isFloatShortage && (
+        <div css={shortage}>
+          <div>
+            <FormattedMessage id="floats.insufficient" values={{ value: destToken }} />
+          </div>
+          <div>
+            <FormattedMessage id="floats.withdraw" values={{ value: swapSrc.token }} />
+          </div>
+        </div>
+      )}
       <div css={details}>
         <div css={row}>
           <div>
@@ -50,8 +121,10 @@ export const SkypoolsSwap = ({
             <FormattedMessage
               id="token-amount"
               values={{
-                amount: <FormattedNumber value={Number(wbtcSrcAmount)} maximumFractionDigits={8} />,
-                token: 'WBTC',
+                amount: (
+                  <FormattedNumber value={Number(swapSrc.amount)} maximumFractionDigits={8} />
+                ),
+                token: swapSrc.token,
               }}
             />
           </div>
