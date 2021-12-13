@@ -161,10 +161,9 @@ export const useParaInchCreateSwap = () => {
               return callCreateSwap({ skypoolsTransactionHash: hash });
             });
           }
-        } catch (e) {
-          const error = e as unknown as Error;
-          logger.error(error);
-          setCreateSwapError(error.message);
+        } catch (err: any) {
+          logger.error(err);
+          setCreateSwapError(err.message);
         } finally {
           setIsLoading(false);
         }
