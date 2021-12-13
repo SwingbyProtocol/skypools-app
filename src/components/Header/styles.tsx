@@ -7,8 +7,8 @@ export const header = css`
   display: grid;
   grid-template-rows: min-content min-content;
   grid-template-areas:
-    'logo'
-    'info';
+    'logo links'
+    'info info';
   align-items: center;
   align-content: center;
   justify-content: space-between;
@@ -23,10 +23,8 @@ export const header = css`
   padding-inline-end: var(--sp-app-inset-right);
 
   @media (min-width: ${rem(768)}) {
-    grid-gap: ${rem(size.town)};
     grid-template-rows: none;
-    grid-template-columns: 1fr min-content;
-    grid-template-areas: 'logo info';
+    grid-template-areas: 'logo links info';
   }
 `;
 
@@ -46,10 +44,31 @@ export const logo = css`
 export const info = css`
   grid-area: info;
   display: flex;
-  column-gap: ${rem(size.state)};
+  column-gap: ${rem(size.box)};
   align-items: center;
+  @media (min-width: ${rem(1024)}) {
+    column-gap: ${rem(size.state)};
+  }
 `;
 
 export const connect = css`
   grid-area: connect;
+`;
+
+export const links = css`
+  grid-area: links;
+  display: flex;
+  column-gap: ${rem(size.room)};
+  align-items: center;
+  @media (min-width: ${rem(768)}) {
+    column-gap: ${rem(size.closet)};
+  }
+  @media (min-width: ${rem(1024)}) {
+    column-gap: ${rem(size.state)};
+  }
+`;
+
+export const link = css`
+  text-decoration: none;
+  font-weight: 600;
 `;

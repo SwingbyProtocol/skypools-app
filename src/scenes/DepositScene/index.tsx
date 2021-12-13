@@ -1,0 +1,1 @@
+export { DepositScene } from './component';

@@ -10,8 +10,10 @@ import {
   historyContainer,
   priceAndPathCard,
   swapScene,
+  balanceScene,
   widgetCard,
   skybridgeWidgetCard,
+  balanceCard,
 } from './styles';
 
 type Props = {
@@ -19,6 +21,7 @@ type Props = {
   afterPriceChart?: React.ReactNode;
   widgetContent?: React.ReactNode;
   isSkybridgeWidget: boolean;
+  isAccountBalance?: boolean;
 };
 
 export const Layout = ({
@@ -26,22 +29,33 @@ export const Layout = ({
   afterPriceChart = null,
   widgetContent = null,
   isSkybridgeWidget = false,
+  isAccountBalance = false,
 }: Props) => {
   return (
-    <div css={swapScene}>
+    <div css={isAccountBalance ? balanceScene : swapScene}>
       <Header css={headerContainer} />
 
-      <Card css={priceAndPathCard}>
-        {!!priceHistory && priceHistory.length > 0 && (
-          <div css={chartContainer}>
-            <TradingView data={priceHistory} />
-          </div>
-        )}
+      {!isAccountBalance && (
+        <Card css={priceAndPathCard}>
+          {!!priceHistory && priceHistory.length > 0 && (
+            <div css={chartContainer}>
+              <TradingView data={priceHistory} />
+            </div>
+          )}
 
-        {afterPriceChart}
-      </Card>
+          {afterPriceChart}
+        </Card>
+      )}
 
-      <Card css={isSkybridgeWidget ? [widgetCard, skybridgeWidgetCard] : widgetCard}>
+      <Card
+        css={
+          isAccountBalance
+            ? [widgetCard, balanceCard]
+            : isSkybridgeWidget
+            ? [widgetCard, skybridgeWidgetCard]
+            : widgetCard
+        }
+      >
         {widgetContent}
       </Card>
 

@@ -34,6 +34,20 @@ export const swapScene = css`
   }
 `;
 
+export const balanceScene = css`
+  display: flex;
+  flex-direction: column;
+  padding: ${rem(size.town)};
+  padding-block: ${rem(size.town)};
+  padding-inline: ${rem(size.town)};
+  padding-block-start: var(--sp-app-inset-top);
+  padding-block-end: var(--sp-app-inset-bottom);
+  padding-inline-start: var(--sp-app-inset-left);
+  padding-inline-end: var(--sp-app-inset-right);
+  min-height: 100vh;
+  min-width: 100vw;
+`;
+
 export const headerContainer = css`
   grid-area: header;
   margin-block: ${rem(-size.town)} 0;
@@ -90,6 +104,12 @@ export const widgetCard = css`
     box-shadow: none;
     border: 1px solid hsl(var(--sp-color-border-normal));
   }
+`;
+
+export const balanceCard = css`
+  margin: auto;
+  max-width: ${rem(400)};
+  min-width: ${rem(375)};
 `;
 
 export const historyContainer = css`
