@@ -174,7 +174,7 @@ export const Widget = () => {
                 {fromToken?.symbol}
               </td>
             </tr>
-            {!!swapQuote.bestRoute.estimatedGasUsd && (
+            {!!swapQuote.bestRoute.estimatedGasUsd && !isSkypools && (
               <tr>
                 <td css={infoLabel}>
                   <FormattedMessage id="widget.details.gas" />

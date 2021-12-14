@@ -15,7 +15,7 @@ export const container = css`
     'address'
     'claim'
     'shortage'
-    'details';
+    'bottom';
 `;
 
 export const confirmed = css`
@@ -38,9 +38,12 @@ export const buttons = css`
   column-gap: ${rem(size.street)};
 `;
 
-export const details = css`
-  grid-area: details;
+export const bottom = css`
+  grid-area: bottom;
   width: 100%;
+`;
+
+export const details = css`
   margin-block-end: ${rem(size.drawer)};
   display: flex;
   flex-direction: column;

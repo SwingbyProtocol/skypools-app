@@ -55,7 +55,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
           query: TokensDocument,
           variables: { where: { network: { equals: network } } },
         })
-      ).data.tokens.edges.map((it) => it.node);
+      ).data.tokens.edges
+        .map((it) => it.node)
+        .filter((it) => it.symbol !== 'WBTC');
     } catch (err) {
       logger.fatal({ err }, 'Could not load token list');
       return [];
