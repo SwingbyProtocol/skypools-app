@@ -3,7 +3,7 @@ export { swapMinAmount } from './swapMinAmount';
 
 const CONTRACT_SKYPOOLS = {
   ETHEREUM: '',
-  ROPSTEN: '0x664FEDDbC5AdE9EB84eC46bD4be68c6672a0fF5F',
+  ROPSTEN: '0x7dfbf7E38F188Da1BD337A128ce7A5D758957621',
   BSC: '',
 };
 
