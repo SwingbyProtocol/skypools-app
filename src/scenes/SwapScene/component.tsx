@@ -22,6 +22,7 @@ export const SwapScene = ({ swapId }: { swapId: string }) => {
   const isSwapFromBtc = swap?.srcToken.symbol === 'BTC';
   const skybridgeId = swap?.skybridgeSwapId ?? '';
   const { status } = useSkybridgeSwap(skybridgeId);
+  console.log('status', status);
   const isSkybridgeWidget = status !== 'COMPLETED';
 
   const skypoolsSwap = swap && <SkypoolsSwap destToken={swap?.destToken.symbol} swapId={swapId} />;
