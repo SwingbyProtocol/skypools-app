@@ -37,7 +37,7 @@ export default createEndpoint({
 
     if (network === 'ROPSTEN') {
       const web3 = new Web3();
-      const wbtc = web3.utils.toChecksumAddress('0x442Be68395613bDCD19778e761f03261ec46C06D');
+      const wbtc = web3.utils.toChecksumAddress('0x7cb2eac36b4bb7c36640f32e806d33e474d1d427');
       await prisma.token.upsert({
         where: { network_address: { network, address: wbtc } },
         create: {
