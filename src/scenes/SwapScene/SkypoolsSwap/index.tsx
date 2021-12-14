@@ -5,6 +5,7 @@ import { validate } from 'bitcoin-address-validation';
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
 import { useSkypools, useSkypoolsDeposit } from '../../../modules/para-inch-react';
+import { SkypoolsSlippage } from '../SkypoolsSlippage';
 
 import {
   address,
@@ -17,10 +18,11 @@ import {
   invalidAddressFormat,
   buttons,
   shortage,
+  bottom,
 } from './styles';
 
 export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId: string }) => {
-  // Todo: Get data from slippage UI
+  const [slippage, setSlippage] = useState<string>('1');
   const {
     handleClaim,
     minAmount,
@@ -32,7 +34,7 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
     isFloatShortage,
   } = useSkypools({
     swapId,
-    slippage: '1',
+    slippage,
   });
   const { depositBalance, handleWithdraw } = useSkypoolsDeposit(swapId);
 
@@ -43,7 +45,8 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
   const spProgress =
     status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';
 
-  const isDisabledClaim = !isDeposited || isFloatShortage || spProgress === 'completed';
+  const isDisabledClaim =
+    !isDeposited || isFloatShortage || spProgress === 'completed' || isNaN(Number(slippage));
 
   return (
     <div css={container}>
@@ -104,47 +107,50 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
           </div>
         </div>
       )}
-      <div css={details}>
-        <div css={row}>
-          <div>
-            <FormattedMessage id="swap.total-deposited-balance" />
+      <div css={bottom}>
+        <div css={details}>
+          <div css={row}>
+            <div>
+              <FormattedMessage id="swap.total-deposited-balance" />
+            </div>
+            <div>
+              {depositBalance.balance} {depositBalance.token}
+            </div>
           </div>
-          <div>
-            {depositBalance.balance} {depositBalance.token}
+          <div css={row}>
+            <div>
+              <FormattedMessage id="swap.swap-src-amount" />
+            </div>
+            <div>
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  amount: (
+                    <FormattedNumber value={Number(swapSrc.amount)} maximumFractionDigits={8} />
+                  ),
+                  token: swapSrc.token,
+                }}
+              />
+            </div>
+          </div>
+          <div css={row}>
+            <div>
+              <FormattedMessage id="swap.min-receiving-amount" />
+            </div>
+            <div>
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  amount: (
+                    <FormattedNumber value={Number(minAmount.amount)} maximumFractionDigits={8} />
+                  ),
+                  token: minAmount.token,
+                }}
+              />
+            </div>
           </div>
         </div>
-        <div css={row}>
-          <div>
-            <FormattedMessage id="swap.swap-src-amount" />
-          </div>
-          <div>
-            <FormattedMessage
-              id="token-amount"
-              values={{
-                amount: (
-                  <FormattedNumber value={Number(swapSrc.amount)} maximumFractionDigits={8} />
-                ),
-                token: swapSrc.token,
-              }}
-            />
-          </div>
-        </div>
-        <div css={row}>
-          <div>
-            <FormattedMessage id="swap.min-receiving-amount" />
-          </div>
-          <div>
-            <FormattedMessage
-              id="token-amount"
-              values={{
-                amount: (
-                  <FormattedNumber value={Number(minAmount.amount)} maximumFractionDigits={8} />
-                ),
-                token: minAmount.token,
-              }}
-            />
-          </div>
-        </div>
+        <SkypoolsSlippage slippage={slippage} setSlippage={setSlippage} />
       </div>
     </div>
   );
