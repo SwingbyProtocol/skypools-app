@@ -24,10 +24,8 @@ export const useSkybridgeSwap = (skybridgeId: string) => {
     setStatus(result.data.transaction.status);
     setWbtcSrcAmount(result.data.transaction.receivingAmount);
 
-    if (status === 'COMPLETED') {
-      result.stopPolling();
-    }
-  }, [result, status]);
+    return () => result.stopPolling();
+  }, [result]);
 
   return useMemo(() => {
     return {
