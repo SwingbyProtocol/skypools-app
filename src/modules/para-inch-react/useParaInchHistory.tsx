@@ -34,8 +34,8 @@ export const useParaInchHistory = () => {
   }, [getSwaps, network, address]);
 
   useEffect(() => {
-    if (!address || !result) return;
-    result.startPolling && result.startPolling(30000);
+    if (!address || !result || !result.startPolling) return;
+    result.startPolling(30000);
   }, [address, result]);
 
   return result;
