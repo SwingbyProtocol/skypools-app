@@ -1,16 +1,13 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useSkybridgeSwapInfoLazyQuery } from '../../generated/skybridge-graphql';
 
 export const useSkybridgeSwap = (skybridgeId: string) => {
   const [wbtcSrcAmount, setWbtcSrcAmount] = useState<string>('0');
   const [status, setStatus] = useState<string>('WAITING');
-  const [getSwaps, result] = useSkybridgeSwapInfoLazyQuery({
-    pollInterval: 5000,
-    onCompleted: () => console.log('check'),
-  });
+  const [getSwaps, result] = useSkybridgeSwapInfoLazyQuery();
 
-  const getSwap = useCallback(() => {
+  useEffect(() => {
     if (!skybridgeId) return;
 
     getSwaps({
@@ -21,21 +18,16 @@ export const useSkybridgeSwap = (skybridgeId: string) => {
   }, [getSwaps, skybridgeId]);
 
   useEffect(() => {
-    getSwap();
-    // const interval = setInterval(() => {
-    //   getSwap();
-    // }, 120000);
-
-    // return () => clearInterval(interval);
-  }, [getSwap]);
-
-  useEffect(() => {
     if (!result.data) return;
 
-    console.log('result.data.transaction.status', result.data.transaction.status);
+    result.startPolling(60000);
     setStatus(result.data.transaction.status);
     setWbtcSrcAmount(result.data.transaction.receivingAmount);
-  }, [result]);
+
+    if (status === 'COMPLETED') {
+      result.stopPolling();
+    }
+  }, [result, status]);
 
   return useMemo(() => {
     return {
