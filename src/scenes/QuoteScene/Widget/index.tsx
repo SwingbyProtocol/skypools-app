@@ -41,6 +41,7 @@ export const Widget = () => {
   const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
     useParaInchCreateSwap();
   const { address } = useOnboard();
+  console.log('swapQuote', swapQuote);
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
