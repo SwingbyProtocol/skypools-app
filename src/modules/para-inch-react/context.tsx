@@ -66,7 +66,9 @@ export const ParaInchTokenProvider = ({
 
   useEffect(() => {
     const availableNetwork = ['ROPSTEN'];
-    if (address && !availableNetwork.includes(valueProp.network)) {
+    const isSkypools = fromToken?.symbol === 'BTC' || toToken?.symbol === 'BTC';
+
+    if (address && isSkypools && !availableNetwork.includes(valueProp.network)) {
       setErrorMsg('Currently, Skypools supports Ropsten testnet only');
       return;
     }
@@ -77,7 +79,7 @@ export const ParaInchTokenProvider = ({
     }
 
     setErrorMsg('');
-  }, [quoteError, address, valueProp.network]);
+  }, [quoteError, address, valueProp.network, fromToken, toToken]);
 
   const setFromToken = useCallback(
     (newValue: string) => {

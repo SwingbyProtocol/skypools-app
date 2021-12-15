@@ -4,6 +4,7 @@ import Web3 from 'web3';
 
 import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
+import { isFakeBtcToken } from '../../para-inch';
 import { prisma } from '../../server__env';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 
@@ -42,15 +43,20 @@ export const getParaSwapQuote = async ({
 
   const paraSwap = new ParaSwap(getNetworkId(network));
 
-  const option =
-    network === 'ROPSTEN'
-      ? {
-          includeContractMethods: [ContractMethod.simpleSwap],
-          maxImpact: 100,
-        }
-      : {
-          includeContractMethods: [ContractMethod.simpleSwap],
-        };
+  const isFromBtc = isFakeBtcToken(srcTokenAddress);
+  const isToBtc = isFakeBtcToken(destTokenAddress);
+  const isParaSwap = !isToBtc && !isFromBtc;
+
+  const option = isParaSwap
+    ? undefined
+    : network === 'ROPSTEN'
+    ? {
+        includeContractMethods: [ContractMethod.simpleSwap],
+        maxImpact: 100,
+      }
+    : {
+        includeContractMethods: [ContractMethod.simpleSwap],
+      };
 
   const result = await paraSwap.getRate(
     srcTokenAddress,
