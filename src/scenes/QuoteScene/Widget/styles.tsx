@@ -92,7 +92,6 @@ export const direction = css`
   align-items: center;
   background: hsl(var(--sp-color-input-bg));
   cursor: pointer;
-  padding-inline-start: ${rem(size.box / 2)};
   width: ${rem(size.city)};
   height: ${rem(size.city)};
   border-radius: 100%;
