@@ -56,7 +56,6 @@ const NUMBER_FORMAT_FULL: Partial<React.ComponentPropsWithoutRef<typeof Formatte
 const Context = createContext<ParaInchHistoryItem[]>([]);
 
 const Row = ({ style, index }: ListChildComponentProps) => {
-  const { network } = useParaInchForm();
   const { formatNumber } = useIntl();
   const data = useContext(Context);
 
@@ -129,7 +128,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
         {item.skypoolsTransactionHashes.map((it) => (
           <a
             key={it}
-            href={buildLinkToTransaction({ network, transactionHash: it })}
+            href={buildLinkToTransaction({ network: item.network, transactionHash: it })}
             target="_blank"
             rel="noopener noreferrer"
           >
