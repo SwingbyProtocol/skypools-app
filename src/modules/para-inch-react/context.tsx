@@ -65,12 +65,19 @@ export const ParaInchTokenProvider = ({
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   useEffect(() => {
+    const availableNetwork = ['ROPSTEN'];
+    if (address && !availableNetwork.includes(valueProp.network)) {
+      setErrorMsg('Currently, Skypools supports Ropsten testnet only');
+      return;
+    }
+
     if (quoteError) {
       setErrorMsg(formatQuoteError(quoteError.message));
-    } else {
-      setErrorMsg('');
+      return;
     }
-  }, [quoteError]);
+
+    setErrorMsg('');
+  }, [quoteError, address, valueProp.network]);
 
   const setFromToken = useCallback(
     (newValue: string) => {
