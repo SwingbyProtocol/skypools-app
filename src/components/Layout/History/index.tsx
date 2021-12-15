@@ -1,41 +1,37 @@
-import { useMeasure } from 'react-use';
-import { VariableSizeList as List, ListChildComponentProps } from 'react-window';
-import { FormattedDate, FormattedNumber, useIntl, FormattedMessage } from 'react-intl';
-import { useRef, useEffect, useCallback, useState, createContext, useContext } from 'react';
-import { stripUnit } from 'polished';
 import { Big } from 'big.js';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
+import { stripUnit } from 'polished';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { FormattedDate, FormattedMessage, FormattedNumber, useIntl } from 'react-intl';
+import { useMeasure } from 'react-use';
+import { ListChildComponentProps, VariableSizeList as List } from 'react-window';
 
-import { size } from '../../../modules/styles';
-import {
-  ParaInchHistoryItem,
-  useParaInchForm,
-  useParaInchHistory,
-} from '../../../modules/para-inch-react';
-import { shortenAddress } from '../../../modules/short-address';
-import { buildLinkToTransaction } from '../../../modules/web3';
 import { Coin } from '../../../components/Coin';
 import { SwapStatus } from '../../../generated/skypools-graphql';
 import { isFakeBtcToken } from '../../../modules/para-inch';
+import { ParaInchHistoryItem, useParaInchHistory } from '../../../modules/para-inch-react';
+import { shortenAddress } from '../../../modules/short-address';
+import { size } from '../../../modules/styles';
+import { buildLinkToTransaction } from '../../../modules/web3';
 
 import {
   amountIn,
   amountOut,
+  coinIn,
+  coinOut,
   container,
+  firstRow,
   hash,
   icon,
-  rowContainer,
-  time,
-  status,
-  firstRow,
-  lastRow,
-  sizeCalc,
   iconCompleted,
   iconFailed,
   iconPending,
-  coinIn,
-  coinOut,
+  lastRow,
+  rowContainer,
+  sizeCalc,
+  status,
+  time,
 } from './styles';
 import { ReactComponent as SwapIcon } from './swap.svg';
 

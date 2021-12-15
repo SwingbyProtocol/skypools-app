@@ -4,7 +4,7 @@ import Web3 from 'web3';
 
 import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
-import { isFakeBtcToken } from '../../para-inch';
+import { getWrappedBtcAddress } from '../../para-inch';
 import { prisma } from '../../server__env';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 
@@ -43,8 +43,9 @@ export const getParaSwapQuote = async ({
 
   const paraSwap = new ParaSwap(getNetworkId(network));
 
-  const isFromBtc = isFakeBtcToken(srcTokenAddress);
-  const isToBtc = isFakeBtcToken(destTokenAddress);
+  const wbtcAddress = getWrappedBtcAddress({ network });
+  const isFromBtc = srcTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
+  const isToBtc = destTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
   const isParaSwap = !isToBtc && !isFromBtc;
 
   const option = isParaSwap
