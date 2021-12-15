@@ -10,6 +10,7 @@ export const container = css`
   grid-template-areas:
     'from-label'
     'from-input'
+    'reverse'
     'to-label'
     'to-input'
     'swap'
@@ -75,4 +76,24 @@ export const error = css`
   margin-block-start: ${rem(size.drawer)};
   font-size: ${rem(size.room)};
   color: hsl(var(--sp-color-danger-normal));
+`;
+
+export const reverse = css`
+  grid-area: reverse;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  margin-block-start: ${rem(-size.box)};
+`;
+
+export const direction = css`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: hsl(var(--sp-color-input-bg));
+  cursor: pointer;
+  width: ${rem(size.city)};
+  height: ${rem(size.city)};
+  border-radius: 100%;
+  font-size: ${rem(size.house)};
 `;
