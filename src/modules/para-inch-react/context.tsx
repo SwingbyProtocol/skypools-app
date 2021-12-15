@@ -18,6 +18,7 @@ export type ParaInchContextValue = {
   setFromToken: (address: string) => void;
   setNetwork: (amount: Network) => void;
   setToToken: (address: string) => void;
+  setToken: ({ from, to }: { from: string; to: string }) => void;
   unlinkSkybridgeSwap: () => void;
   tokens: ParaInchToken[];
   toToken: ParaInchToken | null;
@@ -34,6 +35,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
   setAmount: () => {},
   setSlippage: () => {},
   setFromToken: () => {},
+  setToken: () => {},
   setNetwork: () => {},
   setToToken: () => {},
   unlinkSkybridgeSwap: () => {},
@@ -95,6 +97,36 @@ export const ParaInchTokenProvider = ({
       );
     },
     [valueProp.tokens, push, toToken, valueProp.network, skybridgeSwap, fromToken?.address],
+  );
+
+  const setToken = useCallback(
+    ({ from, to }: { from: string; to: string }) => {
+      const fromAddress = from.toLowerCase();
+      const toAddress = to.toLowerCase();
+      const fromToken = valueProp.tokens.find(
+        ({ address }) => address.toLowerCase() === fromAddress,
+      );
+      if (!fromToken) {
+        throw new Error(`Could not find token "${fromAddress}"`);
+      }
+      const toToken = valueProp.tokens.find(({ address }) => address.toLowerCase() === toAddress);
+      if (!toToken) {
+        throw new Error(`Could not find token "${toAddress}"`);
+      }
+      setFromTokenState(toToken);
+      setToTokenState(fromToken);
+      setAmount(null);
+
+      push(
+        stringifyUrl({
+          url: `/quote/${valueProp.network.toLowerCase()}/${toToken?.address}/${fromToken.address}`,
+          query: { skybridgeSwap },
+        }),
+        '',
+        { shallow: true },
+      );
+    },
+    [push, skybridgeSwap, valueProp.network, valueProp.tokens],
   );
 
   const setToToken = useCallback(
@@ -161,7 +193,7 @@ export const ParaInchTokenProvider = ({
         network: valueProp.network,
         srcTokenAmount: (() => {
           try {
-            if (!amount) return '1';
+            if (!amount || amount === '0') return '1';
             return new Big(amount).toFixed();
           } catch (e) {
             return '1';
@@ -183,6 +215,7 @@ export const ParaInchTokenProvider = ({
       toToken,
       setFromToken,
       setToToken,
+      setToken,
       setNetwork,
       errorMsg,
       isAmountValid: ((): boolean => {
@@ -209,6 +242,7 @@ export const ParaInchTokenProvider = ({
       swapQuoteData,
       unlinkSkybridgeSwap,
       errorMsg,
+      setToken,
     ],
   );
 
