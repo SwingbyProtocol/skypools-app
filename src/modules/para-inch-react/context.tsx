@@ -67,12 +67,21 @@ export const ParaInchTokenProvider = ({
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   useEffect(() => {
+    const availableNetwork = ['ROPSTEN'];
+    const isSkypools = fromToken?.symbol === 'BTC' || toToken?.symbol === 'BTC';
+
+    if (address && isSkypools && !availableNetwork.includes(valueProp.network)) {
+      setErrorMsg('Currently, Skypools supports Ropsten testnet only');
+      return;
+    }
+
     if (quoteError) {
       setErrorMsg(formatQuoteError(quoteError.message));
-    } else {
-      setErrorMsg('');
+      return;
     }
-  }, [quoteError]);
+
+    setErrorMsg('');
+  }, [quoteError, address, valueProp.network, fromToken, toToken]);
 
   const setFromToken = useCallback(
     (newValue: string) => {
