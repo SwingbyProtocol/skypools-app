@@ -1,9 +1,9 @@
-import Image from 'next/image';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import { useSkypoolsFloats } from '../../modules/para-inch-react';
 
-import { floatsColumn, floatsRow, floatsTitle, floatsContainer } from './styles';
+import { FloatsItem } from './FloatsItem';
+import { floatsContainer, floatsRow, floatsTitle } from './styles';
 
 export const Floats = () => {
   const btcImage = 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579';
@@ -12,13 +12,6 @@ export const Floats = () => {
 
   const { floats } = useSkypoolsFloats();
 
-  const floatItem = (image: string, amount: string) => (
-    <div css={floatsColumn}>
-      <Image src={image} alt="btc" layout="fixed" width={26} height={26} />
-      <FormattedNumber value={Number(amount)} maximumFractionDigits={3} />
-    </div>
-  );
-
   return (
     floats && (
       <div css={floatsContainer}>
@@ -26,8 +19,8 @@ export const Floats = () => {
           <FormattedMessage id="floats" />
         </div>
         <div css={floatsRow}>
-          {floatItem(btcImage, floats.btc)}
-          {floatItem(wbtcImage, floats.wrappedBtc)}
+          <FloatsItem image={btcImage} amount={floats.btc} />
+          <FloatsItem image={wbtcImage} amount={floats.wrappedBtc} />
         </div>
       </div>
     )

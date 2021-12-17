@@ -33,5 +33,11 @@ export const useParaInchHistory = () => {
     });
   }, [getSwaps, network, address]);
 
+  useEffect(() => {
+    if (!result.data) return;
+    result.startPolling(30000);
+    return () => result.stopPolling();
+  }, [result]);
+
   return result;
 };

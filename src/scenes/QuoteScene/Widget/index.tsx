@@ -20,6 +20,8 @@ import {
   infoValue,
   infoValueHighlight,
   error,
+  reverse,
+  direction,
 } from './styles';
 
 export const Widget = () => {
@@ -29,6 +31,7 @@ export const Widget = () => {
     toToken,
     setFromToken,
     setToToken,
+    setToken,
     amount,
     setAmount,
     isAmountValid,
@@ -101,7 +104,20 @@ export const Widget = () => {
       />
 
       <div css={[label, toLabel]}>
-        <FormattedMessage id="widget.to" />
+        <div css={reverse}>
+          <div
+            css={direction}
+            onClick={() => {
+              if (!to.coin || !from.coin) return;
+              setToken({ from: from.coin?.address, to: to.coin?.address });
+            }}
+          >
+            ↕
+          </div>
+        </div>
+        <div>
+          <FormattedMessage id="widget.to" />
+        </div>
       </div>
       <CoinAmountInput
         css={toInput}
@@ -174,7 +190,7 @@ export const Widget = () => {
                 {fromToken?.symbol}
               </td>
             </tr>
-            {!!swapQuote.bestRoute.estimatedGasUsd && (
+            {!!swapQuote.bestRoute.estimatedGasUsd && !isSkypools && (
               <tr>
                 <td css={infoLabel}>
                   <FormattedMessage id="widget.details.gas" />

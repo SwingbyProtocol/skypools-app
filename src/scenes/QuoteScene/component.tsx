@@ -82,6 +82,10 @@ export const QuoteScene = () => {
     };
   }, [wallet, setAmount, address, fromToken]);
 
+  const isFromBtc = fromToken?.symbol === 'BTC';
+  const isToBtc = toToken?.symbol === 'BTC';
+  const isParaSwap = !isToBtc && !isFromBtc;
+
   return (
     <Layout
       isSkybridgeWidget={false}
@@ -101,7 +105,7 @@ export const QuoteScene = () => {
       widgetContent={
         <>
           <Widget />
-          <Slippage />
+          {isParaSwap && <Slippage />}
         </>
       }
     />

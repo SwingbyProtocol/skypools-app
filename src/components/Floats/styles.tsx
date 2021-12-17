@@ -24,10 +24,3 @@ export const floatsRow = css`
   column-gap: ${rem(size.street)};
   align-items: center;
 `;
-
-export const floatsColumn = css`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: ${rem(size.box)};
-`;

@@ -15,8 +15,7 @@ import { buildSkypoolsContract, getERC20Symbol, getSkypoolsContractAddress } fro
 
 import { simpleSwapPriceRoute, txDataSpSimpleSwap } from './paraSkypools';
 import { useSkybridgeSwap } from './useSkybridgeSwap';
-
-import { useSkypoolsFloats } from '.';
+import { useSkypoolsFloats } from './useSkypoolsFloats';
 
 export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
   const { address, wallet, network: onboardNetwork } = useOnboard();

@@ -7,7 +7,7 @@ import { Erc20Deposit } from './SkypoolsSwap';
 export const DepositScene = () => {
   const widget = (
     <div>
-      <div>Deposit</div>
+      <div>From</div>
       <Erc20Deposit />
     </div>
   );
