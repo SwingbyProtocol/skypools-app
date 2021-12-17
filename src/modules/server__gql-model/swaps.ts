@@ -261,7 +261,7 @@ export const SwapsQuery = extendType({
               };
 
         const orderBy: OrderBy =
-          type === 'after' ? [{ createdAt: 'asc' }] : [{ createdAt: 'desc' }];
+          type === 'after' ? [{ createdAt: 'desc' }] : [{ createdAt: 'asc' }];
 
         const edges = (
           await ctx.prisma.swap.findMany({

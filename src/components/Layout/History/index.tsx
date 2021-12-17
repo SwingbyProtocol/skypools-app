@@ -84,8 +84,9 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       <div css={time}>
         <FormattedDate
           value={DateTime.fromISO(item.createdAt).toJSDate()}
-          dateStyle="short"
-          timeStyle="short"
+          year="numeric"
+          month="short"
+          day="2-digit"
           hour12={false}
         />
       </div>
