@@ -76,6 +76,11 @@ export const error = css`
   margin-block-start: ${rem(size.drawer)};
   font-size: ${rem(size.room)};
   color: hsl(var(--sp-color-danger-normal));
+  overflow-wrap: break-word;
+  max-width: ${rem(250)};
+  @media (min-width: ${rem(1440)}) {
+    max-width: ${rem(350)};
+  }
 `;
 
 export const reverse = css`
