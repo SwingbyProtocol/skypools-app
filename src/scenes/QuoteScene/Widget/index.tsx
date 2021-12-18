@@ -41,6 +41,8 @@ export const Widget = () => {
   const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
     useParaInchCreateSwap();
   const { address } = useOnboard();
+  const isSwapDisabled =
+    isApprovalNeeded === null || isLoading || !isQuote || !address || errorMsg !== '';
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -136,7 +138,7 @@ export const Widget = () => {
           variant="primary"
           size="state"
           css={swapButton}
-          disabled={isApprovalNeeded === null || isLoading || !isQuote || !address}
+          disabled={isSwapDisabled}
           onClick={createSwap ?? undefined}
         >
           <FormattedMessage

@@ -7,6 +7,7 @@ import { formatQuoteError, ParaInchToken } from '../para-inch';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
 import { SwapQuoteQueryResult, useSwapQuoteLazyQuery } from '../../generated/skypools-graphql';
+import { minimumReceiveBtcAmount } from '../env';
 
 export type ParaInchContextValue = {
   amount: string | null;
@@ -82,6 +83,16 @@ export const ParaInchTokenProvider = ({
 
     setErrorMsg('');
   }, [quoteError, address, valueProp.network, fromToken, toToken]);
+
+  useEffect(() => {
+    if (!swapQuoteData || toToken?.symbol !== 'BTC') return;
+
+    if (minimumReceiveBtcAmount > Number(swapQuoteData.swapQuote.bestRoute.destTokenAmount)) {
+      setErrorMsg(`Minimum receiving amount is ${minimumReceiveBtcAmount}BTC`);
+    } else {
+      setErrorMsg('');
+    }
+  }, [swapQuoteData, toToken]);
 
   const setFromToken = useCallback(
     (newValue: string) => {
