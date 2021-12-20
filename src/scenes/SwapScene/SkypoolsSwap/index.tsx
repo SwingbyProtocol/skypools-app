@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
-import { validate } from 'bitcoin-address-validation';
+import { Network, validate } from 'bitcoin-address-validation';
 
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
 import { useSkypools, useSkypoolsDeposit } from '../../../modules/para-inch-react';
 import { SkypoolsSlippage } from '../SkypoolsSlippage';
+import { useOnboard } from '../../../modules/onboard';
 
 import {
   address,
@@ -23,6 +24,7 @@ import {
 
 export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId: string }) => {
   const [slippage, setSlippage] = useState<string>('1');
+  const { network } = useOnboard();
   const {
     handleClaim,
     minAmount,
@@ -41,6 +43,8 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
 
   const isDeposited = Number(depositBalance.balance) >= Number(swapSrc.amount);
+
+  const btcNetwork = network === 'ROPSTEN' ? Network.testnet : Network.mainnet;
 
   const spProgress =
     status === 'COMPLETED' ? 'completed' : isDeposited ? 'ready-to-claim' : 'confirming-deposit-tx';
@@ -63,7 +67,7 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
             value={btcAddress ?? ''}
             onChange={(evt) => {
               setBtcAddress(evt.target.value);
-              if (validate(evt.target.value)) {
+              if (validate(evt.target.value, btcNetwork)) {
                 setIsValidAddress(true);
               } else {
                 setIsValidAddress(false);
@@ -114,7 +118,18 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
               <FormattedMessage id="swap.total-deposited-balance" />
             </div>
             <div>
-              {depositBalance.balance} {depositBalance.token}
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  amount: (
+                    <FormattedNumber
+                      value={Number(depositBalance.balance)}
+                      maximumFractionDigits={8}
+                    />
+                  ),
+                  token: depositBalance.token,
+                }}
+              />
             </div>
           </div>
           <div css={row}>

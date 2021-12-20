@@ -6,3 +6,4 @@ export const graphqlEndpoint = '/api/v1/graphql';
 
 export const blocknativeApiKey = process.env.NEXT_PUBLIC_BLOCKNATIVE_KEY || undefined;
 export const infuraApiKey = process.env.NEXT_PUBLIC_INFURA_KEY || undefined;
+export const minimumReceiveBtcAmount = 0.001;
