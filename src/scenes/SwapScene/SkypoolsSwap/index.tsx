@@ -118,7 +118,18 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
               <FormattedMessage id="swap.total-deposited-balance" />
             </div>
             <div>
-              {depositBalance.balance} {depositBalance.token}
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  amount: (
+                    <FormattedNumber
+                      value={Number(depositBalance.balance)}
+                      maximumFractionDigits={8}
+                    />
+                  ),
+                  token: depositBalance.token,
+                }}
+              />
             </div>
           </div>
           <div css={row}>
