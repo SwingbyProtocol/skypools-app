@@ -65,7 +65,7 @@ module.exports = {
       {
         source: '/',
         destination:
-          '/quote/ethereum/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+          '/quote/ethereum/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c',
         permanent: false,
       },
     ];
