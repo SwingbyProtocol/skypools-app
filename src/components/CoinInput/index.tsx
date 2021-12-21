@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import Select, { createFilter, MenuListComponentProps, StylesConfig, Theme } from 'react-select';
 import { FixedSizeList as List } from 'react-window';
 
+import { getNetwork } from '../../modules/networks';
 import { isFakeBtcToken, isFakeNativeToken } from '../../modules/para-inch';
 import { size } from '../../modules/styles';
 import { Coin } from '../Coin';
@@ -26,11 +27,8 @@ export interface CoinInfo {
   symbol: string;
 }
 
-// type CoinInfo = Pick<ParaInchToken, 'symbol' | 'address' | 'img' | 'network' | 'decimals'>;
 export type CoinAmountInputValue = {
   coin: CoinInfo | null;
-  // amount: string | null;
-  // amountInfo?: ReactNode;
 };
 
 type OptionType = { value: CoinInfo; label: JSX.Element };
@@ -167,8 +165,9 @@ Props) => {
                       values={{
                         chain: (
                           <FormattedMessage
-                            // id={`network.${coin.network === Network.ETHEREUM ? 'full' : 'short'}.${
-                            id={`network.${coin.network === 1 ? 'full' : 'short'}.${coin.network}`}
+                            id={`network.${coin.network === 1 ? 'full' : 'short'}.${getNetwork(
+                              coin.network,
+                            )}`}
                           />
                         ),
                       }}
@@ -192,6 +191,14 @@ Props) => {
             return 1;
           }
 
+          if (isFakeBtcToken(a.value.address)) {
+            return -1;
+          }
+
+          if (isFakeBtcToken(b.value.address)) {
+            return 1;
+          }
+
           return a.value.symbol.localeCompare(b.value.symbol);
         }),
     [availableCoins],
@@ -204,7 +211,6 @@ Props) => {
       ) ?? null,
     [coins, value.coin],
   );
-  console.log('selectValue', selectValue);
 
   return (
     <div css={container} className={className}>
@@ -217,34 +223,13 @@ Props) => {
         options={coins}
         onChange={(coin) =>
           onChange?.({
-            // amount: value.amount,
             coin: coin?.value ?? null,
-            // amountInfo: value.amountInfo,
           })
         }
         filterOption={createFilter({
           stringify: (option: OptionType) => `${option.value.symbol} ${option.value.address}`,
         })}
-        // isDisabled={disabled === 'all'}
       />
-
-      {/* <div css={textInputContainer}>
-        <TextInput
-          css={textInput}
-          size="country"
-          value={value?.amount ?? ''}
-          onChange={(evt) =>
-            onChange?.({
-              coin: value.coin,
-              amount: evt.target.value ?? null,
-              amountInfo: value.amountInfo,
-            })
-          }
-          disabled={disabled === 'all' || disabled === 'amount'}
-        />
-
-        {!!value.amountInfo && <span css={info}>{value.amountInfo}</span>}
-      </div> */}
     </div>
   );
 };

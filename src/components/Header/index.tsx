@@ -18,7 +18,7 @@ export const Header = ({ className }: Props) => {
   // Todo: change to /trade
   const tradeUrl = `quote/${
     network ? network.toLowerCase() : 'ethereum'
-  }/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`;
+  }/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c`;
 
   return (
     <header css={header} className={className}>
