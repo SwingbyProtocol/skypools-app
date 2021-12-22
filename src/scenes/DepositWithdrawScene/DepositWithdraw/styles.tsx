@@ -3,12 +3,14 @@ import { rem } from 'polished';
 
 import { size } from '../../../modules/styles';
 
-export const container = css`
-  display: grid;
-  grid-template-columns: 1fr;
+export const widgetsContainer = css`
+  display: flex;
   justify-items: center;
-  row-gap: ${rem(size.house)};
-  grid-template-rows: repeat(2, min-content);
+`;
+
+export const container = css`
+  display: flex;
+  flex-direction: column;
 `;
 
 export const fromAmount = css`
@@ -30,4 +32,24 @@ export const rowDepositBalance = css`
 export const buttonContainer = css`
   display: flex;
   justify-content: center;
+`;
+
+export const historyContainer = css`
+  grid-area: history;
+  width: ${rem(250)};
+  justify-self: center;
+  margin-block-start: ${rem(size.house)};
+  margin-block-end: ${rem(-size.town)};
+  margin-block-end: calc(-1 * var(--sp-app-inset-bottom));
+  @media (min-width: ${rem(768)}) {
+    width: ${rem(340)};
+  }
+`;
+
+export const historyBox = css`
+  height: ${rem(170)};
+`;
+
+export const historyCard = css`
+  height: ${rem(150)};
 `;

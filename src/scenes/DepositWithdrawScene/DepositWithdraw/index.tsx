@@ -5,14 +5,26 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Button } from '../../../components/Button';
 import { CoinAmountInputValue, CoinInfo, CoinInput } from '../../../components/CoinInput';
 import { ConnectWalletButton } from '../../../components/ConnectWalletButton';
+import { BtcDeposit } from '../BtcDeposit';
 import { TextInput } from '../../../components/TextInput';
+import { useBtcDeposits } from '../../../modules/localstorage';
 import { useOnboard } from '../../../modules/onboard';
-import { useDepositWithdraw } from '../../../modules/para-inch-react';
+import { useDepositWithdraw, useTokens } from '../../../modules/para-inch-react';
 
-import { buttonContainer, container, rowDepositBalance, fromAmount, label } from './styles';
+import {
+  buttonContainer,
+  container,
+  rowDepositBalance,
+  fromAmount,
+  label,
+  historyBox,
+  historyCard,
+  historyContainer,
+} from './styles';
 
-export const DepositWithdraw = ({ tokens }: { tokens: CoinInfo[] }) => {
-  const [fromToken, setFromToken] = useState<CoinInfo | null>(tokens[0] ?? null);
+export const DepositWithdraw = () => {
+  const { tokens } = useTokens();
+  const [fromToken, setFromToken] = useState<CoinInfo>(tokens[0]);
   const { address } = useOnboard();
   const {
     handleWithdraw,
@@ -24,7 +36,11 @@ export const DepositWithdraw = ({ tokens }: { tokens: CoinInfo[] }) => {
     isApprovalNeeded,
   } = useDepositWithdraw(fromToken);
   const { pathname } = useRouter();
-  const isDeposit = pathname === '/deposit';
+  const isDeposit = pathname.includes('/deposit');
+  const { depositTxs } = useBtcDeposits();
+
+  const { query } = useRouter();
+  const skybridgeId = query.skybridgeId;
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -42,7 +58,9 @@ export const DepositWithdraw = ({ tokens }: { tokens: CoinInfo[] }) => {
       <div>
         <div css={fromAmount}>
           <div>
-            <div css={label}>From</div>
+            <div css={label}>
+              <FormattedMessage id="widget.from" />
+            </div>
             <CoinInput
               availableCoins={tokens}
               value={from}
@@ -55,7 +73,6 @@ export const DepositWithdraw = ({ tokens }: { tokens: CoinInfo[] }) => {
           </div>
           <div>
             <div css={label}>
-              {' '}
               <FormattedMessage id="widget.amount" />
             </div>
             <TextInput
@@ -113,6 +130,13 @@ export const DepositWithdraw = ({ tokens }: { tokens: CoinInfo[] }) => {
           )}
         </div>
       </div>
+      {(fromToken.symbol === 'BTC' || skybridgeId) && depositTxs.length > 0 && (
+        <div css={historyContainer}>
+          <div css={historyBox}>
+            <BtcDeposit css={historyCard} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

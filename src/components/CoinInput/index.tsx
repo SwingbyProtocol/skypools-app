@@ -38,7 +38,6 @@ type Props = {
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
-  // disabled?: 'amount' | 'all';
 };
 
 const theme = (theme: Theme): Theme => ({
@@ -140,14 +139,7 @@ const MenuList = ({
   );
 };
 
-export const CoinInput = ({
-  availableCoins,
-  className,
-  value,
-  onChange,
-}: // value,
-// disabled,
-Props) => {
+export const CoinInput = ({ availableCoins, className, value, onChange }: Props) => {
   const coins = useMemo(
     () =>
       availableCoins

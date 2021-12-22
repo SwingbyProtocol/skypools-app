@@ -2,24 +2,24 @@ import { Card } from '../Card';
 import { Header } from '../Header';
 import { TradingView } from '../TradingView';
 
-import { History } from './History';
 import {
-  chartContainer,
-  headerContainer,
-  historyCard,
-  historyContainer,
-  priceAndPathCard,
-  swapScene,
-  balanceScene,
-  widgetCard,
-  skybridgeWidgetCard,
   balanceCard,
+  balanceScene,
+  chartContainer,
+  depositWithSkybridgeScene,
+  headerContainer,
+  priceAndPathCard,
+  skybridgeCard,
+  skybridgeWidgetCard,
+  swapScene,
+  widgetCard,
 } from './styles';
 
 type Props = {
   priceHistory?: React.ComponentPropsWithoutRef<typeof TradingView>['data'] | null | undefined;
   afterPriceChart?: React.ReactNode;
   widgetContent?: React.ReactNode;
+  skybridgeWidgetContent?: React.ReactNode | null;
   isSkybridgeWidget: boolean;
   isAccountBalance?: boolean;
 };
@@ -28,11 +28,15 @@ export const Layout = ({
   priceHistory,
   afterPriceChart = null,
   widgetContent = null,
+  skybridgeWidgetContent = null,
   isSkybridgeWidget = false,
   isAccountBalance = false,
 }: Props) => {
+  const depositWithdrawScene = skybridgeWidgetContent
+    ? [depositWithSkybridgeScene, balanceScene]
+    : balanceScene;
   return (
-    <div css={isAccountBalance ? balanceScene : swapScene}>
+    <div css={isAccountBalance ? depositWithdrawScene : swapScene}>
       <Header css={headerContainer} />
 
       {!isAccountBalance && (
@@ -42,7 +46,6 @@ export const Layout = ({
               <TradingView data={priceHistory} />
             </div>
           )}
-
           {afterPriceChart}
         </Card>
       )}
@@ -59,9 +62,9 @@ export const Layout = ({
         {widgetContent}
       </Card>
 
-      <div css={historyContainer}>
-        <History css={historyCard} />
-      </div>
+      {skybridgeWidgetContent && (
+        <div css={[widgetCard, skybridgeCard]}>{skybridgeWidgetContent}</div>
+      )}
     </div>
   );
 };

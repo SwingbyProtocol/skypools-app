@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { Layout } from '../../components/Layout';
+import { SkybridgeWidget } from '../../components/SkybridgeWidget';
 import {
   SwapDocument,
   usePriceHistoryLazyQuery,
@@ -8,7 +9,6 @@ import {
 } from '../../generated/skypools-graphql';
 import { useSkybridgeSwap } from '../../modules/para-inch-react';
 
-import { SkybridgeWidget } from './SkybridgeWidget';
 import { SkypoolsSwap } from './SkypoolsSwap';
 
 export const SwapScene = ({ swapId }: { swapId: string }) => {

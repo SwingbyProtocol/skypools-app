@@ -32,6 +32,8 @@
   "widget.skybridge.completed": "Linked to Skybridge swap {swap}.",
   "widget.slippage": "Slippage Tolerance",
   "widget.deposit-balance": "Deposited Balance",
+  "widget.loading": "Loading",
+  "history.status.WAITING": "Waiting",
   "history.status.CONFIRMED": "Confirmed",
   "history.status.SENT": "Sent",
   "history.status.FAILED": "Failed",

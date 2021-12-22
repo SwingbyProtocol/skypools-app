@@ -9,8 +9,18 @@ import { FAKE_BTC_ADDRESS } from '../para-inch';
 
 import { isParaSwapApiError } from './isParaSwapApiError';
 
+const initialState = [
+  {
+    address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+    decimals: 18,
+    img: 'https://img.paraswap.network/ETH.png',
+    network: 1,
+    symbol: 'ETH',
+  },
+];
+
 export const useTokens = () => {
-  const [tokens, setTokens] = useState<CoinInfo[] | null>(null);
+  const [tokens, setTokens] = useState<CoinInfo[]>(initialState);
   const { network } = useOnboard();
 
   useEffect(() => {

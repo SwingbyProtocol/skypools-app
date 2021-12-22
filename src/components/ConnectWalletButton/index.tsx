@@ -4,8 +4,8 @@ import { logger } from '../../modules/logger';
 import { useOnboard } from '../../modules/onboard';
 import { Button } from '../Button';
 
-export const ConnectWalletButton = ({ className }: { className?: string }) => {
-  const { address, onboard } = useOnboard();
+export const ConnectWalletButton = () => {
+  const { onboard } = useOnboard();
 
   return (
     <Button
@@ -14,12 +14,16 @@ export const ConnectWalletButton = ({ className }: { className?: string }) => {
       shape="fit"
       onClick={() => {
         try {
-          onboard?.walletSelect();
+          (async () => {
+            if (!onboard) {
+              throw Error('cannot detect onboard instance');
+            }
+            await onboard.walletSelect();
+          })();
         } catch (err) {
           logger.error({ err });
         }
       }}
-      title={address ?? undefined}
     >
       <FormattedMessage id="wallet.connect-wallet" />
     </Button>

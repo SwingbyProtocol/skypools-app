@@ -48,6 +48,20 @@ export const balanceScene = css`
   min-width: 100vw;
 `;
 
+export const depositWithSkybridgeScene = css`
+  @media (min-width: ${rem(1024)}) {
+    display: grid;
+    grid-gap: ${rem(0)};
+    grid-template-columns: 1fr minmax(${rem(320)}, 1fr);
+    grid-template-rows: min-content min-content min-content minmax(${rem(75)}, 1fr);
+    grid-template-areas:
+      'header header'
+      '. .'
+      'deposit skybridge'
+      'deposit skybridge';
+  }
+`;
+
 export const headerContainer = css`
   grid-area: header;
   margin-block: ${rem(-size.town)} 0;
@@ -107,23 +121,29 @@ export const widgetCard = css`
 `;
 
 export const balanceCard = css`
+  grid-area: deposit;
+  width: ${rem(310)};
   margin: auto;
-  max-width: ${rem(400)};
-  min-width: ${rem(375)};
+  margin-block-start: ${rem(size.country)};
+  margin-block-end: ${rem(size.country)};
+  @media (min-width: ${rem(768)}) {
+    width: ${rem(400)};
+  }
+  @media (min-width: ${rem(1024)}) {
+    margin: auto;
+  }
 `;
 
-export const historyContainer = css`
-  grid-area: history;
-  position: relative;
-  margin-block-start: ${rem(-size.town - size.room)};
-  margin-block-end: ${rem(-size.town)};
-  margin-block-end: calc(-1 * var(--sp-app-inset-bottom));
-`;
-
-export const historyCard = css`
-  position: absolute;
-  inline-size: 100%;
-  block-size: 100%;
-  inset-block-start: 0;
-  inset-inline-start: 0;
+export const skybridgeCard = css`
+  grid-area: skybridge;
+  margin: auto;
+  width: ${rem(310)};
+  padding: 0;
+  border-radius: ${rem(size.house)};
+  @media (min-width: ${rem(768)}) {
+    width: ${rem(400)};
+  }
+  @media (prefers-color-scheme: dark) {
+    overflow: hidden;
+  }
 `;

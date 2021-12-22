@@ -1,18 +1,30 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 
 import { Layout } from '../../components/Layout';
-import { useTokens } from '../../modules/para-inch-react';
+import { SkybridgeWidget } from '../../components/SkybridgeWidget';
+import { useOnboard } from '../../modules/onboard';
 
 import { DepositWithdraw } from './DepositWithdraw';
 
 export const DepositWithdrawScene = () => {
-  const { tokens } = useTokens();
-  const widget = tokens ? <DepositWithdraw tokens={tokens} /> : <div>Loading</div>;
+  const { network } = useOnboard();
+  const { query } = useRouter();
+  const skybridgeId = query.skybridgeId;
+
+  const skybridgeWidget = (
+    <SkybridgeWidget
+      src={`https://widget.skybridge.exchange/${
+        network === 'ROPSTEN' ? 'test' : 'production'
+      }/swap/${skybridgeId}`}
+    />
+  );
 
   return (
     <Layout
       priceHistory={null}
-      widgetContent={widget}
+      widgetContent={<DepositWithdraw />}
+      skybridgeWidgetContent={network && (skybridgeId ? skybridgeWidget : null)}
       isSkybridgeWidget={false}
       isAccountBalance={true}
     />

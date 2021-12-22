@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 import { Big } from 'big.js';
+import { buildContext, createSwap } from '@swingby-protocol/sdk';
+import { useRouter } from 'next/router';
 
 import { CoinInfo } from '../../components/CoinInput';
 import { logger } from '../logger';
@@ -15,14 +17,19 @@ import {
   isFakeBtcToken,
   isFakeNativeToken,
 } from '../para-inch';
+import { addPendingDeposits } from '../localstorage';
 
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
-  const { address, wallet, network } = useOnboard();
+  const { address, wallet, network, onboard } = useOnboard();
   const [amount, setAmount] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const { push } = useRouter();
+  // const [skybridgeId, setSkybridgeId] = useState<string>(
+  //   'VynzdRWcgpyrF6xSHsZZ6ZpgHKGJ6MDAhkbLbYOC1A8=',
+  // );
 
   const [depositedBalance, setDepositedBalance] = useState<{ balance: string; token: string }>({
     balance: '',
@@ -81,8 +88,33 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     return () => clearInterval(interval);
   }, [updateDepositedBalance]);
 
+  const walletCheck = useCallback(async () => {
+    if (!onboard) {
+      throw Error('Cannot detect onboard');
+    }
+
+    const result = await onboard?.walletCheck();
+    if (!result) {
+      throw Error('Invalid wallet connection');
+    }
+  }, [onboard]);
+
+  // useEffect(() => {
+  //   const pendingTxs = localStorage.getItem('skypools-pending-txs');
+  //   const txs = pendingTxs ? JSON.parse(pendingTxs) : [];
+  //   const data = {
+  //     time: Math.floor(Date.now() / 1000),
+  //     amount: 0.0099,
+  //     hash: 'VynzdRWcgpyrF6xSHsZZ6ZpgHKGJ6MDAhkbLbYOC1A8=',
+  //   };
+  //   txs.push(data);
+  //   localStorage.setItem('skypools-pending-txs', JSON.stringify(txs));
+  // }, []);
+
   return useMemo(() => {
     return {
+      // skybridgeId,
+      // setSkybridgeId,
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
       approve,
       depositedBalance,
@@ -94,22 +126,35 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
         try {
           setIsLoading(true);
           if (!coinInfo || !wallet || !network || !address) return;
-          // setIsLoading(true);
           if (isFakeBtcToken(coinInfo.address)) {
-            // Todo
-            //   const context = await buildContext({
-            //     mode: network === Network.ROPSTEN ? 'test' : 'production',
-            //   });
-            //   const { hash } = await createSkybridgeSwap({
-            //     context,
-            //     addressReceiving: address,
-            //     amountDesired: swapQuote.srcTokenAmount,
-            //     currencyDeposit: 'BTC',
-            //     currencyReceiving: network === 'BSC' ? 'BTCB.BEP20' : 'WBTC',
-            //     isSkypoolsSwap: true,
-            //   });
+            const context = await buildContext({
+              mode: network === 'ROPSTEN' ? 'test' : 'production',
+            });
+            const { hash } = await createSwap({
+              context,
+              addressReceiving: address,
+              amountDesired: amount,
+              currencyDeposit: 'BTC',
+              currencyReceiving: network === 'BSC' ? 'BTCB.BEP20' : 'WBTC',
+              isSkypoolsSwap: true,
+            });
+            addPendingDeposits({
+              amount,
+              hash,
+              mode: network === 'ROPSTEN' ? 'test' : 'production',
+            });
+
+            // const pendingTxs = localStorage.getItem('btc-pending-deposits');
+            // const txs = pendingTxs ? JSON.parse(pendingTxs) : [];
+            // const data = {
+            //   time: Math.floor(Date.now() / 1000),
+            //   amount,
+            //   hash,
+            // };
+            // txs.push(data);
+            // localStorage.setItem('btc-pending-deposits', JSON.stringify(txs));
+            return push(`/deposit/${hash}`);
           } else {
-            console.log('ERC20 deposit');
             const web3 = new Web3(wallet.provider);
             const contract = buildSkypoolsContract({ provider: wallet.provider, network });
             const isNativeToken = isFakeNativeToken(coinInfo.address);
@@ -138,6 +183,8 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               { transaction: { ...transaction, gas, gasPrice } },
               'Will send transaction',
             );
+
+            await walletCheck();
             return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
           }
         } catch (err: any) {
@@ -176,10 +223,14 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
         const gasPrice = await web3.eth.getGasPrice();
         const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
         logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
+
+        await walletCheck();
         return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
       },
     };
   }, [
+    // skybridgeId,
+    // setSkybridgeId,
     depositedBalance,
     address,
     depositedInformation,
@@ -194,5 +245,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     approve,
     isApprovalNeeded,
     isFromBtc,
+    walletCheck,
+    push,
   ]);
 };
