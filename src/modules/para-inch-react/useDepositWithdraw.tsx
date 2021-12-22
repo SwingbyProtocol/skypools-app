@@ -168,6 +168,8 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
         }
       },
       handleWithdraw: async () => {
+        if (!coinInfo) return;
+
         const info = await depositedInformation();
         if (!info) {
           throw Error('Something went wrong');
@@ -185,12 +187,15 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
 
         const web3 = new Web3(wallet.provider);
         const redeemAmount = ethers.utils.parseUnits(amount, decimals);
+
         const transaction: TransactionConfig = {
           nonce: await web3.eth.getTransactionCount(address),
           value: '0x0',
           from: address,
           to: contractAddress,
-          data: contract.methods.redeemERC20Token(token, redeemAmount).encodeABI(),
+          data: isFakeNativeToken(coinInfo.address)
+            ? contract.methods.redeemEther(redeemAmount).encodeABI()
+            : contract.methods.redeemERC20Token(token, redeemAmount).encodeABI(),
         };
 
         const gasPrice = await web3.eth.getGasPrice();
@@ -202,8 +207,6 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
       },
     };
   }, [
-    // skybridgeId,
-    // setSkybridgeId,
     depositedBalance,
     address,
     depositedInformation,
