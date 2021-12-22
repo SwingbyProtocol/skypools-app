@@ -17,7 +17,7 @@ import {
   isFakeBtcToken,
   isFakeNativeToken,
 } from '../para-inch';
-import { addPendingDeposits } from '../localstorage';
+import { addBtcDeposits } from '../localstorage';
 
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
@@ -27,9 +27,6 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
   const { push } = useRouter();
-  // const [skybridgeId, setSkybridgeId] = useState<string>(
-  //   'VynzdRWcgpyrF6xSHsZZ6ZpgHKGJ6MDAhkbLbYOC1A8=',
-  // );
 
   const [depositedBalance, setDepositedBalance] = useState<{ balance: string; token: string }>({
     balance: '',
@@ -99,22 +96,8 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     }
   }, [onboard]);
 
-  // useEffect(() => {
-  //   const pendingTxs = localStorage.getItem('skypools-pending-txs');
-  //   const txs = pendingTxs ? JSON.parse(pendingTxs) : [];
-  //   const data = {
-  //     time: Math.floor(Date.now() / 1000),
-  //     amount: 0.0099,
-  //     hash: 'VynzdRWcgpyrF6xSHsZZ6ZpgHKGJ6MDAhkbLbYOC1A8=',
-  //   };
-  //   txs.push(data);
-  //   localStorage.setItem('skypools-pending-txs', JSON.stringify(txs));
-  // }, []);
-
   return useMemo(() => {
     return {
-      // skybridgeId,
-      // setSkybridgeId,
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
       approve,
       depositedBalance,
@@ -138,21 +121,11 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               currencyReceiving: network === 'BSC' ? 'BTCB.BEP20' : 'WBTC',
               isSkypoolsSwap: true,
             });
-            addPendingDeposits({
+            addBtcDeposits({
               amount,
               hash,
               mode: network === 'ROPSTEN' ? 'test' : 'production',
             });
-
-            // const pendingTxs = localStorage.getItem('btc-pending-deposits');
-            // const txs = pendingTxs ? JSON.parse(pendingTxs) : [];
-            // const data = {
-            //   time: Math.floor(Date.now() / 1000),
-            //   amount,
-            //   hash,
-            // };
-            // txs.push(data);
-            // localStorage.setItem('btc-pending-deposits', JSON.stringify(txs));
             return push(`/deposit/${hash}`);
           } else {
             const web3 = new Web3(wallet.provider);

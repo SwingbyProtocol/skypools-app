@@ -124,8 +124,6 @@ export const balanceCard = css`
   grid-area: deposit;
   width: ${rem(310)};
   margin: auto;
-  margin-block-start: ${rem(size.country)};
-  margin-block-end: ${rem(size.country)};
   @media (min-width: ${rem(768)}) {
     width: ${rem(400)};
   }

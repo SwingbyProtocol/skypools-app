@@ -6,7 +6,7 @@ import { FormattedDate, FormattedMessage, FormattedNumber, useIntl } from 'react
 import { useMeasure } from 'react-use';
 import { ListChildComponentProps, VariableSizeList as List } from 'react-window';
 
-import { PendingDeposit, useBtcDeposits, useUpdateDeposits } from '../../../modules/localstorage';
+import { PendingDeposit, useBtcDeposits, useUpdateBtcDeposit } from '../../../modules/localstorage';
 import { shortenAddress } from '../../../modules/short-address';
 import { size } from '../../../modules/styles';
 import { Coin } from '../../Coin';
@@ -49,7 +49,7 @@ const Context = createContext<PendingDeposit[]>([]);
 const Row = ({ style, index }: ListChildComponentProps) => {
   const { formatNumber } = useIntl();
   const data = useContext(Context);
-  useUpdateDeposits(data[index].hash);
+  useUpdateBtcDeposit(data[index].hash);
   const btcImage = 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579';
 
   const item = data[index];

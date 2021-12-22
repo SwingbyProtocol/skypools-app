@@ -4,7 +4,7 @@ import { useSkybridgeSwapInfoLazyQuery } from '../../generated/skybridge-graphql
 
 import { useBtcDeposits } from './useBtcDeposits';
 
-export const useUpdateDeposits = (skybridgeId: string) => {
+export const useUpdateBtcDeposit = (skybridgeId: string) => {
   const [getSwaps, result] = useSkybridgeSwapInfoLazyQuery();
   const { updateTx, depositTxs } = useBtcDeposits();
 

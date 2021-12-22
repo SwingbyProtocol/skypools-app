@@ -1,8 +1,8 @@
-export { addPendingDeposits, getPendingDeposits, updatePendingDeposits } from './utils';
+export { addBtcDeposits, getBtcDeposits, updateBtcDeposits } from './utils';
 
 export { useBtcDeposits } from './useBtcDeposits';
 
-export { useUpdateDeposits } from './useUpdateDeposits';
+export { useUpdateBtcDeposit } from './useUpdateBtcDeposit';
 
 export interface PendingDeposit {
   amount: string;

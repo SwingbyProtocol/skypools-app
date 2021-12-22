@@ -5,12 +5,12 @@ export const LOCAL_STORAGE = {
 
 const { btcPendingDeposits } = LOCAL_STORAGE;
 
-export const getPendingDeposits = () => {
+export const getBtcDeposits = () => {
   const pendingTxs = localStorage.getItem(btcPendingDeposits);
   return pendingTxs ? JSON.parse(pendingTxs) : [];
 };
 
-export const addPendingDeposits = ({
+export const addBtcDeposits = ({
   amount,
   hash,
   mode,
@@ -19,7 +19,7 @@ export const addPendingDeposits = ({
   hash: string;
   mode: 'production' | 'test';
 }): void => {
-  const pendingTxs = getPendingDeposits();
+  const pendingTxs = getBtcDeposits();
   const data = {
     time: Math.floor(Date.now() / 1000),
     status: 'WAITING',
@@ -32,7 +32,7 @@ export const addPendingDeposits = ({
   return;
 };
 
-export const updatePendingDeposits = (txs: PendingDeposit[]): void => {
+export const updateBtcDeposits = (txs: PendingDeposit[]): void => {
   localStorage.setItem(btcPendingDeposits, JSON.stringify(txs));
   return;
 };

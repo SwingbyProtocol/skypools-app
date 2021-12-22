@@ -1,25 +1,25 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 
-import { updatePendingDeposits } from './utils';
+import { updateBtcDeposits } from './utils';
 
-import { getPendingDeposits, PendingDeposit } from './index';
+import { getBtcDeposits, PendingDeposit } from './index';
 
 export const useBtcDeposits = () => {
   const [depositTxs, setDepositTxs] = useState<PendingDeposit[] | []>([]);
 
   const updateTx = useCallback(({ status, hash }: { status: string; hash: string }) => {
-    const txs = getPendingDeposits();
+    const txs = getBtcDeposits();
 
     const updatedTxs = txs.map((it: PendingDeposit) =>
       it.hash === hash ? { ...it, status } : { ...it },
     );
     setDepositTxs(updatedTxs);
-    updatePendingDeposits(updatedTxs);
+    updateBtcDeposits(updatedTxs);
     return;
   }, []);
 
   const getTxs = useCallback(() => {
-    const txs = getPendingDeposits();
+    const txs = getBtcDeposits();
     setDepositTxs(txs);
   }, []);
 
