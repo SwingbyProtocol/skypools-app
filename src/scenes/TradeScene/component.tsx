@@ -31,7 +31,7 @@ const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value']
   ],
 };
 
-export const QuoteScene = () => {
+export const TradeScene = () => {
   const { network: onboardNetwork, wallet, address } = useOnboard();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInchForm();
   const [getPriceHistory, { data: priceHistoryData }] = usePriceHistoryLazyQuery();

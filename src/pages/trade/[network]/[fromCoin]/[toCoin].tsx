@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { Network } from '../../../../modules/networks';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
-import { QuoteScene } from '../../../../scenes/QuoteScene';
 import { apolloClient } from '../../../../modules/apollo';
 import {
   TokensDocument,
@@ -12,6 +11,7 @@ import {
   TokensQueryVariables,
 } from '../../../../generated/skypools-graphql';
 import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch';
+import { TradeScene } from '../../../../scenes/TradeScene';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
@@ -23,7 +23,7 @@ export default function TradePage({ fromToken, toToken, tokens, network }: Props
 
   return (
     <ParaInchTokenProvider value={value}>
-      <QuoteScene />
+      <TradeScene />
     </ParaInchTokenProvider>
   );
 }

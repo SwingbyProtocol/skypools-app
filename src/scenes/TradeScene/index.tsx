@@ -1,1 +1,1 @@
-export { QuoteScene } from './component';
+export { TradeScene } from './component';

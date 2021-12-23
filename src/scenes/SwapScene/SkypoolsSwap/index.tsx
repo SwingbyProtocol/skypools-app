@@ -115,7 +115,7 @@ export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId:
         <div css={details}>
           <div css={row}>
             <div>
-              <FormattedMessage id="swap.total-deposited-balance" />
+              <FormattedMessage id="swap.deposited-balance" />
             </div>
             <div>
               <FormattedMessage

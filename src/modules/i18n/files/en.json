@@ -48,7 +48,7 @@
   "swap.progress.completed": "Your swap has been completed",
   "swap.progress.ready-to-claim": "Your deposit has been confirmed",
   "swap.progress.confirming-deposit-tx": "Confirming your deposit",
-  "swap.total-deposited-balance": "Total Deposited Balance:",
+  "swap.deposited-balance": "Deposited Balance:",
   "swap.swap-src-amount": "Swap Source Amount:",
   "swap.min-receiving-amount": "Min Receiving Amount:",
   "token-amount": "{amount} {token}",

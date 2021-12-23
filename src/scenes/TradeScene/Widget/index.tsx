@@ -5,6 +5,7 @@ import { Big } from 'big.js';
 import { Button } from '../../../components/Button';
 import { useParaInchForm, useParaInchCreateSwap } from '../../../modules/para-inch-react';
 import { useOnboard } from '../../../modules/onboard';
+import { TextInput } from '../../../components/TextInput';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -22,6 +23,9 @@ import {
   error,
   reverse,
   direction,
+  labelAddress,
+  btcAddress,
+  depositValue,
 } from './styles';
 
 export const Widget = () => {
@@ -38,11 +42,16 @@ export const Widget = () => {
     swapQuote,
     errorMsg,
   } = useParaInchForm();
+
   const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
     useParaInchCreateSwap();
+
   const { address } = useOnboard();
+
   const isSwapDisabled =
     isApprovalNeeded === null || isLoading || !isQuote || !address || errorMsg !== '';
+
+  const isToBtc = toToken?.symbol === 'BTC';
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -133,6 +142,32 @@ export const Widget = () => {
         }}
       />
 
+      {isToBtc && (
+        <div css={btcAddress}>
+          <div css={labelAddress}>
+            <FormattedMessage id="btc-destination-address" />
+          </div>
+          <TextInput
+            size="city"
+            //  value={btcAddress ?? ''}
+            value={''}
+            onChange={(evt) => {
+              //  setBtcAddress(evt.target.value);
+              //  if (validate(evt.target.value, btcNetwork)) {
+              //    setIsValidAddress(true);
+              //  } else {
+              //    setIsValidAddress(false);
+              //  }
+            }}
+          />
+          {/* {btcAddress !== '' && !isValidAddress && (
+         <div css={invalidAddressFormat}>
+           <FormattedMessage id="invalid-address-format" />
+         </div>
+       )} */}
+        </div>
+      )}
+
       {!isApprovalNeeded && (
         <Button
           variant="primary"
@@ -159,6 +194,25 @@ export const Widget = () => {
       {isAmountValid && swapQuote && (
         <table css={info}>
           <tbody>
+            <td>
+              <FormattedMessage id="swap.deposited-balance" />
+            </td>
+            <td css={depositValue}>
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  amount: (
+                    <FormattedNumber
+                      // value={Number(depositBalance.balance)}
+                      value={Number(1)}
+                      maximumFractionDigits={8}
+                    />
+                  ),
+                  // token: depositBalance.token,
+                  token: 'ETH',
+                }}
+              />
+            </td>
             <tr>
               <td css={infoLabel} rowSpan={2}>
                 <FormattedMessage id="widget.details.rate" />

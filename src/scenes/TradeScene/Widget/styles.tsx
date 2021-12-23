@@ -13,6 +13,7 @@ export const container = css`
     'reverse'
     'to-label'
     'to-input'
+    'address'
     'swap'
     'error'
     'info';
@@ -101,4 +102,22 @@ export const direction = css`
   height: ${rem(size.city)};
   border-radius: 100%;
   font-size: ${rem(size.house)};
+`;
+
+export const labelAddress = css`
+  text-align: left;
+  margin-block-end: ${rem(size.drawer)};
+  font-size: ${rem(size.room)};
+  color: hsl(var(--sp-color-text-masked));
+`;
+
+export const btcAddress = css`
+  grid-area: address;
+  margin-block-start: ${rem(size.street)};
+  margin-block-end: ${rem(size.drawer)};
+  width: 100%;
+`;
+
+export const depositValue = css`
+  text-align: end;
 `;

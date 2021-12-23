@@ -15,7 +15,7 @@ export const Header = ({ className }: Props) => {
   const isDarkMode = useMedia('(prefers-color-scheme: dark)', false);
   const { wallet, network } = useOnboard();
 
-  const tradeUrl = `trade/${
+  const tradeUrl = `/trade/${
     network ? network.toLowerCase() : 'ethereum'
   }/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c`;
 
