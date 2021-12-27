@@ -1,5 +1,6 @@
 export { ParaInchTokenProvider } from './context';
 export { useParaInchCreateSwap } from './useParaInchCreateSwap';
+export { useCreateSwap } from './useCreateSwap';
 export { useParaInchForm } from './useParaInchForm';
 export { useParaInchHistory } from './useParaInchHistory';
 export { useSkypools } from './useSkypools';

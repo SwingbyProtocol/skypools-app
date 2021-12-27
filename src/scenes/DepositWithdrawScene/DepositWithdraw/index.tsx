@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
+import Head from 'next/head';
 
 import { Button } from '../../../components/Button';
 import { CoinAmountInputValue, CoinInfo, CoinInput } from '../../../components/CoinInput';
@@ -20,6 +21,7 @@ import {
   historyBox,
   historyCard,
   historyContainer,
+  error,
 } from './styles';
 
 export const DepositWithdraw = () => {
@@ -27,13 +29,14 @@ export const DepositWithdraw = () => {
   const [fromToken, setFromToken] = useState<CoinInfo>(tokens[0]);
   const { address } = useOnboard();
   const {
-    handleWithdraw,
-    handleDeposit,
     depositedBalance,
     amount,
-    setAmount,
-    approve,
     isApprovalNeeded,
+    errorMsg,
+    handleDeposit,
+    approve,
+    setAmount,
+    handleWithdraw,
   } = useDepositWithdraw(fromToken);
   const { pathname } = useRouter();
   const isDeposit = pathname.includes('/deposit');
@@ -51,92 +54,98 @@ export const DepositWithdraw = () => {
 
   const isDisabledDeposit = 0 >= Number(amount);
   const isDisabledWithdraw =
-    Number(amount) > Number(depositedBalance.balance) || Number(amount) === 0;
+    Number(amount) > Number(depositedBalance.amount) || Number(amount) === 0;
 
   return (
-    <div css={container}>
-      <div>
-        <div css={fromAmount}>
-          <div>
-            <div css={label}>
-              <FormattedMessage id="widget.from" />
-            </div>
-            <CoinInput
-              availableCoins={tokens}
-              value={from}
-              onChange={({ coin }) => {
-                if (coin) {
-                  setFromToken(coin);
-                }
-              }}
-            />
-          </div>
-          <div>
-            <div css={label}>
-              <FormattedMessage id="widget.amount" />
-            </div>
-            <TextInput
-              size="country"
-              value={amount}
-              onChange={(evt) => {
-                if (!isNaN(Number(evt.target.value))) {
-                  setAmount(evt.target.value);
-                }
-              }}
-            />
-          </div>
-        </div>
-        <div css={rowDepositBalance}>
-          <div>
-            <FormattedMessage id="widget.deposit-balance" />
-          </div>
-          <div>
-            <FormattedMessage
-              id="token-amount"
-              values={{
-                amount: (
-                  <FormattedNumber
-                    value={Number(depositedBalance.balance)}
-                    maximumFractionDigits={8}
-                  />
-                ),
-                token: depositedBalance.token,
-              }}
-            />
-          </div>
-        </div>
-        <div css={buttonContainer}>
-          {!address ? (
-            <ConnectWalletButton />
-          ) : (
-            <Button
-              variant="primary"
-              size="city"
-              shape="fit"
-              disabled={!isApprovalNeeded && (isDeposit ? isDisabledDeposit : isDisabledWithdraw)}
-              onClick={!!isApprovalNeeded ? approve : isDeposit ? handleDeposit : handleWithdraw}
-            >
-              <FormattedMessage
-                id={
-                  !!isApprovalNeeded
-                    ? 'widget.approve'
-                    : isDeposit
-                    ? 'widget.deposit'
-                    : 'swap.withdraw'
-                }
-                values={{ value: fromToken?.symbol }}
+    <>
+      <Head>
+        <title>Swingby Skypools | {isDeposit ? 'Deposit' : 'Withdraw'}</title>
+      </Head>
+      <div css={container}>
+        <div>
+          <div css={fromAmount}>
+            <div>
+              <div css={label}>
+                <FormattedMessage id="widget.from" />
+              </div>
+              <CoinInput
+                availableCoins={tokens}
+                value={from}
+                onChange={({ coin }) => {
+                  if (coin) {
+                    setFromToken(coin);
+                  }
+                }}
               />
-            </Button>
-          )}
-        </div>
-      </div>
-      {(fromToken.symbol === 'BTC' || skybridgeId) && depositTxs.length > 0 && (
-        <div css={historyContainer}>
-          <div css={historyBox}>
-            <BtcDeposit css={historyCard} />
+            </div>
+            <div>
+              <div css={label}>
+                <FormattedMessage id="widget.amount" />
+              </div>
+              <TextInput
+                size="country"
+                value={amount}
+                onChange={(evt) => {
+                  if (!isNaN(Number(evt.target.value))) {
+                    setAmount(evt.target.value);
+                  }
+                }}
+              />
+            </div>
           </div>
+          <div css={rowDepositBalance}>
+            <div>
+              <FormattedMessage id="widget.deposit-balance" />
+            </div>
+            <div>
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  amount: (
+                    <FormattedNumber
+                      value={Number(depositedBalance.amount)}
+                      maximumFractionDigits={8}
+                    />
+                  ),
+                  token: depositedBalance.token,
+                }}
+              />
+            </div>
+          </div>
+          <div css={buttonContainer}>
+            {!address ? (
+              <ConnectWalletButton />
+            ) : (
+              <Button
+                variant="primary"
+                size="city"
+                shape="fit"
+                disabled={!isApprovalNeeded && (isDeposit ? isDisabledDeposit : isDisabledWithdraw)}
+                onClick={!!isApprovalNeeded ? approve : isDeposit ? handleDeposit : handleWithdraw}
+              >
+                <FormattedMessage
+                  id={
+                    !!isApprovalNeeded
+                      ? 'widget.approve'
+                      : isDeposit
+                      ? 'widget.deposit'
+                      : 'swap.withdraw'
+                  }
+                  values={{ value: fromToken?.symbol }}
+                />
+              </Button>
+            )}
+          </div>
+          {errorMsg && <div css={error}>{errorMsg}</div>}
         </div>
-      )}
-    </div>
+        {(fromToken.symbol === 'BTC' || skybridgeId) && depositTxs.length > 0 && (
+          <div css={historyContainer}>
+            <div css={historyBox}>
+              <BtcDeposit css={historyCard} />
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };

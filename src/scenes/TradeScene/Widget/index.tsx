@@ -1,31 +1,35 @@
-import { useMemo } from 'react';
-import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Big } from 'big.js';
+import { validate, Network } from 'bitcoin-address-validation';
+import Link from 'next/link';
+import { useMemo, useState } from 'react';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
-import { useParaInchForm, useParaInchCreateSwap } from '../../../modules/para-inch-react';
-import { useOnboard } from '../../../modules/onboard';
 import { TextInput } from '../../../components/TextInput';
+import { useOnboard } from '../../../modules/onboard';
+import { useCreateSwap, useParaInchForm } from '../../../modules/para-inch-react';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
-  label,
+  container,
+  depositValue,
+  direction,
+  error,
   fromInput,
   fromLabel,
-  toInput,
-  toLabel,
-  container,
-  swap as swapButton,
   info,
   infoLabel,
   infoValue,
   infoValueHighlight,
-  error,
-  reverse,
-  direction,
+  invalidAddressFormat,
+  label,
   labelAddress,
-  btcAddress,
-  depositValue,
+  link,
+  reverse,
+  rowBtcAddress,
+  swap as swapButton,
+  toInput,
+  toLabel,
 } from './styles';
 
 export const Widget = () => {
@@ -43,15 +47,29 @@ export const Widget = () => {
     errorMsg,
   } = useParaInchForm();
 
-  const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
-    useParaInchCreateSwap();
+  const {
+    depositedBalance,
+    btcAddress,
+    setBtcAddress,
+    createSwap,
+    isLoading,
+    isQuote,
+    isSkypools,
+    createSwapError,
+    isFloatShortage,
+    minAmount,
+    isEnoughDeposit,
+  } = useCreateSwap();
 
-  const { address } = useOnboard();
-
-  const isSwapDisabled =
-    isApprovalNeeded === null || isLoading || !isQuote || !address || errorMsg !== '';
-
+  const { address, network } = useOnboard();
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
+  const btcNetwork = network === 'ROPSTEN' ? Network.testnet : Network.mainnet;
   const isToBtc = toToken?.symbol === 'BTC';
+
+  const commonSwapDisabled = isLoading || !isQuote || !address || errorMsg !== '';
+  const isSkypoolsDisabled = !isEnoughDeposit || isFloatShortage || (isToBtc && !isValidAddress);
+
+  const isSwapDisabled = isSkypools ? isSkypoolsDisabled || commonSwapDisabled : commonSwapDisabled;
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -142,33 +160,32 @@ export const Widget = () => {
         }}
       />
 
-      {isToBtc && (
-        <div css={btcAddress}>
+      {isToBtc && isEnoughDeposit && (
+        <div css={rowBtcAddress}>
           <div css={labelAddress}>
             <FormattedMessage id="btc-destination-address" />
           </div>
           <TextInput
             size="city"
-            //  value={btcAddress ?? ''}
-            value={''}
+            value={btcAddress ?? ''}
             onChange={(evt) => {
-              //  setBtcAddress(evt.target.value);
-              //  if (validate(evt.target.value, btcNetwork)) {
-              //    setIsValidAddress(true);
-              //  } else {
-              //    setIsValidAddress(false);
-              //  }
+              setBtcAddress(evt.target.value);
+              if (validate(evt.target.value, btcNetwork)) {
+                setIsValidAddress(true);
+              } else {
+                setIsValidAddress(false);
+              }
             }}
           />
-          {/* {btcAddress !== '' && !isValidAddress && (
-         <div css={invalidAddressFormat}>
-           <FormattedMessage id="invalid-address-format" />
-         </div>
-       )} */}
+          {btcAddress !== '' && !isValidAddress && (
+            <div css={invalidAddressFormat}>
+              <FormattedMessage id="invalid-address-format" />
+            </div>
+          )}
         </div>
       )}
 
-      {!isApprovalNeeded && (
+      {(!address || isEnoughDeposit || !isSkypools) && (
         <Button
           variant="primary"
           size="state"
@@ -176,16 +193,20 @@ export const Widget = () => {
           disabled={isSwapDisabled}
           onClick={createSwap ?? undefined}
         >
-          <FormattedMessage
-            id={isSkypools ? 'widget.deposit' : 'widget.swap'}
-            values={{ value: fromToken?.symbol }}
-          />
+          <FormattedMessage id="widget.swap" values={{ value: fromToken?.symbol }} />
         </Button>
       )}
-      {!!isApprovalNeeded && (
-        <Button variant="primary" size="state" css={swapButton} onClick={approve}>
-          <FormattedMessage id="widget.approve" />
-        </Button>
+
+      {address && isSkypools && !isEnoughDeposit && (
+        <div css={swapButton}>
+          <Link href={'/deposit'}>
+            <a href="/deposit" css={link}>
+              <Button variant="secondary" size="state">
+                <FormattedMessage id="widget.deposit" values={{ value: fromToken?.symbol }} />
+              </Button>
+            </a>
+          </Link>
+        </div>
       )}
 
       {errorMsg && <div css={error}>{errorMsg}</div>}
@@ -194,25 +215,41 @@ export const Widget = () => {
       {isAmountValid && swapQuote && (
         <table css={info}>
           <tbody>
-            <td>
-              <FormattedMessage id="swap.deposited-balance" />
-            </td>
-            <td css={depositValue}>
-              <FormattedMessage
-                id="token-amount"
-                values={{
-                  amount: (
-                    <FormattedNumber
-                      // value={Number(depositBalance.balance)}
-                      value={Number(1)}
-                      maximumFractionDigits={8}
-                    />
-                  ),
-                  // token: depositBalance.token,
-                  token: 'ETH',
-                }}
-              />
-            </td>
+            <tr>
+              <td>
+                <FormattedMessage id="swap.deposited-balance" />
+              </td>
+              <td css={depositValue}>
+                <FormattedMessage
+                  id="token-amount"
+                  values={{
+                    amount: (
+                      <FormattedNumber
+                        value={Number(depositedBalance.amount)}
+                        maximumFractionDigits={8}
+                      />
+                    ),
+                    token: depositedBalance.token,
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <FormattedMessage id="swap.min-receiving-amount" />
+              </td>
+              <td css={depositValue}>
+                <FormattedMessage
+                  id="token-amount"
+                  values={{
+                    amount: (
+                      <FormattedNumber value={Number(minAmount.amount)} maximumFractionDigits={8} />
+                    ),
+                    token: minAmount.token,
+                  }}
+                />
+              </td>
+            </tr>
             <tr>
               <td css={infoLabel} rowSpan={2}>
                 <FormattedMessage id="widget.details.rate" />

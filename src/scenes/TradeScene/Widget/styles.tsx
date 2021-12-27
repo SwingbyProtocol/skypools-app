@@ -111,7 +111,7 @@ export const labelAddress = css`
   color: hsl(var(--sp-color-text-masked));
 `;
 
-export const btcAddress = css`
+export const rowBtcAddress = css`
   grid-area: address;
   margin-block-start: ${rem(size.street)};
   margin-block-end: ${rem(size.drawer)};
@@ -120,4 +120,16 @@ export const btcAddress = css`
 
 export const depositValue = css`
   text-align: end;
+`;
+
+export const invalidAddressFormat = css`
+  margin-block-start: ${rem(size.box / 2)};
+  position: absolute;
+  text-align: left;
+  font-size: ${rem(size.room)};
+  color: hsl(var(--sp-color-danger-normal));
+`;
+
+export const link = css`
+  text-decoration: none;
 `;

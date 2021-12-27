@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   if (!network) {
     return {
       redirect: {
-        destination: `/quote/ethereum/${fromCoinAddress}/${toCoinAddress}`,
+        destination: `/trade/ethereum/${fromCoinAddress}/${toCoinAddress}`,
         permanent: false,
       },
     };
@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     if (newFrom && newTo) {
       return {
         redirect: {
-          destination: `/quote/${network.toLowerCase()}/${newFrom}/${newTo}`,
+          destination: `/trade/${network.toLowerCase()}/${newFrom}/${newTo}`,
           permanent: false,
         },
       };

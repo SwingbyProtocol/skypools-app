@@ -28,8 +28,8 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const { push } = useRouter();
 
-  const [depositedBalance, setDepositedBalance] = useState<{ balance: string; token: string }>({
-    balance: '',
+  const [depositedBalance, setDepositedBalance] = useState<{ amount: string; token: string }>({
+    amount: '',
     token: '',
   });
 
@@ -63,13 +63,13 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
       if (!info || !coinInfo) return;
 
       setDepositedBalance({
-        balance: info.balance,
+        amount: info.balance,
         token: coinInfo.symbol,
       });
     } catch (error) {
       logger.error(error);
       setDepositedBalance({
-        balance: '',
+        amount: '',
         token: '',
       });
     }
@@ -95,6 +95,14 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
       throw Error('Invalid wallet connection');
     }
   }, [onboard]);
+
+  useEffect(() => {
+    setErrorMsg('');
+  }, [coinInfo, amount]);
+
+  useEffect(() => {
+    setAmount('');
+  }, [coinInfo]);
 
   return useMemo(() => {
     return {
@@ -168,42 +176,51 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
         }
       },
       handleWithdraw: async () => {
-        if (!coinInfo) return;
+        try {
+          setIsLoading(true);
 
-        const info = await depositedInformation();
-        if (!info) {
-          throw Error('Something went wrong');
+          if (!coinInfo) return;
+          const info = await depositedInformation();
+          if (!info) {
+            throw Error('Something went wrong');
+          }
+
+          const { contract, token, decimals } = info;
+
+          if (!address || !wallet || !wallet.provider) {
+            throw new Error('No wallet connected');
+          }
+
+          const contractAddress = network && getSkypoolsContractAddress(network);
+          if (!contractAddress) {
+            throw new Error('Contract address was not defined');
+          }
+
+          const web3 = new Web3(wallet.provider);
+          const redeemAmount = ethers.utils.parseUnits(amount, decimals);
+
+          const transaction: TransactionConfig = {
+            nonce: await web3.eth.getTransactionCount(address),
+            value: '0x0',
+            from: address,
+            to: contractAddress,
+            data: isFakeNativeToken(coinInfo.address)
+              ? contract.methods.redeemEther(redeemAmount).encodeABI()
+              : contract.methods.redeemERC20Token(token, redeemAmount).encodeABI(),
+          };
+
+          const gasPrice = await web3.eth.getGasPrice();
+          const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
+          logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
+
+          await walletCheck();
+          return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
+        } catch (err: any) {
+          logger.error(err);
+          setErrorMsg(err.message);
+        } finally {
+          setIsLoading(false);
         }
-        const { contract, token, decimals } = info;
-
-        if (!address || !wallet || !wallet.provider) {
-          throw new Error('No wallet connected');
-        }
-
-        const contractAddress = network && getSkypoolsContractAddress(network);
-        if (!contractAddress) {
-          throw new Error('Contract address was not defined');
-        }
-
-        const web3 = new Web3(wallet.provider);
-        const redeemAmount = ethers.utils.parseUnits(amount, decimals);
-
-        const transaction: TransactionConfig = {
-          nonce: await web3.eth.getTransactionCount(address),
-          value: '0x0',
-          from: address,
-          to: contractAddress,
-          data: isFakeNativeToken(coinInfo.address)
-            ? contract.methods.redeemEther(redeemAmount).encodeABI()
-            : contract.methods.redeemERC20Token(token, redeemAmount).encodeABI(),
-        };
-
-        const gasPrice = await web3.eth.getGasPrice();
-        const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-        logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
-
-        await walletCheck();
-        return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
       },
     };
   }, [
