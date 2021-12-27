@@ -26,14 +26,11 @@ export const rowContainer = css`
   grid-row-gap: ${rem(0)};
   grid-template-columns: min-content 1fr min-content min-content 1fr;
   grid-template-rows: 1fr;
-  /* grid-template-rows: 1fr 1fr; */
   grid-template-areas: 'status time coin-in amount-in hash';
-  /* 'icon status coin-out amount-out hash'; */
   overflow: hidden;
   white-space: nowrap;
   font-size: ${rem(size.closet)};
   border-bottom: 1px solid hsl(var(--sp-color-border-normal));
-  /* align-items: self-end; */
   height: 20px;
 `;
 
@@ -95,24 +92,12 @@ export const amountIn = css`
   justify-self: start;
 `;
 
-// export const amountOut = css`
-//   ${amountIn};
-//   grid-area: amount-out;
-//   align-self: flex-start;
-// `;
-
 export const coinIn = css`
   grid-area: coin-in;
   align-self: flex-end;
   justify-self: center;
   font-size: ${rem(size.room)};
 `;
-
-// export const coinOut = css`
-//   ${coinIn};
-//   grid-area: coin-out;
-//   align-self: flex-start;
-// `;
 
 export const hash = css`
   grid-area: hash;
