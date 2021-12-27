@@ -272,7 +272,7 @@ export const SwapsQuery = extendType({
           })
         ).map((it) => ({ node: it, cursor: buildCursor(it.id) }));
 
-        if (type === 'before') {
+        if (type === 'after') {
           edges.reverse();
         }
 
