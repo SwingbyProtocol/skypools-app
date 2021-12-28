@@ -13,7 +13,7 @@ type Props = { className?: string };
 
 export const Header = ({ className }: Props) => {
   const isDarkMode = useMedia('(prefers-color-scheme: dark)', false);
-  const { wallet, network } = useOnboard();
+  const { network } = useOnboard();
 
   const swapUrl = `/swap/${
     network ? network.toLowerCase() : 'ethereum'
@@ -42,7 +42,7 @@ export const Header = ({ className }: Props) => {
         </Link>
       </div>
       <div css={info}>
-        {wallet && <Floats />}
+        <Floats />
         <ConnectWallet css={connect} />
       </div>
     </header>
