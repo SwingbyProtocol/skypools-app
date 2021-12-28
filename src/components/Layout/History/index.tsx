@@ -6,6 +6,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { FormattedDate, FormattedMessage, FormattedNumber, useIntl } from 'react-intl';
 import { useMeasure } from 'react-use';
 import { ListChildComponentProps, VariableSizeList as List } from 'react-window';
+import InfiniteLoader from 'react-window-infinite-loader';
 
 import { Coin } from '../../../components/Coin';
 import { SwapStatus } from '../../../generated/skypools-graphql';
@@ -152,13 +153,12 @@ const Row = ({ style, index }: ListChildComponentProps) => {
 export const History = ({ className }: Props) => {
   const [ref, { width, height }] = useMeasure();
   const stylesRef = useRef<HTMLDivElement | null>(null);
-  const listRef = useRef<List | null>(null);
   const [itemHeightFirst, setItemHeightFirst] = useState<number>(size.city);
   const [itemHeightLast, setItemHeightLast] = useState<number>(size.city);
   const [itemHeightOther, setItemHeightOther] = useState<number>(size.city);
   const [direction, setDirection] = useState<'rtl' | 'ltr'>('ltr');
 
-  const { data: swapHistory } = useParaInchHistory();
+  const { data: swapHistory, fetchMore } = useParaInchHistory();
   const swaps = swapHistory?.swaps.edges.map((it) => it.node) ?? [];
 
   const itemSize = useCallback(
@@ -192,24 +192,46 @@ export const History = ({ className }: Props) => {
     };
   }, []);
 
-  useEffect(() => {
-    listRef.current?.resetAfterIndex(0, true);
-  }, [itemHeightFirst, itemHeightLast, itemHeightOther]);
+  const itemCount = swapHistory?.swaps.totalCount ?? 0;
 
   return (
     <div css={container} className={className} ref={ref as any}>
       <div css={sizeCalc} ref={stylesRef} />
       <Context.Provider value={swaps}>
-        <List
-          width={width}
-          height={height}
-          itemSize={itemSize}
-          itemCount={swaps.length}
-          ref={listRef}
-          direction={direction}
+        <InfiniteLoader
+          isItemLoaded={(index) => !!swaps[index]}
+          itemCount={itemCount}
+          loadMoreItems={async () => {
+            if (!swapHistory || !fetchMore) return;
+            await fetchMore({
+              variables: { before: swapHistory.swaps.pageInfo.endCursor },
+              updateQuery: (previousResult, { fetchMoreResult }) => {
+                if (!fetchMoreResult) return previousResult;
+                return {
+                  swaps: {
+                    totalCount: fetchMoreResult.swaps.totalCount,
+                    edges: [...previousResult.swaps.edges, ...fetchMoreResult.swaps.edges],
+                    pageInfo: fetchMoreResult.swaps.pageInfo,
+                  },
+                };
+              },
+            });
+          }}
         >
-          {Row}
-        </List>
+          {({ onItemsRendered, ref }) => (
+            <List
+              width={width}
+              height={height}
+              itemSize={itemSize}
+              itemCount={itemCount}
+              direction={direction}
+              onItemsRendered={onItemsRendered}
+              ref={ref}
+            >
+              {Row}
+            </List>
+          )}
+        </InfiniteLoader>
       </Context.Provider>
     </div>
   );

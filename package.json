@@ -53,6 +53,7 @@
     "react-spring": "^9.2.4",
     "react-use": "^17.3.1",
     "react-window": "^1.8.6",
+    "react-window-infinite-loader": "^1.0.7",
     "sharp": "^0.29.3",
     "web3": "^1.6.0"
   },
@@ -78,6 +79,7 @@
     "@types/react": "^17.0.33",
     "@types/react-select": "^4.0.17",
     "@types/react-window": "^1.8.5",
+    "@types/react-window-infinite-loader": "^1.0.5",
     "cypress": "^8.7.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "^12.0.1",

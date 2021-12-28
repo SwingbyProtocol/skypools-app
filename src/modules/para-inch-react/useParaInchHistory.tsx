@@ -23,6 +23,7 @@ export const useParaInchHistory = () => {
 
     getSwaps({
       variables: {
+        last: 25,
         where: {
           initiatorAddress: {
             equals: address,

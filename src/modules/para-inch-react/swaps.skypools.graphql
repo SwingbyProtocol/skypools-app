@@ -1,5 +1,9 @@
-query Swaps($where: SwapWhereInput) {
-  swaps(where: $where) {
+query Swaps($where: SwapWhereInput, $last: Int, $before: String) {
+  swaps(where: $where, last: $last, before: $before) {
+    totalCount
+    pageInfo {
+      endCursor
+    }
     edges {
       node {
         id

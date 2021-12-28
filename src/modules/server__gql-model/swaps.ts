@@ -261,7 +261,7 @@ export const SwapsQuery = extendType({
               };
 
         const orderBy: OrderBy =
-          type === 'after' ? [{ createdAt: 'desc' }] : [{ createdAt: 'asc' }];
+          type === 'after' ? [{ createdAt: 'asc' }] : [{ createdAt: 'desc' }];
 
         const edges = (
           await ctx.prisma.swap.findMany({
@@ -272,7 +272,7 @@ export const SwapsQuery = extendType({
           })
         ).map((it) => ({ node: it, cursor: buildCursor(it.id) }));
 
-        if (type === 'before') {
+        if (type === 'after') {
           edges.reverse();
         }
 
