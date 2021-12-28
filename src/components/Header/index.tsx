@@ -15,7 +15,7 @@ export const Header = ({ className }: Props) => {
   const isDarkMode = useMedia('(prefers-color-scheme: dark)', false);
   const { wallet, network } = useOnboard();
 
-  const tradeUrl = `/trade/${
+  const swapUrl = `/swap/${
     network ? network.toLowerCase() : 'ethereum'
   }/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c`;
 
@@ -25,9 +25,9 @@ export const Header = ({ className }: Props) => {
         <Image src={`/logo-${isDarkMode ? 'dark' : 'light'}.svg`} alt="Skypools" layout="fill" />
       </a>
       <div css={links}>
-        <Link href={tradeUrl}>
-          <a href={tradeUrl} css={link}>
-            <FormattedMessage id="link.trade" />
+        <Link href={swapUrl}>
+          <a href={swapUrl} css={link}>
+            <FormattedMessage id="link.swap" />
           </a>
         </Link>
         <Link href={'/deposit'}>

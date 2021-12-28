@@ -2,12 +2,12 @@ import { GetServerSideProps } from 'next';
 
 import { SwapDocument, SwapQuery, SwapQueryVariables } from '../../generated/skypools-graphql';
 import { apolloClient } from '../../modules/apollo';
-import { SwapScene } from '../../scenes/SwapScene';
+import { ClaimScene } from '../../scenes/ClaimScene';
 
 type Props = { swapId: string };
 
 export default function SwapPage({ swapId }: Props) {
-  return <SwapScene swapId={swapId} />;
+  return <ClaimScene swapId={swapId} />;
 }
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {

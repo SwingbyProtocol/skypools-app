@@ -1,1 +1,0 @@
-export { TradeScene } from './component';

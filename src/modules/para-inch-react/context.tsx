@@ -109,7 +109,7 @@ export const ParaInchTokenProvider = ({
       setFromTokenState(token);
       push(
         stringifyUrl({
-          url: `/trade/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -139,7 +139,7 @@ export const ParaInchTokenProvider = ({
 
       push(
         stringifyUrl({
-          url: `/trade/${valueProp.network.toLowerCase()}/${toToken?.address}/${fromToken.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${toToken?.address}/${fromToken.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -164,7 +164,7 @@ export const ParaInchTokenProvider = ({
       setToTokenState(token);
       push(
         stringifyUrl({
-          url: `/trade/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -183,7 +183,7 @@ export const ParaInchTokenProvider = ({
 
       push(
         stringifyUrl({
-          url: `/trade/${value}/${fromToken?.address}/${toToken?.address}`,
+          url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
       );
@@ -194,7 +194,7 @@ export const ParaInchTokenProvider = ({
   const unlinkSkybridgeSwap = useCallback(() => {
     push(
       stringifyUrl({
-        url: `/trade/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
+        url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
         query: { skybridgeSwap: undefined },
       }),
     );

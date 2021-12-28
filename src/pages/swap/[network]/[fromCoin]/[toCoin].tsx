@@ -11,11 +11,11 @@ import {
   TokensQueryVariables,
 } from '../../../../generated/skypools-graphql';
 import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch';
-import { TradeScene } from '../../../../scenes/TradeScene';
+import { SwapScene } from '../../../../scenes/SwapScene';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
-export default function TradePage({ fromToken, toToken, tokens, network }: Props) {
+export default function SwapPage({ fromToken, toToken, tokens, network }: Props) {
   const value = useMemo(
     () => ({ fromToken, toToken, tokens, network }),
     [fromToken, toToken, tokens, network],
@@ -23,7 +23,7 @@ export default function TradePage({ fromToken, toToken, tokens, network }: Props
 
   return (
     <ParaInchTokenProvider value={value}>
-      <TradeScene />
+      <SwapScene />
     </ParaInchTokenProvider>
   );
 }
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   if (!network) {
     return {
       redirect: {
-        destination: `/trade/ethereum/${fromCoinAddress}/${toCoinAddress}`,
+        destination: `/swap/ethereum/${fromCoinAddress}/${toCoinAddress}`,
         permanent: false,
       },
     };
@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     if (newFrom && newTo) {
       return {
         redirect: {
-          destination: `/trade/${network.toLowerCase()}/${newFrom}/${newTo}`,
+          destination: `/swap/${network.toLowerCase()}/${newFrom}/${newTo}`,
           permanent: false,
         },
       };

@@ -10,7 +10,7 @@
   "network.invalid": "Unsupported network",
   "wallet.connect": "Connect",
   "wallet.connect-wallet": "Connect Wallet",
-  "link.trade": "Trade",
+  "link.swap": "Swap",
   "link.deposit": "Deposit",
   "link.withdraw": "Withdraw",
   "generic.platform.uniswap-v3": "Uniswap V3",
