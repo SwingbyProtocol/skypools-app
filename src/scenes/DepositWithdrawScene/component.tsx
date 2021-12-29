@@ -15,7 +15,7 @@ export const DepositWithdrawScene = () => {
     <SkybridgeWidget
       src={`https://widget.skybridge.exchange/${
         network === 'ROPSTEN' ? 'test' : 'production'
-      }/swap/${skybridgeId}`}
+      }/swap/${skybridgeId}?disableNavigation`}
     />
   );
 
