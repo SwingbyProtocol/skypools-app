@@ -21,6 +21,14 @@ export const fromAmount = css`
 
 export const label = css`
   margin-block-end: ${rem(size.box)};
+  display: flex;
+  column-gap: ${rem(size.drawer)};
+  align-items: center;
+`;
+
+export const max = css`
+  text-decoration: underline;
+  font-size: ${rem(size.room)};
 `;
 
 export const rowDepositBalance = css`
@@ -62,5 +70,11 @@ export const error = css`
   max-width: ${rem(250)};
   @media (min-width: ${rem(1440)}) {
     max-width: ${rem(350)};
+  }
+`;
+
+export const textInput = css`
+  input {
+    text-align: end;
   }
 `;

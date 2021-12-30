@@ -1,9 +1,9 @@
 import Big from 'big.js';
 import { ethers } from 'ethers';
+import ABI from 'human-standard-token-abi';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
-import ABI from 'human-standard-token-abi';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
@@ -88,10 +88,8 @@ export const useCreateSwap = () => {
     }
 
     const contract = new web3.eth.Contract(ABI, fromToken.address);
-
-    return new Big(await contract.methods.balanceOf(address).call())
-      .div(`1e${fromToken.decimals}`)
-      .toFixed();
+    const rawBalance = await contract.methods.balanceOf(address).call();
+    return ethers.utils.formatUnits(rawBalance, fromToken.decimals);
   }, [address, fromToken, wallet]);
 
   const getBalance = useCallback(async () => {
@@ -110,7 +108,12 @@ export const useCreateSwap = () => {
         ? getWrappedBtcAddress({ network })
         : getERC20Address({ network, tokenAddress: fromToken.address });
 
-      const rawBal = await contract.methods.balanceOf(token, address).call();
+      const rawBal = await contract.methods
+        .balanceOf(token, address)
+        .call()
+        .catch((e: any) => {
+          return '0';
+        });
       const decimals = fromToken.decimals;
       const amount = ethers.utils.formatUnits(rawBal, decimals);
 

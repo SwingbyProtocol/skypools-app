@@ -5,6 +5,7 @@ import { TransactionConfig } from 'web3-eth';
 import { Big } from 'big.js';
 import { buildContext, createSwap } from '@swingby-protocol/sdk';
 import { useRouter } from 'next/router';
+import ABI from 'human-standard-token-abi';
 
 import { CoinInfo } from '../../components/CoinInput';
 import { logger } from '../logger';
@@ -26,7 +27,8 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
   const [amount, setAmount] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
-  const { push } = useRouter();
+  const { push, pathname } = useRouter();
+  const isDeposit = pathname.includes('/deposit');
 
   const [depositedBalance, setDepositedBalance] = useState<{ amount: string; token: string }>({
     amount: '',
@@ -104,12 +106,40 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     setAmount('');
   }, [coinInfo]);
 
+  const getWalletBalance = useCallback(async () => {
+    if (!wallet || !coinInfo || !address || !network) return;
+    const web3 = new Web3(wallet.provider);
+    return await (async () => {
+      if (isFakeNativeToken(coinInfo.address)) {
+        return web3.utils.fromWei(await web3.eth.getBalance(address), 'ether');
+      }
+
+      const contract = new web3.eth.Contract(ABI, coinInfo.address);
+      const rawBalance = await contract.methods.balanceOf(address).call();
+      return ethers.utils.formatUnits(rawBalance, coinInfo.decimals);
+    })();
+  }, [address, coinInfo, wallet, network]);
+
+  const toMaxAmount = useCallback(async () => {
+    console.log('1');
+    if (!isDeposit) {
+      if (!depositedBalance.amount) return;
+      setAmount(depositedBalance.amount);
+    } else {
+      console.log('hello');
+      const balance = (await getWalletBalance()) ?? '0';
+      setAmount(balance);
+    }
+  }, [setAmount, getWalletBalance, depositedBalance, isDeposit]);
+
   return useMemo(() => {
     return {
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
       approve,
+      isDeposit,
       depositedBalance,
       setAmount,
+      toMaxAmount,
       amount,
       isLoading,
       errorMsg,
@@ -224,12 +254,14 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
       },
     };
   }, [
+    isDeposit,
     depositedBalance,
     address,
     depositedInformation,
     network,
     wallet,
     setAmount,
+    toMaxAmount,
     amount,
     isLoading,
     errorMsg,

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, FormattedNumber } from 'react-intl';
 import Head from 'next/head';
 
@@ -22,6 +22,8 @@ import {
   historyCard,
   historyContainer,
   error,
+  textInput,
+  max,
 } from './styles';
 
 export const DepositWithdraw = () => {
@@ -37,9 +39,10 @@ export const DepositWithdraw = () => {
     approve,
     setAmount,
     handleWithdraw,
+    isDeposit,
+    toMaxAmount,
   } = useDepositWithdraw(fromToken);
-  const { pathname } = useRouter();
-  const isDeposit = pathname.includes('/deposit');
+
   const { depositTxs } = useBtcDeposits();
 
   const { query } = useRouter();
@@ -55,6 +58,14 @@ export const DepositWithdraw = () => {
   const isDisabledDeposit = 0 >= Number(amount);
   const isDisabledWithdraw =
     Number(amount) > Number(depositedBalance.amount) || Number(amount) === 0;
+  const isMax = !isDeposit || (isDeposit && fromToken.symbol !== 'BTC');
+
+  useEffect(() => {
+    if (skybridgeId) {
+      const btc = tokens.find((it) => it.symbol === 'BTC');
+      btc && setFromToken(btc);
+    }
+  }, [skybridgeId, tokens]);
 
   return (
     <>
@@ -81,8 +92,14 @@ export const DepositWithdraw = () => {
             <div>
               <div css={label}>
                 <FormattedMessage id="widget.amount" />
+                {isMax && (
+                  <div css={max} onClick={toMaxAmount}>
+                    <FormattedMessage id="max" />
+                  </div>
+                )}
               </div>
               <TextInput
+                css={textInput}
                 size="country"
                 value={amount}
                 onChange={(evt) => {
@@ -138,7 +155,7 @@ export const DepositWithdraw = () => {
           </div>
           {errorMsg && <div css={error}>{errorMsg}</div>}
         </div>
-        {(fromToken.symbol === 'BTC' || skybridgeId) && depositTxs.length > 0 && (
+        {(fromToken.symbol === 'BTC' || skybridgeId) && depositTxs.length > 0 && isDeposit && (
           <div css={historyContainer}>
             <div css={historyBox}>
               <BtcDeposit css={historyCard} />
