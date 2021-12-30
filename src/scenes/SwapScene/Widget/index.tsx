@@ -12,7 +12,7 @@ import { useCreateSwap, useParaInchForm } from '../../../modules/para-inch-react
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
   container,
-  depositValue,
+  minimumReceivingValue,
   direction,
   error,
   fromInput,
@@ -30,6 +30,8 @@ import {
   swap as swapButton,
   toInput,
   toLabel,
+  rowBalance,
+  max,
 } from './styles';
 
 export const Widget = () => {
@@ -48,10 +50,11 @@ export const Widget = () => {
   } = useParaInchForm();
 
   const {
-    depositedBalance,
     btcAddress,
     setBtcAddress,
     createSwap,
+    toMaxAmount,
+    balance,
     isLoading,
     isQuote,
     isSkypools,
@@ -120,17 +123,49 @@ export const Widget = () => {
       <div css={[label, fromLabel]}>
         <FormattedMessage id="widget.from" />
       </div>
-      <CoinAmountInput
-        css={fromInput}
-        availableCoins={tokens}
-        value={from}
-        onChange={({ coin, amount }) => {
-          setAmount(amount);
-          if (coin) {
-            setFromToken(coin.address);
-          }
-        }}
-      />
+      <div css={fromInput}>
+        <CoinAmountInput
+          availableCoins={tokens}
+          value={from}
+          onChange={({ coin, amount }) => {
+            setAmount(amount);
+            if (coin) {
+              setFromToken(coin.address);
+            }
+          }}
+        />
+        {address && (
+          <div css={rowBalance}>
+            <div>
+              <FormattedMessage
+                id={isSkypools ? 'swap.deposited-balance' : 'swap.wallet-balance'}
+              />
+            </div>
+            <div>
+              <FormattedMessage
+                id="token-amount"
+                values={{
+                  token: balance.token,
+                  amount: (
+                    <FormattedNumber value={Number(balance.amount)} maximumFractionDigits={4} />
+                  ),
+                }}
+              />
+            </div>
+            <div
+              css={max}
+              onClick={() =>
+                (async () => {
+                  if (!toMaxAmount) return;
+                  await toMaxAmount();
+                })()
+              }
+            >
+              <FormattedMessage id="max" />
+            </div>
+          </div>
+        )}
+      </div>
 
       <div css={[label, toLabel]}>
         <div css={reverse}>
@@ -215,41 +250,27 @@ export const Widget = () => {
       {isAmountValid && swapQuote && (
         <table css={info}>
           <tbody>
-            <tr>
-              <td>
-                <FormattedMessage id="swap.deposited-balance" />
-              </td>
-              <td css={depositValue}>
-                <FormattedMessage
-                  id="token-amount"
-                  values={{
-                    amount: (
-                      <FormattedNumber
-                        value={Number(depositedBalance.amount)}
-                        maximumFractionDigits={8}
-                      />
-                    ),
-                    token: depositedBalance.token,
-                  }}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <FormattedMessage id="swap.min-receiving-amount" />
-              </td>
-              <td css={depositValue}>
-                <FormattedMessage
-                  id="token-amount"
-                  values={{
-                    amount: (
-                      <FormattedNumber value={Number(minAmount.amount)} maximumFractionDigits={8} />
-                    ),
-                    token: minAmount.token,
-                  }}
-                />
-              </td>
-            </tr>
+            {isSkypools && (
+              <tr>
+                <td>
+                  <FormattedMessage id="swap.min-receiving-amount" />
+                </td>
+                <td css={minimumReceivingValue}>
+                  <FormattedMessage
+                    id="token-amount"
+                    values={{
+                      amount: (
+                        <FormattedNumber
+                          value={Number(minAmount.amount)}
+                          maximumFractionDigits={8}
+                        />
+                      ),
+                      token: minAmount.token,
+                    }}
+                  />
+                </td>
+              </tr>
+            )}
             <tr>
               <td css={infoLabel} rowSpan={2}>
                 <FormattedMessage id="widget.details.rate" />

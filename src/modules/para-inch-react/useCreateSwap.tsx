@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
+import ABI from 'human-standard-token-abi';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
@@ -13,6 +14,7 @@ import {
   getSkypoolsContractAddress,
   getWrappedBtcAddress,
   isFakeBtcToken,
+  isFakeNativeToken,
 } from '../para-inch';
 
 import { simpleSwapPriceRoute, SimpleSwapQuote, txDataSpSimpleSwap } from './spSimpleSwap';
@@ -21,14 +23,14 @@ import { useSkypoolsFloats } from './useSkypoolsFloats';
 
 export const useCreateSwap = () => {
   const { address, wallet, onboard, network: onboardNetwork } = useOnboard();
-  const { swapQuote, network, slippage, fromToken, amount, toToken } = useParaInchForm();
+  const { swapQuote, network, slippage, fromToken, amount, toToken, setAmount } = useParaInchForm();
 
   const { floats } = useSkypoolsFloats();
   const [createSwapError, setCreateSwapError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFloatShortage, setIsFloatShortage] = useState<boolean>(false);
   const [btcAddress, setBtcAddress] = useState<string>('');
-  const [depositedBalance, setDepositedBalance] = useState<{ amount: string; token: string }>({
+  const [balance, setBalance] = useState<{ amount: string; token: string }>({
     amount: '',
     token: '',
   });
@@ -78,30 +80,62 @@ export const useCreateSwap = () => {
     }
   }, [onboard]);
 
-  const getDepositedBalance = useCallback(async () => {
+  const getWalletBalance = useCallback(async () => {
+    if (!wallet || !fromToken || !address) return;
+    const web3 = new Web3(wallet.provider);
+    if (isFakeNativeToken(fromToken.address)) {
+      return web3.utils.fromWei(await web3.eth.getBalance(address), 'ether');
+    }
+
+    const contract = new web3.eth.Contract(ABI, fromToken.address);
+
+    return new Big(await contract.methods.balanceOf(address).call())
+      .div(`1e${fromToken.decimals}`)
+      .toFixed();
+  }, [address, fromToken, wallet]);
+
+  const getBalance = useCallback(async () => {
     if (!wallet || !address || !network || !fromToken) return;
 
-    const contract = buildSkypoolsContract({ provider: wallet.provider, network });
-    const token = isFakeBtcToken(fromToken.address)
-      ? getWrappedBtcAddress({ network })
-      : getERC20Address({ network, tokenAddress: fromToken.address });
+    if (!isSkypools) {
+      const amount = (await getWalletBalance()) ?? '0';
+      setBalance({
+        amount,
+        token: fromToken.symbol,
+      });
+      return;
+    } else {
+      const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+      const token = isFakeBtcToken(fromToken.address)
+        ? getWrappedBtcAddress({ network })
+        : getERC20Address({ network, tokenAddress: fromToken.address });
 
-    const rawBal = await contract.methods.balanceOf(token, address).call();
-    const decimals = fromToken.decimals;
-    const amount = ethers.utils.formatUnits(rawBal, decimals);
+      const rawBal = await contract.methods.balanceOf(token, address).call();
+      const decimals = fromToken.decimals;
+      const amount = ethers.utils.formatUnits(rawBal, decimals);
 
-    setDepositedBalance({
-      amount,
-      token: fromToken.symbol,
-    });
+      setBalance({
+        amount,
+        token: fromToken.symbol,
+      });
 
-    if (!floats || !swapQuote || !isSkypools || !toToken) return;
-    const skybridgeFloat = isFromBtc ? floats.wrappedBtc : floats.btc;
-
-    const spRequiredFloatAmount = isFromBtc ? amount : swapQuote.bestRoute.destTokenAmount;
-
-    setIsFloatShortage(Number(spRequiredFloatAmount) > Number(skybridgeFloat));
-  }, [address, wallet, network, fromToken, floats, isFromBtc, isSkypools, toToken, swapQuote]);
+      if (!floats || !swapQuote || !toToken) return;
+      const skybridgeFloat = isFromBtc ? floats.wrappedBtc : floats.btc;
+      const spRequiredFloatAmount = isFromBtc ? amount : swapQuote.bestRoute.destTokenAmount;
+      setIsFloatShortage(Number(spRequiredFloatAmount) > Number(skybridgeFloat));
+    }
+  }, [
+    address,
+    wallet,
+    network,
+    fromToken,
+    floats,
+    isFromBtc,
+    isSkypools,
+    toToken,
+    swapQuote,
+    getWalletBalance,
+  ]);
 
   const checkIsFloatEnough = useCallback(async () => {
     if (!floats || !swapQuote || !isSkypools || !toToken) return;
@@ -133,34 +167,45 @@ export const useCreateSwap = () => {
   }, [toToken, swapQuote, address, contractAddress, fromToken, getSimpleSwapData]);
 
   useEffect(() => {
-    getDepositedBalance();
+    getBalance();
     checkIsFloatEnough();
     getMinimumAmount();
 
     const interval = setInterval(() => {
-      getDepositedBalance();
+      getBalance();
       checkIsFloatEnough();
       getMinimumAmount();
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [getDepositedBalance, checkIsFloatEnough, getMinimumAmount]);
+  }, [getBalance, checkIsFloatEnough, getMinimumAmount]);
 
   useEffect(() => {
     setCreateSwapError('');
   }, [fromToken, amount, toToken, onboardNetwork]);
 
+  const toMaxAmount = useCallback(async () => {
+    if (isSkypools) {
+      if (!balance.amount) return;
+      setAmount(balance.amount);
+    } else {
+      const balance = (await getWalletBalance()) ?? '0';
+      setAmount(balance);
+    }
+  }, [setAmount, balance, isSkypools, getWalletBalance]);
+
   return useMemo(() => {
     return {
       isQuote: amount && swapQuote ? true : false,
-      isEnoughDeposit: Number(depositedBalance.amount) >= Number(amount),
-      depositedBalance,
+      isEnoughDeposit: Number(balance.amount) >= Number(amount),
+      balance,
       isSkypools,
       isLoading,
       isFloatShortage,
       createSwapError,
       minAmount,
       btcAddress,
+      toMaxAmount,
       setBtcAddress,
       createSwap: async () => {
         if (!swapQuote) {
@@ -219,8 +264,6 @@ export const useCreateSwap = () => {
               userAddress: address,
             });
 
-            console.log(' JSON.parse(swapQuote.rawRouteData)', JSON.parse(swapQuote.rawRouteData));
-
             await walletCheck();
             return web3.eth.sendTransaction(transaction);
           }
@@ -249,9 +292,10 @@ export const useCreateSwap = () => {
     fromToken,
     toToken,
     getSimpleSwapData,
-    depositedBalance,
+    balance,
     isFloatShortage,
     minAmount,
     walletCheck,
+    toMaxAmount,
   ]);
 };

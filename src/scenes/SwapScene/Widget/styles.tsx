@@ -118,7 +118,7 @@ export const rowBtcAddress = css`
   width: 100%;
 `;
 
-export const depositValue = css`
+export const minimumReceivingValue = css`
   text-align: end;
 `;
 
@@ -132,4 +132,18 @@ export const invalidAddressFormat = css`
 
 export const link = css`
   text-decoration: none;
+`;
+
+export const rowBalance = css`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: ${rem(size.drawer)};
+  column-gap: ${rem(size.drawer)};
+  padding-right: ${rem(size.box / 2)};
+  font-size: ${rem(12)};
+`;
+
+export const max = css`
+  text-decoration: underline;
 `;
