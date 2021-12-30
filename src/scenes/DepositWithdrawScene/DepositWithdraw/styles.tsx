@@ -29,6 +29,7 @@ export const label = css`
 export const max = css`
   text-decoration: underline;
   font-size: ${rem(size.room)};
+  cursor: pointer;
 `;
 
 export const rowDepositBalance = css`

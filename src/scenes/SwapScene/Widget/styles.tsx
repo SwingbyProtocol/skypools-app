@@ -146,4 +146,5 @@ export const rowBalance = css`
 
 export const max = css`
   text-decoration: underline;
+  cursor: pointer;
 `;
