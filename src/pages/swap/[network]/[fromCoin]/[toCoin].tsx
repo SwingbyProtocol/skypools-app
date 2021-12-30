@@ -49,6 +49,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   }
 
   const tokens = await (async () => {
+    const disabledCoins = ['WBTC', 'WETH'];
     try {
       return (
         await apolloClient.query<TokensQuery, TokensQueryVariables>({
@@ -57,7 +58,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
         })
       ).data.tokens.edges
         .map((it) => it.node)
-        .filter((it) => it.symbol !== 'WBTC');
+        .filter((it) => !disabledCoins.find((that) => that === it.symbol));
+      // .filter((it) => it.symbol !== 'WBTC' && it.symbol !== 'WETH');
     } catch (err) {
       logger.fatal({ err }, 'Could not load token list');
       return [];

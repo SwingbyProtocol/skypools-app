@@ -41,7 +41,10 @@ export const useTokens = () => {
         throw result;
       }
 
-      const formattedTokens = result.filter((it) => it.symbol !== 'WBTC');
+      const disabledCoins = ['WBTC', 'WETH'];
+      const formattedTokens = result.filter(
+        (it) => !disabledCoins.find((that) => that === it.symbol),
+      );
       formattedTokens.splice(1, 0, btc);
       setTokens(formattedTokens as CoinInfo[]);
     })();
