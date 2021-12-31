@@ -91,7 +91,7 @@ export const SwapScene = () => {
   return (
     <>
       <Head>
-        <title>Swingby Skypools | Swap</title>
+        <title>Swingby SkyPools | Swap</title>
       </Head>
       <Layout
         isSkybridgeWidget={false}

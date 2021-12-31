@@ -70,7 +70,7 @@ export const DepositWithdraw = () => {
   return (
     <>
       <Head>
-        <title>Swingby Skypools | {isDeposit ? 'Deposit' : 'Withdraw'}</title>
+        <title>Swingby SkyPools | {isDeposit ? 'Deposit' : 'Withdraw'}</title>
       </Head>
       <div css={container}>
         <div>
