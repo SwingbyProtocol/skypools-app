@@ -79,3 +79,12 @@ export const textInput = css`
     text-align: end;
   }
 `;
+
+export const explorer = css`
+  margin-block-start: ${rem(size.drawer)};
+  text-align: center;
+`;
+
+export const detailLink = css`
+  color: hsl(var(--sp-color-primary-normal));
+`;

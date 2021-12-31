@@ -1,5 +1,7 @@
 {
   "logo": "SkyPools Beta",
+  "transaction-submitted": "Transaction submitted",
+  "view-on-explorer": "View on {value}",
   "network.full.ETHEREUM": "Ethereum",
   "network.full.ROPSTEN": "Ropsten",
   "network.full.BSC": "Binance Smart Chain",

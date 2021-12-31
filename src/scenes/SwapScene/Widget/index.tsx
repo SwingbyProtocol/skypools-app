@@ -31,6 +31,8 @@ import {
   toLabel,
   rowBalance,
   max,
+  explorer,
+  detailLink,
 } from './styles';
 
 export const Widget = () => {
@@ -61,6 +63,7 @@ export const Widget = () => {
     isFloatShortage,
     minAmount,
     isEnoughDeposit,
+    explorerLink,
   } = useCreateSwap();
 
   const { address, network } = useOnboard();
@@ -245,6 +248,16 @@ export const Widget = () => {
 
       {errorMsg && <div css={error}>{errorMsg}</div>}
       {createSwapError && <div css={error}>{createSwapError}</div>}
+      {explorerLink && (
+        <div css={explorer}>
+          <div>
+            <FormattedMessage id="transaction-submitted" />
+          </div>
+          <a href={explorerLink} target="_blank" rel="noopener noreferrer" css={detailLink}>
+            <FormattedMessage id="view-on-explorer" values={{ value: 'Etherscan' }} />
+          </a>
+        </div>
+      )}
 
       {isAmountValid && swapQuote && (
         <table css={info}>

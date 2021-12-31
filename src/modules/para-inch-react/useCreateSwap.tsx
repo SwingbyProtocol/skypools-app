@@ -16,6 +16,7 @@ import {
   isFakeBtcToken,
   isFakeNativeToken,
 } from '../para-inch';
+import { buildLinkToTransaction } from '../web3';
 
 import { simpleSwapPriceRoute, SimpleSwapQuote, txDataSpSimpleSwap } from './spSimpleSwap';
 import { useParaInchForm } from './useParaInchForm';
@@ -30,6 +31,7 @@ export const useCreateSwap = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFloatShortage, setIsFloatShortage] = useState<boolean>(false);
   const [btcAddress, setBtcAddress] = useState<string>('');
+  const [explorerLink, setExplorerLink] = useState<string>('');
   const [balance, setBalance] = useState<{ amount: string; token: string }>({
     amount: '',
     token: '',
@@ -185,6 +187,7 @@ export const useCreateSwap = () => {
 
   useEffect(() => {
     setCreateSwapError('');
+    setExplorerLink('');
   }, [fromToken, amount, toToken, onboardNetwork]);
 
   const toMaxAmount = useCallback(async () => {
@@ -208,6 +211,7 @@ export const useCreateSwap = () => {
       createSwapError,
       minAmount,
       btcAddress,
+      explorerLink,
       toMaxAmount,
       setBtcAddress,
       createSwap: async () => {
@@ -258,7 +262,12 @@ export const useCreateSwap = () => {
             );
 
             await walletCheck();
-            return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
+            return web3.eth
+              .sendTransaction({ ...transaction, gasPrice, gas })
+              .once('transactionHash', (transactionHash) => {
+                const url = buildLinkToTransaction({ network, transactionHash });
+                setExplorerLink(url);
+              });
           } else {
             const web3 = new Web3(wallet.provider);
             const transaction: TransactionConfig = await buildParaTxData({
@@ -268,7 +277,12 @@ export const useCreateSwap = () => {
             });
 
             await walletCheck();
-            return web3.eth.sendTransaction(transaction);
+            return web3.eth
+              .sendTransaction(transaction)
+              .once('transactionHash', (transactionHash) => {
+                const url = buildLinkToTransaction({ network, transactionHash });
+                setExplorerLink(url);
+              });
           }
         } catch (err: any) {
           logger.error(err);
@@ -298,6 +312,7 @@ export const useCreateSwap = () => {
     balance,
     isFloatShortage,
     minAmount,
+    explorerLink,
     walletCheck,
     toMaxAmount,
   ]);

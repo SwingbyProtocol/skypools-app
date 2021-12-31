@@ -19,6 +19,7 @@ import {
   isFakeNativeToken,
 } from '../para-inch';
 import { addBtcDeposits } from '../localstorage';
+import { buildLinkToTransaction } from '../web3';
 
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
@@ -29,6 +30,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
   const [errorMsg, setErrorMsg] = useState<string>('');
   const { push, pathname } = useRouter();
   const isDeposit = pathname.includes('/deposit');
+  const [explorerLink, setExplorerLink] = useState<string>('');
 
   const [depositedBalance, setDepositedBalance] = useState<{ amount: string; token: string }>({
     amount: '',
@@ -100,6 +102,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
 
   useEffect(() => {
     setErrorMsg('');
+    setExplorerLink('');
   }, [coinInfo, amount]);
 
   useEffect(() => {
@@ -121,12 +124,10 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
   }, [address, coinInfo, wallet, network]);
 
   const toMaxAmount = useCallback(async () => {
-    console.log('1');
     if (!isDeposit) {
       if (!depositedBalance.amount) return;
       setAmount(depositedBalance.amount);
     } else {
-      console.log('hello');
       const balance = (await getWalletBalance()) ?? '0';
       setAmount(balance);
     }
@@ -137,6 +138,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
       approve,
       isDeposit,
+      explorerLink,
       depositedBalance,
       setAmount,
       toMaxAmount,
@@ -196,7 +198,12 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             );
 
             await walletCheck();
-            return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
+            return web3.eth
+              .sendTransaction({ ...transaction, gasPrice, gas })
+              .once('transactionHash', (transactionHash) => {
+                const url = buildLinkToTransaction({ network, transactionHash });
+                setExplorerLink(url);
+              });
           }
         } catch (err: any) {
           logger.error(err);
@@ -244,7 +251,12 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
           logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
           await walletCheck();
-          return web3.eth.sendTransaction({ ...transaction, gasPrice, gas });
+          return web3.eth
+            .sendTransaction({ ...transaction, gasPrice, gas })
+            .once('transactionHash', (transactionHash) => {
+              const url = buildLinkToTransaction({ network, transactionHash });
+              setExplorerLink(url);
+            });
         } catch (err: any) {
           logger.error(err);
           setErrorMsg(err.message);
@@ -255,6 +267,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     };
   }, [
     isDeposit,
+    explorerLink,
     depositedBalance,
     address,
     depositedInformation,

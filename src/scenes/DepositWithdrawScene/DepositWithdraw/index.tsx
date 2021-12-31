@@ -24,6 +24,8 @@ import {
   error,
   textInput,
   max,
+  explorer,
+  detailLink,
 } from './styles';
 
 export const DepositWithdraw = () => {
@@ -41,6 +43,7 @@ export const DepositWithdraw = () => {
     handleWithdraw,
     isDeposit,
     toMaxAmount,
+    explorerLink,
   } = useDepositWithdraw(fromToken);
 
   const { depositTxs } = useBtcDeposits();
@@ -154,6 +157,16 @@ export const DepositWithdraw = () => {
             )}
           </div>
           {errorMsg && <div css={error}>{errorMsg}</div>}
+          {explorerLink && (
+            <div css={explorer}>
+              <div>
+                <FormattedMessage id="transaction-submitted" />
+              </div>
+              <a href={explorerLink} target="_blank" rel="noopener noreferrer" css={detailLink}>
+                <FormattedMessage id="view-on-explorer" values={{ value: 'Etherscan' }} />
+              </a>
+            </div>
+          )}
         </div>
         {(fromToken.symbol === 'BTC' || skybridgeId) && depositTxs.length > 0 && isDeposit && (
           <div css={historyContainer}>

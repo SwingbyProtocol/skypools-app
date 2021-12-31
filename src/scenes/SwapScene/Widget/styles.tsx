@@ -16,6 +16,7 @@ export const container = css`
     'address'
     'swap'
     'error'
+    'explorer'
     'info';
 `;
 
@@ -134,9 +135,9 @@ export const rowBalance = css`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-top: ${rem(size.drawer)};
+  margin-block-start: ${rem(size.drawer)};
   column-gap: ${rem(size.drawer)};
-  padding-right: ${rem(size.box / 2)};
+  padding-inline-end: ${rem(size.box / 2)};
   font-size: ${rem(12)};
   color: hsl(var(--sp-color-text-masked));
 `;
@@ -144,4 +145,14 @@ export const rowBalance = css`
 export const max = css`
   text-decoration: underline;
   cursor: pointer;
+`;
+
+export const explorer = css`
+  grid-area: explorer;
+  margin-block-start: ${rem(size.drawer)};
+  text-align: center;
+`;
+
+export const detailLink = css`
+  color: hsl(var(--sp-color-primary-normal));
 `;
