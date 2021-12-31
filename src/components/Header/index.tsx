@@ -1,5 +1,3 @@
-import Image from 'next/image';
-import { useMedia } from 'react-use';
 import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
 
@@ -7,12 +5,11 @@ import { ConnectWallet } from '../../components/ConnectWallet';
 import { useOnboard } from '../../modules/onboard';
 import { Floats } from '../Floats';
 
-import { header, logo, connect, info, links, link } from './styles';
+import { connect, header, info, link, links, logo } from './styles';
 
 type Props = { className?: string };
 
 export const Header = ({ className }: Props) => {
-  const isDarkMode = useMedia('(prefers-color-scheme: dark)', false);
   const { network } = useOnboard();
 
   const swapUrl = `/swap/${
@@ -22,7 +19,7 @@ export const Header = ({ className }: Props) => {
   return (
     <header css={header} className={className}>
       <a css={logo} href="/">
-        <Image src={`/logo-${isDarkMode ? 'dark' : 'light'}.svg`} alt="Skypools" layout="fill" />
+        <FormattedMessage id="logo" />
       </a>
       <div css={links}>
         <Link href={swapUrl}>

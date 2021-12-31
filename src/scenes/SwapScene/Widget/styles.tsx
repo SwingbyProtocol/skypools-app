@@ -68,10 +68,6 @@ export const infoValue = css`
   text-align: end;
 `;
 
-export const infoValueHighlight = css`
-  color: hsl(var(--sp-color-text-normal));
-`;
-
 export const error = css`
   grid-area: error;
   margin-block-start: ${rem(size.drawer)};
@@ -142,6 +138,7 @@ export const rowBalance = css`
   column-gap: ${rem(size.drawer)};
   padding-right: ${rem(size.box / 2)};
   font-size: ${rem(12)};
+  color: hsl(var(--sp-color-text-masked));
 `;
 
 export const max = css`

@@ -20,7 +20,6 @@ import {
   info,
   infoLabel,
   infoValue,
-  infoValueHighlight,
   invalidAddressFormat,
   label,
   labelAddress,
@@ -277,12 +276,12 @@ export const Widget = () => {
               </td>
               <td css={infoValue}>
                 1&nbsp;{fromToken?.symbol}&nbsp;=&nbsp;
-                <span css={infoValueHighlight}>
+                <span>
                   <FormattedNumber
                     value={new Big(swapQuote.srcTokenPriceUsd)
                       .div(swapQuote.destTokenPriceUsd)
                       .toNumber()}
-                    maximumSignificantDigits={6}
+                    maximumSignificantDigits={8}
                   />
                 </span>
                 &nbsp;
@@ -292,12 +291,12 @@ export const Widget = () => {
             <tr>
               <td css={infoValue}>
                 1&nbsp;{toToken?.symbol}&nbsp;=&nbsp;
-                <span css={infoValueHighlight}>
+                <span>
                   <FormattedNumber
                     value={new Big(swapQuote.destTokenPriceUsd)
                       .div(swapQuote.srcTokenPriceUsd)
                       .toNumber()}
-                    maximumSignificantDigits={6}
+                    maximumSignificantDigits={8}
                   />
                 </span>
                 &nbsp;

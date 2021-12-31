@@ -13,7 +13,7 @@ export const header = css`
   align-content: center;
   justify-content: space-between;
   justify-items: start;
-  grid-row-gap: ${rem(size.box)};
+  grid-row-gap: ${rem(size.drawer)};
   min-block-size: ${rem(80)};
   background: hsl(var(--sp-color-bg-normal));
   border-block-end: 1px solid hsl(var(--sp-color-border-normal));
@@ -30,14 +30,17 @@ export const header = css`
 
 export const logo = css`
   grid-area: logo;
-  block-size: ${rem(size.state / 2)};
-  inline-size: ${rem((size.state * (146 / 44)) / 2)};
-  position: relative;
   cursor: pointer;
-
-  @media (min-width: ${rem(768)}) {
-    block-size: ${rem(size.state)};
-    inline-size: ${rem(size.state * (146 / 44))};
+  text-decoration: none;
+  color: hsl(var(--sp-color-primary-normal));
+  font-weight: 600;
+  transform: scale(0.9, 1);
+  @media (min-width: ${rem(425)}) {
+    font-size: ${rem(size.street)};
+    font-weight: 700;
+  }
+  @media (min-width: ${rem(1024)}) {
+    font-size: ${rem(size.town)};
   }
 `;
 
@@ -71,4 +74,8 @@ export const links = css`
 export const link = css`
   text-decoration: none;
   font-weight: 600;
+  font-size: ${rem(size.room)};
+  @media (min-width: ${rem(425)}) {
+    font-size: ${rem(size.house)};
+  }
 `;
