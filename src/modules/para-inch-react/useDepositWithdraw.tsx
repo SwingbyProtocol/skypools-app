@@ -109,6 +109,17 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     setAmount('');
   }, [coinInfo]);
 
+  useEffect(() => {
+    if (!network) return;
+    const availableNetwork = ['ROPSTEN'];
+    if (!availableNetwork.includes(network)) {
+      setErrorMsg('Currently, SkyPools supports Ropsten testnet only');
+      return;
+    }
+
+    setErrorMsg('');
+  }, [network]);
+
   const getWalletBalance = useCallback(async () => {
     if (!wallet || !coinInfo || !address || !network) return;
     const web3 = new Web3(wallet.provider);

@@ -11,6 +11,7 @@ import { TextInput } from '../../../components/TextInput';
 import { useBtcDeposits } from '../../../modules/localstorage';
 import { useOnboard } from '../../../modules/onboard';
 import { useDepositWithdraw, useTokens } from '../../../modules/para-inch-react';
+import { availableNetwork } from '../../../modules/env';
 
 import {
   buttonContainer,
@@ -31,7 +32,7 @@ import {
 export const DepositWithdraw = () => {
   const { tokens } = useTokens();
   const [fromToken, setFromToken] = useState<CoinInfo>(tokens[0]);
-  const { address } = useOnboard();
+  const { address, network } = useOnboard();
   const {
     depositedBalance,
     amount,
@@ -58,9 +59,13 @@ export const DepositWithdraw = () => {
     [fromToken],
   );
 
-  const isDisabledDeposit = 0 >= Number(amount);
+  const isDisabledDeposit = 0 >= Number(amount) || !availableNetwork.includes(network ?? '');
+
   const isDisabledWithdraw =
-    Number(amount) > Number(depositedBalance.amount) || Number(amount) === 0;
+    Number(amount) > Number(depositedBalance.amount) ||
+    Number(amount) === 0 ||
+    !availableNetwork.includes(network ?? '');
+
   const isMax = !isDeposit || (isDeposit && fromToken.symbol !== 'BTC');
 
   useEffect(() => {

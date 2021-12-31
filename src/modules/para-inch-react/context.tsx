@@ -7,7 +7,7 @@ import { formatQuoteError, ParaInchToken } from '../para-inch';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
 import { SwapQuoteQueryResult, useSwapQuoteLazyQuery } from '../../generated/skypools-graphql';
-import { minimumReceiveBtcAmount } from '../env';
+import { availableNetwork, minimumReceiveBtcAmount } from '../env';
 
 export type ParaInchContextValue = {
   amount: string | null;
@@ -68,11 +68,10 @@ export const ParaInchTokenProvider = ({
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   useEffect(() => {
-    const availableNetwork = ['ROPSTEN'];
     const isSkypools = fromToken?.symbol === 'BTC' || toToken?.symbol === 'BTC';
 
     if (address && isSkypools && !availableNetwork.includes(valueProp.network)) {
-      setErrorMsg('Currently, Skypools supports Ropsten testnet only');
+      setErrorMsg('Currently, SkyPools supports Ropsten testnet only');
       return;
     }
 
