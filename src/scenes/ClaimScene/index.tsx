@@ -1,0 +1,1 @@
+export { ClaimScene } from './component';

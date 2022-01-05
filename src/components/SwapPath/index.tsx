@@ -17,7 +17,7 @@ export const SwapPath = ({ value, className }: Props) => {
   const query = useMemo(
     () => ({
       withFractions: { minWidth: 120 * value.path?.length },
-      withNames: { minWidth: 280 * value.path?.length },
+      withNames: { minWidth: 500 * value.path?.length },
     }),
     [value.path?.length],
   );

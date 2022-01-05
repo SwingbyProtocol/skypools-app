@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { Network } from '../../../../modules/networks';
 import { ParaInchTokenProvider } from '../../../../modules/para-inch-react';
 import { logger } from '../../../../modules/logger';
-import { QuoteScene } from '../../../../scenes/QuoteScene';
 import { apolloClient } from '../../../../modules/apollo';
 import {
   TokensDocument,
@@ -12,10 +11,11 @@ import {
   TokensQueryVariables,
 } from '../../../../generated/skypools-graphql';
 import { isFakeBtcToken, isFakeNativeToken } from '../../../../modules/para-inch';
+import { SwapScene } from '../../../../scenes/SwapScene';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
-export default function QuotePage({ fromToken, toToken, tokens, network }: Props) {
+export default function SwapPage({ fromToken, toToken, tokens, network }: Props) {
   const value = useMemo(
     () => ({ fromToken, toToken, tokens, network }),
     [fromToken, toToken, tokens, network],
@@ -23,7 +23,7 @@ export default function QuotePage({ fromToken, toToken, tokens, network }: Props
 
   return (
     <ParaInchTokenProvider value={value}>
-      <QuoteScene />
+      <SwapScene />
     </ParaInchTokenProvider>
   );
 }
@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   if (!network) {
     return {
       redirect: {
-        destination: `/quote/ethereum/${fromCoinAddress}/${toCoinAddress}`,
+        destination: `/swap/ethereum/${fromCoinAddress}/${toCoinAddress}`,
         permanent: false,
       },
     };
@@ -59,6 +59,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
       ).data.tokens.edges
         .map((it) => it.node)
         .filter((it) => !disabledCoins.find((that) => that === it.symbol));
+      // .filter((it) => it.symbol !== 'WBTC' && it.symbol !== 'WETH');
     } catch (err) {
       logger.fatal({ err }, 'Could not load token list');
       return [];
@@ -90,7 +91,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     if (newFrom && newTo) {
       return {
         redirect: {
-          destination: `/quote/${network.toLowerCase()}/${newFrom}/${newTo}`,
+          destination: `/swap/${network.toLowerCase()}/${newFrom}/${newTo}`,
           permanent: false,
         },
       };

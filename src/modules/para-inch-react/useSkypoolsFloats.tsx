@@ -9,7 +9,10 @@ import { buildSkypoolsContract, getWrappedBtcAddress } from '../para-inch';
 
 export const useSkypoolsFloats = () => {
   const { wallet, network } = useOnboard();
-  const [floats, setFloats] = useState<{ btc: string; wrappedBtc: string } | null>(null);
+  const [floats, setFloats] = useState<{ btc: string; wrappedBtc: string }>({
+    btc: '0',
+    wrappedBtc: '0',
+  });
 
   const floatsInformation = useCallback(async () => {
     if (!wallet || !network) return;

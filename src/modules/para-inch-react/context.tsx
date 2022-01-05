@@ -7,7 +7,7 @@ import { formatQuoteError, ParaInchToken } from '../para-inch';
 import { Network } from '../networks';
 import { useOnboard } from '../onboard';
 import { SwapQuoteQueryResult, useSwapQuoteLazyQuery } from '../../generated/skypools-graphql';
-import { minimumReceiveBtcAmount } from '../env';
+import { availableNetwork, minimumReceiveBtcAmount } from '../env';
 
 export type ParaInchContextValue = {
   amount: string | null;
@@ -68,11 +68,10 @@ export const ParaInchTokenProvider = ({
   const [errorMsg, setErrorMsg] = useState<string>('');
 
   useEffect(() => {
-    const availableNetwork = ['ROPSTEN'];
     const isSkypools = fromToken?.symbol === 'BTC' || toToken?.symbol === 'BTC';
 
     if (address && isSkypools && !availableNetwork.includes(valueProp.network)) {
-      setErrorMsg('Currently, Skypools supports Ropsten testnet only');
+      setErrorMsg('Currently, SkyPools supports Ropsten testnet only');
       return;
     }
 
@@ -109,7 +108,7 @@ export const ParaInchTokenProvider = ({
       setFromTokenState(token);
       push(
         stringifyUrl({
-          url: `/quote/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${token.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -139,7 +138,7 @@ export const ParaInchTokenProvider = ({
 
       push(
         stringifyUrl({
-          url: `/quote/${valueProp.network.toLowerCase()}/${toToken?.address}/${fromToken.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${toToken?.address}/${fromToken.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -164,7 +163,7 @@ export const ParaInchTokenProvider = ({
       setToTokenState(token);
       push(
         stringifyUrl({
-          url: `/quote/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
+          url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${token.address}`,
           query: { skybridgeSwap },
         }),
         '',
@@ -183,7 +182,7 @@ export const ParaInchTokenProvider = ({
 
       push(
         stringifyUrl({
-          url: `/quote/${value}/${fromToken?.address}/${toToken?.address}`,
+          url: `/swap/${value}/${fromToken?.address}/${toToken?.address}`,
           query: { skybridgeSwap },
         }),
       );
@@ -194,7 +193,7 @@ export const ParaInchTokenProvider = ({
   const unlinkSkybridgeSwap = useCallback(() => {
     push(
       stringifyUrl({
-        url: `/quote/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
+        url: `/swap/${valueProp.network.toLowerCase()}/${fromToken?.address}/${toToken?.address}`,
         query: { skybridgeSwap: undefined },
       }),
     );

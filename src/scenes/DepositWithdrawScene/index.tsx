@@ -1,0 +1,1 @@
+export { DepositWithdrawScene } from './component';
