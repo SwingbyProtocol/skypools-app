@@ -8,7 +8,9 @@ import { ListChildComponentProps, VariableSizeList as List } from 'react-window'
 
 import { Coin } from '../../../components/Coin';
 import { PendingDeposit, useBtcDeposits, useUpdateBtcDeposit } from '../../../modules/localstorage';
+import { useOnboard } from '../../../modules/onboard';
 import { shortenAddress } from '../../../modules/short-address';
+import { getWidgetUrl } from '../../../modules/skybridge';
 import { size } from '../../../modules/styles';
 
 import {
@@ -42,6 +44,7 @@ const Context = createContext<PendingDeposit[]>([]);
 
 const Row = ({ style, index }: ListChildComponentProps) => {
   const { formatNumber } = useIntl();
+  const { network } = useOnboard();
   const data = useContext(Context);
   useUpdateBtcDeposit(data[index].hash);
   const btcImage = 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png?1547033579';
@@ -50,6 +53,14 @@ const Row = ({ style, index }: ListChildComponentProps) => {
   if (!item) {
     return <></>;
   }
+
+  const bridge = network === 'BSC' ? 'btc_bep20' : 'btc_erc';
+  const widgetUrl = getWidgetUrl({
+    bridge,
+    hash: item.hash,
+    mode: item.mode,
+    disableNavigation: true,
+  });
 
   return (
     <div
@@ -77,11 +88,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
       </div>
 
       <div css={hash}>
-        <a
-          href={`https://widget.skybridge.exchange/${item.mode}/swap/${item.hash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a href={widgetUrl} target="_blank" rel="noopener noreferrer">
           {shortenAddress({ value: item.hash })}
         </a>
       </div>
