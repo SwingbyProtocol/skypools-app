@@ -1,1 +1,1 @@
-export { getWidgetUrl } from './utils';
+export { getWidgetUrl, getSkybridgeTx } from './utils';

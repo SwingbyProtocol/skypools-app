@@ -17,7 +17,6 @@ import {
   amountIn,
   coinIn,
   container,
-  firstRow,
   hash,
   lastRow,
   rowContainer,
@@ -63,10 +62,7 @@ const Row = ({ style, index }: ListChildComponentProps) => {
   });
 
   return (
-    <div
-      css={[rowContainer, index === 0 && firstRow, index === data.length - 1 && lastRow]}
-      style={style}
-    >
+    <div css={[rowContainer, index === data.length - 1 && lastRow]} style={style}>
       <Link css={txStatus} href={`/deposit/${item.hash}`} passHref>
         <a href={`/deposit/${item.hash}`}>
           <FormattedMessage id={`history.status.${item.status}`} />

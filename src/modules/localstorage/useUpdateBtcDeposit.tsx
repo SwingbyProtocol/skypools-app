@@ -1,35 +1,35 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
-import { useSkybridgeSwapInfoLazyQuery } from '../../generated/skybridge-graphql';
+import { useOnboard } from '../onboard';
+import { getSkybridgeTx } from '../skybridge';
 
 import { useBtcDeposits } from './useBtcDeposits';
 
 export const useUpdateBtcDeposit = (skybridgeId: string) => {
-  const [getSwaps, result] = useSkybridgeSwapInfoLazyQuery();
   const { updateTx, depositTxs } = useBtcDeposits();
+  const { network } = useOnboard();
 
-  useEffect(() => {
-    if (!skybridgeId) return;
+  const updateTxStatus = useCallback(async () => {
+    if (!skybridgeId || !network) return;
+    const filteredTxs = depositTxs.filter((it) => it.hash === skybridgeId);
+    const filteredTx = filteredTxs[0];
+    const tx = await getSkybridgeTx({ network, hash: skybridgeId });
+    if (!tx || !filteredTx) return;
 
-    getSwaps({
-      variables: {
-        id: skybridgeId,
-      },
-    });
-  }, [getSwaps, skybridgeId]);
+    if (['COMPLETED', 'EXPIRED', 'REFUNDED'].includes(filteredTx.status)) return;
 
-  useEffect(() => {
-    if (!result.data || !skybridgeId) return;
-    const filteredTx = depositTxs.filter((it) => it.hash === skybridgeId);
-    const tx = filteredTx[0] ?? null;
-    if (!tx) return;
-
-    if (['COMPLETED', 'EXPIRED', 'REFUNDED'].includes(tx.status)) return;
-
-    if (tx.status !== result.data.transaction.status) {
-      updateTx({ status: result.data.transaction.status, hash: skybridgeId });
+    if (tx.status !== filteredTx.status) {
+      updateTx({ status: tx.status, hash: skybridgeId });
     }
-    result.startPolling(60000);
-    return () => result.stopPolling();
-  }, [result, skybridgeId, depositTxs, updateTx]);
+  }, [updateTx, depositTxs, network, skybridgeId]);
+
+  useEffect(() => {
+    updateTxStatus();
+
+    const interval = setInterval(() => {
+      updateTxStatus();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [updateTxStatus]);
 };
