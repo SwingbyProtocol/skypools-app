@@ -1,3 +1,5 @@
+import { SkybridgeBridge } from '@swingby-protocol/sdk';
+
 import { PendingDeposit } from './../index';
 export const LOCAL_STORAGE = {
   btcPendingDeposits: 'btc-pending-deposits',
@@ -14,10 +16,12 @@ export const addBtcDeposits = ({
   amount,
   hash,
   mode,
+  bridge,
 }: {
   amount: string;
   hash: string;
   mode: 'production' | 'test';
+  bridge: SkybridgeBridge;
 }): void => {
   const pendingTxs = getBtcDeposits();
   const data = {
@@ -26,6 +30,7 @@ export const addBtcDeposits = ({
     amount,
     hash,
     mode,
+    bridge,
   };
   pendingTxs.unshift(data);
   localStorage.setItem(btcPendingDeposits, JSON.stringify(pendingTxs.slice(0, 25)));

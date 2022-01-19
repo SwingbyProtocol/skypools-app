@@ -34,10 +34,6 @@ export const rowContainer = css`
   height: 20px;
 `;
 
-export const firstRow = css`
-  padding-block-start: ${rem(size.town + size.room)};
-`;
-
 export const lastRow = css`
   padding-block-end: ${rem(size.town)};
   padding-block-end: var(--sp-app-inset-bottom);

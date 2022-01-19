@@ -1,3 +1,4 @@
+import { SkybridgeBridge } from '@swingby-protocol/sdk';
 export { addBtcDeposits, getBtcDeposits, updateBtcDeposits } from './utils';
 
 export { useBtcDeposits } from './useBtcDeposits';
@@ -10,4 +11,5 @@ export interface PendingDeposit {
   status: string;
   time: number;
   mode: 'test' | 'production';
+  bridge: SkybridgeBridge;
 }

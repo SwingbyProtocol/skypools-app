@@ -164,6 +164,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             const context = await buildContext({
               mode: network === 'ROPSTEN' ? 'test' : 'production',
             });
+
             const { hash } = await createSwap({
               context,
               addressReceiving: address,
@@ -172,11 +173,14 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               currencyReceiving: network === 'BSC' ? 'BTCB.BEP20' : 'WBTC',
               isSkypoolsSwap: true,
             });
+
             addBtcDeposits({
               amount,
               hash,
               mode: network === 'ROPSTEN' ? 'test' : 'production',
+              bridge: network === 'BSC' ? 'btc_bep20' : 'btc_erc',
             });
+
             return push(`/deposit/${hash}`);
           } else {
             const web3 = new Web3(wallet.provider);

@@ -19,7 +19,7 @@
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@prisma/client": "2.23.0",
-    "@swingby-protocol/sdk": "^1.0.0-alpha.113",
+    "@swingby-protocol/sdk": "^1.0.0-alpha.119",
     "@typescript-eslint/eslint-plugin": "5.2.0",
     "abi-decoder": "^2.4.0",
     "apollo-server": "^3.4.0",
