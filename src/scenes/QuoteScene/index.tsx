@@ -1,1 +1,0 @@
-export { QuoteScene } from './component';
