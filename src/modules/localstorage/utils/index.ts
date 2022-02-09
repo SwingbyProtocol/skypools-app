@@ -1,7 +1,6 @@
+import { LOCAL_STORAGE } from '../../env';
+
 import { PendingDeposit } from './../index';
-export const LOCAL_STORAGE = {
-  btcPendingDeposits: 'btc-pending-deposits',
-};
 
 const { btcPendingDeposits } = LOCAL_STORAGE;
 
