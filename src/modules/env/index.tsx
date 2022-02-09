@@ -13,5 +13,6 @@ export const availableNetwork = ['ROPSTEN'];
 export enum LOCAL_STORAGE {
   btcPendingDeposits = 'btc-pending-deposits',
   Wallet = 'wallet',
+  Terms = 'swingby-skypools.terms',
 }
 export const IGNORED_STORE_WALLET_NAMES = ['WalletConnect'];

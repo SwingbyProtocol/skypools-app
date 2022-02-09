@@ -1,0 +1,1 @@
+export { useAssertTermsSignature } from './useAssertTermsSignature';

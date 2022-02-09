@@ -1,12 +1,12 @@
-import { FormattedMessage } from 'react-intl';
 import { useEffect } from 'react';
+import { FormattedMessage } from 'react-intl';
 
-import { shortenAddress } from '../../modules/short-address';
+import { IGNORED_STORE_WALLET_NAMES, LOCAL_STORAGE } from '../../modules/env';
 import { logger } from '../../modules/logger';
+import { useOnboard } from '../../modules/onboard';
+import { shortenAddress } from '../../modules/short-address';
 import { Button } from '../Button';
 import { NetworkTag } from '../NetworkTag';
-import { useOnboard } from '../../modules/onboard';
-import { IGNORED_STORE_WALLET_NAMES, LOCAL_STORAGE } from '../../modules/env';
 
 import { container, networkTag, walletWrapper } from './styled';
 
