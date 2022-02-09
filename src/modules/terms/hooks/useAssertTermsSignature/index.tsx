@@ -44,6 +44,7 @@ export const useAssertTermsSignature = () => {
     const web3 = new Web3(wallet.provider);
     const signature = await web3.eth.personal.sign(message, address, seed);
     localStorage.setItem(LOCAL_STORAGE.Terms, signature);
+    setIsSignedTerms(true);
   }, [address, wallet]);
 
   useEffect(() => {
