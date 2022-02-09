@@ -13,17 +13,3 @@ generates:
         Decimal: 'string'
       enumValues:
         Network: '../modules/networks#Network'
-  src/generated/skybridge-graphql.tsx:
-    schema: https://network.skybridge.exchange/api/v3/graphql
-    documents: 'src/**/*.skybridge.graphql'
-    plugins:
-      - 'typescript'
-      - 'typescript-operations'
-      - 'typescript-react-apollo'
-    config:
-      defaultBaseOptions:
-        context:
-          serviceName: 'skybridge'
-      scalars:
-        DateTime: 'string'
-        Decimal: 'string'
