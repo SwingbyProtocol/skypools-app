@@ -19,7 +19,7 @@ export const Header = ({ className }: Props) => {
   return (
     <header css={header} className={className}>
       <a css={logo} href="/">
-        <FormattedMessage id="logo" />
+        <img src="/skypools-logo.svg" alt="Skypool Logo" />
       </a>
       <div css={links}>
         <Link href={swapUrl}>

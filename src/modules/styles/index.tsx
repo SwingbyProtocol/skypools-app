@@ -19,11 +19,11 @@ const hslParams = (value: string) => value.replace(/(hsla?\()|(\))/gi, '');
 const primaryText = hslParams('hsla(0, 0%, 100%)');
 
 export const lightTheme = `
-  --sp-color-bg-normal: ${primaryText};
+  --sp-color-bg-normal: ${hslParams('hsla(266, 50%, 20%, 0.9)')};
   --sp-color-bg-base: ${hslParams('hsla(240, 20%, 99%)')};
   --sp-color-bg-accent: ${hslParams('hsla(0, 0%, 98%)')};
 
-  --sp-color-text-normal: ${hslParams('hsla(217, 26%, 23%)')};
+  --sp-color-text-normal: ${hslParams('hsla(0, 0%, 100%)')};
   --sp-color-text-masked: ${hslParams('hsla(215, 8%, 61%)')};
   --sp-color-text-placeholder: ${hslParams('hsla(215, 8%, 61%)')};
 
@@ -116,6 +116,7 @@ export const GlobalStyles = () => (
         margin: 0;
         padding: 0;
         min-block-size: 100vh;
+        background: linear-gradient(121.14deg, #25257d 19.28%, #a04fc7 77.77%, #ea7bec 104.57%);
       }
 
       *,

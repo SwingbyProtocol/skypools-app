@@ -34,7 +34,6 @@ export const logo = css`
   text-decoration: none;
   color: hsl(var(--sp-color-primary-normal));
   font-weight: 600;
-  transform: scale(0.9, 1);
   @media (min-width: ${rem(425)}) {
     font-size: ${rem(size.street)};
     font-weight: 700;
