@@ -16,7 +16,6 @@ export const header = css`
   grid-row-gap: ${rem(size.drawer)};
   min-block-size: ${rem(80)};
   background: hsl(var(--sp-color-bg-normal));
-  border-block-end: 1px solid hsl(var(--sp-color-border-normal));
   padding-block: 0;
   padding-inline: ${rem(size.town)};
   padding-inline-start: var(--sp-app-inset-right);
