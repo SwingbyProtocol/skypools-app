@@ -112,6 +112,7 @@ export const widgetCard = css`
   justify-self: stretch;
   border: none;
   background: rgba(92, 150, 218, 0.2);
+  box-shadow: inset #a2c6fb85 1px 1px 11px;
   border-radius: ${rem(size.house)};
   z-index: 2;
 

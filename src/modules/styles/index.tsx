@@ -116,7 +116,30 @@ export const GlobalStyles = () => (
         margin: 0;
         padding: 0;
         min-block-size: 100vh;
-        background: linear-gradient(121.14deg, #25257d 19.28%, #a04fc7 77.77%, #ea7bec 104.57%);
+        width: 100%;
+        /* height: 100vh; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-size: 300% 300%;
+        background-image: linear-gradient(
+          121.14deg,
+          #25257d 19.28%,
+          #a04fc7 77.77%,
+          #ea7bec 104.57%
+        );
+        animation: AnimateBG 30s ease infinite;
+      }
+      @keyframes AnimateBG {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
       }
 
       *,
