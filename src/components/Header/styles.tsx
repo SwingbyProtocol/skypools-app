@@ -7,14 +7,14 @@ export const header = css`
   display: grid;
   grid-template-rows: min-content min-content;
   grid-template-areas:
-    'logo links'
-    'info info';
+    'logo logo'
+    'links info';
   align-items: center;
   align-content: center;
   justify-content: space-between;
   justify-items: start;
   grid-row-gap: ${rem(size.drawer)};
-  min-block-size: ${rem(80)};
+  min-block-size: ${rem(120)};
   background: hsl(var(--sp-color-bg-normal));
   padding-block: 0;
   padding-inline: ${rem(size.town)};
@@ -24,6 +24,7 @@ export const header = css`
   @media (min-width: ${rem(768)}) {
     grid-template-rows: none;
     grid-template-areas: 'logo links info';
+    min-block-size: ${rem(80)};
   }
 `;
 
