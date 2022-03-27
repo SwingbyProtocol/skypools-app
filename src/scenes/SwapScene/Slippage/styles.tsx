@@ -29,7 +29,7 @@ export const selectorButtonsWrapper = css`
 
 export const selectorButton = css`
   border: 1px solid hsl(var(--sp-color-border-normal));
-  background: hsl(var(--sp-color-bg-normal));
+  background: hsl(var(--sp-color-bg-accent));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,7 +51,7 @@ export const selectorButton = css`
 `;
 
 export const selectorButtonActive = css`
-  background-color: hsl(var(--sp-color-border-normal));
+  background-color: hsl(var(--sp-color-primary-active));
 `;
 
 export const textInput = css`

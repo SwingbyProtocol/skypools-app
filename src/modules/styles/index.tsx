@@ -21,10 +21,12 @@ const primaryText = hslParams('hsla(0, 0%, 100%)');
 export const lightTheme = `
   --sp-color-bg-normal: ${hslParams('hsla(266, 50%, 20%, 0.9)')};
   --sp-color-bg-base: ${hslParams('hsla(240, 20%, 99%)')};
-  --sp-color-bg-accent: ${hslParams('hsla(0, 0%, 98%)')};
+  --sp-color-bg-accent: ${hslParams('hsla(268,50%,42%)')};
+  /* --sp-color-bg-accent: ${hslParams('hsla(243, 32%, 50%, 1')}; */
 
   --sp-color-text-normal: ${hslParams('hsla(0, 0%, 100%)')};
-  --sp-color-text-masked: ${hslParams('hsla(215, 8%, 61%)')};
+  --sp-color-bg-normal-dark: ${hslParams('hsla(217, 6%, 19%)')};
+  --sp-color-text-masked: ${hslParams('hsla(0, 8%, 90%)')};
   --sp-color-text-placeholder: ${hslParams('hsla(215, 8%, 61%)')};
 
   --sp-color-input-bg: var(--sp-color-bg-accent);
@@ -60,11 +62,12 @@ export const lightTheme = `
 `;
 
 export const darkTheme = `
-  --sp-color-bg-normal: ${hslParams('hsla(217, 6%, 19%)')};
+  --sp-color-bg-normal: ${hslParams('hsla(266, 50%, 20%, 0.9)')};
   --sp-color-bg-base: ${hslParams('hsla(217, 6%, 15%)')};
   --sp-color-bg-accent: ${hslParams('hsla(217, 6%, 26%)')};
 
   --sp-color-text-normal: ${hslParams('hsla(0, 0%, 100%)')};
+  --sp-color-bg-normal-dark: ${hslParams('hsla(217, 6%, 19%)')};
   --sp-color-text-masked: ${hslParams('hsla(0, 0%, 98%)')};
   --sp-color-text-placeholder: ${hslParams('hsla(215, 8%, 61%)')};
 
@@ -122,15 +125,10 @@ export const GlobalStyles = () => (
         align-items: center;
         justify-content: center;
         background-size: 300% 300%;
-        background-image: linear-gradient(
-          121.14deg,
-          #25257d 19.28%,
-          #a04fc7 77.77%,
-          #ea7bec 104.57%
-        );
-        animation: AnimateBG 30s ease infinite;
+        background: linear-gradient(121.14deg, #25257d 19.28%, #a04fc7 77.77%, #ea7bec 104.57%);
+        /*  animation: AnimateBG 30s ease infinite; */
       }
-      @keyframes AnimateBG {
+      /*  @keyframes AnimateBG {
         0% {
           background-position: 0% 50%;
         }
@@ -140,7 +138,7 @@ export const GlobalStyles = () => (
         100% {
           background-position: 0% 50%;
         }
-      }
+      } */
 
       *,
       *::before,
