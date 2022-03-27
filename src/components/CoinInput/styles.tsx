@@ -58,7 +58,7 @@ export const coinChain = css`
 `;
 
 export const coinName = css`
-  color: var(--coin-name-color, hsl(var(--sp-color-text-normal)));
+  color: var(--coin-name-color, hsl(var(--sp-color-text-normal-dark)));
   font-size: ${rem(size.room)};
   font-weight: 700;
 `;

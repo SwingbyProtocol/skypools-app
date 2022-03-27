@@ -7,16 +7,15 @@ export const header = css`
   display: grid;
   grid-template-rows: min-content min-content;
   grid-template-areas:
-    'logo links'
-    'info info';
+    'logo logo'
+    'links info';
   align-items: center;
   align-content: center;
   justify-content: space-between;
   justify-items: start;
   grid-row-gap: ${rem(size.drawer)};
-  min-block-size: ${rem(80)};
+  min-block-size: ${rem(120)};
   background: hsl(var(--sp-color-bg-normal));
-  border-block-end: 1px solid hsl(var(--sp-color-border-normal));
   padding-block: 0;
   padding-inline: ${rem(size.town)};
   padding-inline-start: var(--sp-app-inset-right);
@@ -25,6 +24,7 @@ export const header = css`
   @media (min-width: ${rem(768)}) {
     grid-template-rows: none;
     grid-template-areas: 'logo links info';
+    min-block-size: ${rem(80)};
   }
 `;
 
@@ -34,7 +34,6 @@ export const logo = css`
   text-decoration: none;
   color: hsl(var(--sp-color-primary-normal));
   font-weight: 600;
-  transform: scale(0.9, 1);
   @media (min-width: ${rem(425)}) {
     font-size: ${rem(size.street)};
     font-weight: 700;

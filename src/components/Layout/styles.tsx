@@ -111,7 +111,9 @@ export const widgetCard = css`
   align-self: stretch;
   justify-self: stretch;
   border: none;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  background: rgba(92, 150, 218, 0.2);
+  box-shadow: inset #a2c6fb85 1px 1px 11px;
+  border-radius: ${rem(size.house)};
   z-index: 2;
 
   @media (prefers-color-scheme: dark) {
