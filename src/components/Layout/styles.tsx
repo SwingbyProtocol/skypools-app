@@ -115,11 +115,6 @@ export const widgetCard = css`
   box-shadow: inset #a2c6fb85 1px 1px 11px;
   border-radius: ${rem(size.house)};
   z-index: 2;
-
-  @media (prefers-color-scheme: dark) {
-    box-shadow: none;
-    border: 1px solid hsl(var(--sp-color-border-normal));
-  }
 `;
 
 export const balanceCard = css`
