@@ -66,7 +66,10 @@ export const historyCard = css`
 export const error = css`
   margin-block-start: ${rem(size.drawer)};
   font-size: ${rem(size.room)};
-  color: hsl(var(--sp-color-danger-normal));
+  color: hsl(var(--sp-color-text-normal);
+  border-radius: ${rem(size.box)};
+  background-color: hsl(var(--sp-color-danger-normal));
+  padding: ${rem(size.drawer)};
   overflow-wrap: break-word;
   max-width: ${rem(250)};
   @media (min-width: ${rem(1440)}) {
