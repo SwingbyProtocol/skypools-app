@@ -117,7 +117,6 @@ export const widgetCard = css`
   z-index: 2;
 
   @media (prefers-color-scheme: dark) {
-    box-shadow: none;
     border: 1px solid hsl(var(--sp-color-border-normal));
   }
 `;
