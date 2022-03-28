@@ -73,7 +73,7 @@ export const error = css`
   grid-area: error;
   margin-block-start: ${rem(size.drawer)};
   font-size: ${rem(size.room)};
-  color: hsl(var(--sp-color-text-normal);
+  color: hsl(var(--sp-color-text-normal));
   border-radius: ${rem(size.box)};
   background-color: hsl(var(--sp-color-danger-normal));
   padding: ${rem(size.drawer)};
