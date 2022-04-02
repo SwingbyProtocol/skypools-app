@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Network" AS ENUM ('ETHEREUM', 'ROPSTEN', 'BSC');
+CREATE TYPE "Network" AS ENUM ('ETHEREUM', 'ROPSTEN');
 
 -- CreateEnum
 CREATE TYPE "LockId" AS ENUM ('NEWER_SWAPS', 'OLDER_SWAPS', 'PRICES_HISTORIC', 'SWAP_DETAILS', 'SWAP_LOGS', 'SWAP_STATUS');
@@ -70,10 +70,10 @@ CREATE UNIQUE INDEX "Token.network_address_unique" ON "Token"("network", "addres
 CREATE INDEX "Token.network_address_index" ON "Token"("network", "address");
 
 -- AddForeignKey
+ALTER TABLE "TokenUsdPriceHistoric" ADD FOREIGN KEY ("tokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Swap" ADD FOREIGN KEY ("srcTokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Swap" ADD FOREIGN KEY ("destTokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "TokenUsdPriceHistoric" ADD FOREIGN KEY ("tokenId") REFERENCES "Token"("id") ON DELETE CASCADE ON UPDATE CASCADE;

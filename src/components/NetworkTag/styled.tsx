@@ -1,10 +1,9 @@
 import { em, transitions, transparentize } from 'polished';
 import { css } from '@emotion/react';
 
-import { darkTheme, lightTheme, size } from '../../modules/styles';
+import { darkTheme, size } from '../../modules/styles';
 
 const COLOR_ETH = '#8892b5';
-const COLOR_BSC = '#f0b90b';
 
 export const eth = css`
   ${darkTheme};

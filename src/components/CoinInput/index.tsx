@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import Select, { createFilter, MenuListComponentProps, StylesConfig, Theme } from 'react-select';
 import { FixedSizeList as List } from 'react-window';
 
-import { getNetwork } from '../../modules/networks';
+import { TokensQuery, Network as GQLNetwork } from '../../generated/skypools-graphql';
 import { isFakeBtcToken, isFakeNativeToken } from '../../modules/para-inch';
 import { size } from '../../modules/styles';
 import { Coin } from '../Coin';
@@ -19,13 +19,7 @@ import {
   selectInput,
 } from './styles';
 
-export interface CoinInfo {
-  decimals: number;
-  network: number;
-  img: string;
-  address: string;
-  symbol: string;
-}
+export type CoinInfo = TokensQuery['tokens']['edges'][number]['node'];
 
 export type CoinAmountInputValue = {
   coin: CoinInfo | null;
@@ -157,9 +151,9 @@ export const CoinInput = ({ availableCoins, className, value, onChange }: Props)
                       values={{
                         chain: (
                           <FormattedMessage
-                            id={`network.${coin.network === 1 ? 'full' : 'short'}.${getNetwork(
-                              coin.network,
-                            )}`}
+                            id={`network.${
+                              coin.network === GQLNetwork.ETHEREUM ? 'full' : 'short'
+                            }.${coin.network}`}
                           />
                         ),
                       }}
@@ -167,7 +161,7 @@ export const CoinInput = ({ availableCoins, className, value, onChange }: Props)
                   )}
                 </span>
                 <div css={coinWrapper}>
-                  <Coin src={coin.img} css={coinLogo} loading="eager" />
+                  <Coin src={coin.logoUri} css={coinLogo} loading="eager" />
                   <span css={coinNameClass}>{coin.symbol}</span>
                 </div>
               </div>

@@ -296,7 +296,11 @@ export const Widget = () => {
                 <span>
                   <FormattedNumber
                     value={new Big(swapQuote.srcTokenPriceUsd)
-                      .div(swapQuote.destTokenPriceUsd)
+                      .div(
+                        new Big(swapQuote.destTokenPriceUsd).eq(0)
+                          ? 1
+                          : swapQuote.destTokenPriceUsd,
+                      )
                       .toNumber()}
                     maximumSignificantDigits={8}
                   />
@@ -311,7 +315,9 @@ export const Widget = () => {
                 <span>
                   <FormattedNumber
                     value={new Big(swapQuote.destTokenPriceUsd)
-                      .div(swapQuote.srcTokenPriceUsd)
+                      .div(
+                        new Big(swapQuote.srcTokenPriceUsd).eq(0) ? 1 : swapQuote.srcTokenPriceUsd,
+                      )
                       .toNumber()}
                     maximumSignificantDigits={8}
                   />
