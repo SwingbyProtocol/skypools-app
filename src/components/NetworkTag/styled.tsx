@@ -27,27 +27,6 @@ export const ropsten = css`
   color: hsl(var(--sp-color-text-normal));
 `;
 
-export const bsc = css`
-  ${lightTheme};
-
-  background: ${COLOR_BSC};
-  color: hsl(var(--sp-color-text-normal));
-`;
-
-export const bsct = css`
-  ${lightTheme};
-
-  background: ${transparentize(0.5, COLOR_BSC)};
-  background-image: repeating-linear-gradient(
-    -45deg,
-    transparent,
-    transparent 5px,
-    ${COLOR_BSC} 5px,
-    ${COLOR_BSC} 10px
-  );
-  color: hsl(var(--sp-color-text-normal));
-`;
-
 export const container = css`
   display: flex;
   align-items: center;

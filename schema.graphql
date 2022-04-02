@@ -94,7 +94,6 @@ type Mutation {
 }
 
 enum Network {
-  BSC
   ETHEREUM
   ROPSTEN
 }

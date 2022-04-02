@@ -8,7 +8,6 @@ import { logger } from '../logger';
 import { isFakeNativeToken, isFakeBtcToken, getWrappedBtcAddress } from '../para-inch';
 
 const WETH_ADDRESS = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
-const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c';
 
 const HISTORY_LENGTH = Duration.fromObject({ months: 6 });
 
@@ -23,14 +22,12 @@ const getCoingeckoNetworkId = (network: Network) => {
   switch (network) {
     case Network.ETHEREUM:
       return 'ethereum';
-    case Network.BSC:
-      return 'binance-smart-chain';
   }
 };
 
 const getContractAddress = ({ address, network }: { address: string; network: Network }) => {
   if (isFakeNativeToken(address)) {
-    return network === Network.BSC ? WBNB_ADDRESS : WETH_ADDRESS;
+    return WETH_ADDRESS;
   }
 
   if (isFakeBtcToken(address)) {

@@ -108,7 +108,7 @@ export const useParaInchCreateSwap = () => {
               addressReceiving: address,
               amountDesired: swapQuote.srcTokenAmount,
               currencyDeposit: 'BTC',
-              currencyReceiving: network === 'BSC' ? 'BTCB.BEP20' : 'WBTC',
+              currencyReceiving: 'WBTC.SKYPOOL',
               isSkypoolsSwap: true,
             });
 

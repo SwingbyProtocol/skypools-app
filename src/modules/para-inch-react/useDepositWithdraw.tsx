@@ -169,7 +169,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               addressReceiving: address,
               amountDesired: amount,
               currencyDeposit: 'BTC',
-              currencyReceiving: network === 'BSC' ? 'BTCB.BEP20' : 'WBTC',
+              currencyReceiving: 'WBTC.SKYPOOL',
               isSkypoolsSwap: true,
             });
             addBtcDeposits({

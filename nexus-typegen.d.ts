@@ -137,7 +137,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  Network: 'BSC' | 'ETHEREUM' | 'ROPSTEN';
+  Network: 'ETHEREUM' | 'ROPSTEN';
   StringFilterMode: 'default' | 'insensitive';
   SwapStatus: 'COMPLETED' | 'FAILED' | 'PENDING';
 }
