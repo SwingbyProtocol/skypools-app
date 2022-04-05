@@ -16,9 +16,6 @@ export const Header = ({ className }: Props) => {
     network ? network.toLowerCase() : 'ethereum'
   }/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c`;
 
-  const depositLink = false ? '/deposit' : 'https://skybridge.info/pool?bridge=btc_skypool';
-  const withdrawLink = false ? '/withdraw' : 'https://skybridge.info/pool?bridge=btc_skypool';
-
   return (
     <header css={header} className={className}>
       <a css={logo} href="/">
@@ -30,13 +27,13 @@ export const Header = ({ className }: Props) => {
             <FormattedMessage id="link.swap" />
           </a>
         </Link>
-        <Link href={depositLink}>
-          <a href={depositLink} css={link}>
+        <Link href={'/deposit'}>
+          <a href="/deposit" css={link}>
             <FormattedMessage id="link.deposit" />
           </a>
         </Link>
-        <Link href={withdrawLink}>
-          <a href={withdrawLink} css={link}>
+        <Link href={'/withdraw'}>
+          <a href="/withdraw" css={link}>
             <FormattedMessage id="link.withdraw" />
           </a>
         </Link>
