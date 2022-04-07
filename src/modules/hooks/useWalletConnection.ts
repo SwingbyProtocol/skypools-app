@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useOnboard } from '../onboard';
 import { logger } from '../logger';
 import { IGNORED_STORE_WALLET_NAMES, LOCAL_STORAGE } from '../env';
-import { getDefaultNetwork } from '../networks';
+import { getDefaultNetwork, getNetworkConfig } from '../networks';
 
 const useStoredWallet = () => {
   const localStorage = typeof window !== 'undefined' && window.localStorage;
@@ -73,13 +73,51 @@ export const useWalletConnection = () => {
     }
   };
 
+  const pushNetwork = async (chainId: number): Promise<void> => {
+    if (!onboard || !wallet || wallet.name !== 'MetaMask') {
+      console.warn('Unable to push network');
+      return;
+    }
+
+    const provider = wallet.provider;
+    const networkConfig = getNetworkConfig(chainId);
+
+    try {
+      await provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: networkConfig.chainIdHex }],
+      });
+    } catch (switchError) {
+      const config = {
+        chainId: networkConfig.chainIdHex,
+        chainName: networkConfig.name,
+        rpcUrls: [networkConfig.rpcUrl],
+        blockExplorerUrls: networkConfig.blockExplorerUrls,
+        iconUrls: networkConfig.iconUrls,
+      };
+
+      // This error code indicates that the chain has not been added to MetaMask.
+      if ((switchError as { code: number }).code === 4902) {
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [config],
+        });
+      } else {
+        throw switchError;
+      }
+    }
+  };
+
   return {
     address,
     wallet,
     network,
     defaultNetwork,
+    connectedWallet: !!address,
+    supportedNetwork: address && network,
     storedWallet,
     onWalletConnect,
     onWalletDisconnect,
+    pushNetwork,
   };
 };
