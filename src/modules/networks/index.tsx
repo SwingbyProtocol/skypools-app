@@ -3,6 +3,7 @@ import { Network } from '@prisma/client';
 import Web3 from 'web3';
 
 import { infuraApiKey, isProduction } from '../env';
+import { getScanApiUrl } from '../web3';
 
 export { Network };
 
@@ -87,7 +88,7 @@ const chainsConfig: Record<Network, ChainConfig> = {
     chainId: getNetworkId(Network.ETHEREUM),
     chainIdHex: '0x1',
     rpcUrl: getRpcServiceUrl(Network.ETHEREUM),
-    blockExplorerUrls: ['https://polygonscan.com/'],
+    blockExplorerUrls: [getScanApiUrl(Network.ETHEREUM)],
     iconUrls: [],
     token: 'ETH',
   },
@@ -98,7 +99,7 @@ const chainsConfig: Record<Network, ChainConfig> = {
     chainId: getNetworkId(Network.ROPSTEN),
     chainIdHex: '0x3',
     rpcUrl: getRpcServiceUrl(Network.ROPSTEN),
-    blockExplorerUrls: ['https://rinkeby.etherscan.io/'],
+    blockExplorerUrls: [getScanApiUrl(Network.ROPSTEN)],
     iconUrls: [],
     token: 'ETH',
   },

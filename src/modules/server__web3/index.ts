@@ -32,7 +32,7 @@ export const scanApiFetcher = async <Data extends unknown = unknown>({
 }) => {
   const result = await fetcher<{ status: string } & Data>(
     stringifyUrl({
-      url: getScanApiUrl({ network }),
+      url: getScanApiUrl(network),
       query: {
         ...query,
         apikey: getScanApiKey({ network }),

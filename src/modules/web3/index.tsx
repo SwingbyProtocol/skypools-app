@@ -1,6 +1,6 @@
 import { Network } from '../networks';
 
-export const getScanApiUrl = ({ network }: { network: Network }) => {
+export const getScanApiUrl = (network: Network) => {
   switch (network) {
     case Network.ETHEREUM:
       return 'https://api.etherscan.io/api';
