@@ -38,9 +38,9 @@ export const useSkypoolsDeposit = (swapId: string) => {
     if (!wallet || !address || !data) return;
     const { network, srcToken } = data.swap;
 
-    const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+    const contract = buildSkypoolsContract(network);
     const token = isBtcToToken
-      ? getWrappedBtcAddress({ network })
+      ? getWrappedBtcAddress(network)
       : getERC20Address({ network, tokenAddress: data.swap.srcToken.address });
     const rawRouteData = JSON.parse(data.swap.rawRouteData);
     const rawBal = await contract.methods.balanceOf(token, address).call();

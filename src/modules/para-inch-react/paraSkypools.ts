@@ -28,9 +28,9 @@ export const simpleSwapPriceRoute = async ({
   const rawPriceRoute = JSON.parse(rawRouteData);
   const srcDecimals = rawPriceRoute.srcDecimals;
   const srcTokenAddress = isBtcToToken
-    ? getWrappedBtcAddress({ network })
+    ? getWrappedBtcAddress(network)
     : getERC20Address({ network, tokenAddress: srcToken.address });
-  const destTokenAddress = isBtcToToken ? destToken.address : getWrappedBtcAddress({ network });
+  const destTokenAddress = isBtcToToken ? destToken.address : getWrappedBtcAddress(network);
   const beneficiary = isBtcToToken ? initiatorAddress : skypoolsAddress;
   const srcAmount = isBtcToToken
     ? new Big(wbtcSrcAmount).times(`1e${srcDecimals}`).toFixed(0)

@@ -48,10 +48,10 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
   const depositedInformation = useCallback(async () => {
     if (!wallet || !address || !network || !coinInfo) return;
 
-    const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+    const contract = buildSkypoolsContract(network);
 
     const token = isFakeBtcToken(coinInfo.address)
-      ? getWrappedBtcAddress({ network })
+      ? getWrappedBtcAddress(network)
       : getERC20Address({ network, tokenAddress: coinInfo.address });
 
     const rawBal = await contract.methods.balanceOf(token, address).call();
@@ -180,7 +180,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             return push(`/deposit/${hash}`);
           } else {
             const web3 = new Web3(wallet.provider);
-            const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+            const contract = buildSkypoolsContract(network);
             const isNativeToken = isFakeNativeToken(coinInfo.address);
 
             const contractAddress = getSkypoolsContractAddress(network);

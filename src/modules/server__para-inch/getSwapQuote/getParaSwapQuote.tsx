@@ -43,7 +43,7 @@ export const getParaSwapQuote = async ({
 
   const paraSwap = new ParaSwap(getNetworkId(network));
 
-  const wbtcAddress = getWrappedBtcAddress({ network });
+  const wbtcAddress = getWrappedBtcAddress(network);
   const isFromBtc = srcTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
   const isToBtc = destTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
   const isParaSwap = !isToBtc && !isFromBtc;

@@ -68,12 +68,9 @@ export const SwapScene = () => {
       const balance = await (async () => {
         const network = onboardNetwork ?? 'ETHEREUM';
         const token = isFakeBtcToken(fromToken.address)
-          ? getWrappedBtcAddress({ network })
+          ? getWrappedBtcAddress(network)
           : getERC20Address({ network, tokenAddress: fromToken.address });
-        const contract = buildSkypoolsContract({
-          provider: walletProvider,
-          network,
-        });
+        const contract = buildSkypoolsContract(network);
         return new Big(await contract.methods.balanceOf(token, address).call())
           .div(`1e${fromToken.decimals}`)
           .toFixed();

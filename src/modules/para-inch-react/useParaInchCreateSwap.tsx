@@ -115,7 +115,7 @@ export const useParaInchCreateSwap = () => {
             return callCreateSwap({ skybridgeSwapId: hash });
           } else if (isFakeBtcToken(swapQuote.destToken.address)) {
             const web3 = new Web3(wallet.provider);
-            const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+            const contract = buildSkypoolsContract(network);
             const isNativeToken = isFakeNativeToken(swapQuote.srcToken.address);
 
             const data = contract.methods

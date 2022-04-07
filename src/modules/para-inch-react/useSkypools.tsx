@@ -117,7 +117,7 @@ export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: st
           throw new Error('Contract address was not defined');
         }
         const web3 = new Web3(wallet.provider);
-        const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+        const contract = buildSkypoolsContract(network);
 
         const arg = await txDataSpSimpleSwap({
           slippage,

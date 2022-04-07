@@ -51,9 +51,9 @@ export const useCreateSwap = () => {
 
   const getSimpleSwapData = useCallback(() => {
     if (!toToken || !fromToken || !address || !contractAddress || !swapQuote) return;
-    const destTokenAddress = isFromBtc ? toToken.address : getWrappedBtcAddress({ network });
+    const destTokenAddress = isFromBtc ? toToken.address : getWrappedBtcAddress(network);
     const srcTokenAddress = isFromBtc
-      ? getWrappedBtcAddress({ network })
+      ? getWrappedBtcAddress(network)
       : getERC20Address({ network, tokenAddress: fromToken.address });
 
     const simpleSwapQuoteData: SimpleSwapQuote = {
@@ -105,9 +105,9 @@ export const useCreateSwap = () => {
       });
       return;
     } else {
-      const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+      const contract = buildSkypoolsContract(network);
       const token = isFakeBtcToken(fromToken.address)
-        ? getWrappedBtcAddress({ network })
+        ? getWrappedBtcAddress(network)
         : getERC20Address({ network, tokenAddress: fromToken.address });
 
       const rawBal = await contract.methods
@@ -202,7 +202,7 @@ export const useCreateSwap = () => {
 
   return useMemo(() => {
     return {
-      isQuote: amount && swapQuote ? true : false,
+      isQuote: !!(amount && swapQuote),
       isEnoughDeposit: Number(balance.amount) >= Number(amount),
       balance,
       isSkypools,
@@ -237,7 +237,7 @@ export const useCreateSwap = () => {
           setIsLoading(true);
           if (isSkypools) {
             const web3 = new Web3(wallet.provider);
-            const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+            const contract = buildSkypoolsContract(network);
 
             const simpleSwapQuoteData = getSimpleSwapData();
             if (!simpleSwapQuoteData) return;

@@ -25,7 +25,7 @@ export const useParaInchSwapApproval = ({
 
   const token =
     network && tokenParam && isFakeBtcToken(tokenParam)
-      ? getWrappedBtcAddress({ network })
+      ? getWrappedBtcAddress(network)
       : tokenParam;
 
   useEffect(() => {

@@ -31,7 +31,7 @@ const getContractAddress = ({ address, network }: { address: string; network: Ne
   }
 
   if (isFakeBtcToken(address)) {
-    return getWrappedBtcAddress({ network });
+    return getWrappedBtcAddress(network);
   }
 
   return address;
