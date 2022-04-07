@@ -15,7 +15,7 @@ export function isFakeToken(value: string): boolean {
   return isFakeBtcToken(value) || isFakeNativeToken(value);
 }
 
-export function getWrappedBtcAddress({ network }: { network: Network }) {
+export function getWrappedBtcAddress(network: Network) {
   switch (network) {
     case Network.ETHEREUM:
       return '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599';

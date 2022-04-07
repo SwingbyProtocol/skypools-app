@@ -1,31 +1,31 @@
 import { ethers } from 'ethers';
-import ABI from 'human-standard-token-abi';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Web3 from 'web3';
 
 import { logger } from '../logger';
 import { useOnboard } from '../onboard';
 import { buildSkypoolsContract, getWrappedBtcAddress } from '../para-inch';
+import { buildWBtcContract } from '../para-inch/buildWBtcContract';
+import { getDefaultNetwork } from '../networks';
 
 export const useSkypoolsFloats = () => {
-  const { wallet, network } = useOnboard();
+  const { network } = useOnboard();
+  let contractsNetwork = network || getDefaultNetwork();
   const [floats, setFloats] = useState<{ btc: string; wrappedBtc: string }>({
     btc: '0',
     wrappedBtc: '0',
   });
 
   const floatsInformation = useCallback(async () => {
-    if (!wallet || !network) return;
+    if (!contractsNetwork) return;
     try {
       const btcDecimals = 8;
       const token = {
         btc: '0x0000000000000000000000000000000000000000',
-        wrappedBtc: getWrappedBtcAddress({ network }),
+        wrappedBtc: getWrappedBtcAddress(contractsNetwork),
       };
 
-      const web3 = new Web3(wallet.provider);
-      const wBtcContract = new web3.eth.Contract(ABI, token.wrappedBtc);
-      const contract = buildSkypoolsContract({ provider: wallet.provider, network });
+      const wBtcContract = buildWBtcContract(contractsNetwork);
+      const contract = buildSkypoolsContract(contractsNetwork);
 
       const results = await Promise.all([
         contract.methods.getFloatReserve(token.btc, token.wrappedBtc).call(),
@@ -46,7 +46,7 @@ export const useSkypoolsFloats = () => {
         wrappedBtc: '0',
       });
     }
-  }, [network, wallet]);
+  }, [contractsNetwork]);
 
   useEffect(() => {
     floatsInformation();
