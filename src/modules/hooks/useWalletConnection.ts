@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+// @ts-ignore
+import { Network } from '@prisma/client';
 
 import { useOnboard } from '../onboard';
 import { logger } from '../logger';
@@ -73,7 +75,7 @@ export const useWalletConnection = () => {
     }
   };
 
-  const pushNetwork = async (chainId: number): Promise<void> => {
+  const pushNetwork = async (chainId: Network): Promise<void> => {
     if (!onboard || !wallet || wallet.name !== 'MetaMask') {
       console.warn('Unable to push network');
       return;
