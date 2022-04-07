@@ -1,5 +1,6 @@
 {
   "logo": "SkyPools Beta",
+  "general-error": "There was an error",
   "transaction-submitted": "Transaction submitted",
   "view-on-explorer": "View on {value}",
   "network.full.ETHEREUM": "Ethereum",
@@ -15,7 +16,7 @@
   "wallet.disconnect": "Disconnect",
   "wallet.connect-wallet": "Connect Wallet",
   "wallet.wrong-network": "Wrong network",
-  "wallet.connect-ethereum": "Switch to mainnet",
+  "wallet.connect-ethereum": "Switch to Mainnet",
   "wallet.connect-ropsten": "Switch to Ropsten",
   "link.swap": "Swap",
   "link.deposit": "Deposit",
