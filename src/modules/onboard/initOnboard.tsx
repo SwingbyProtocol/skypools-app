@@ -1,19 +1,10 @@
 import Onboard from 'bnc-onboard';
 import type { Subscriptions } from 'bnc-onboard/dist/src/interfaces'; // eslint-disable-line import/no-internal-modules
 
-import { blocknativeApiKey, infuraApiKey } from '../env';
+import { blocknativeApiKey, infuraApiKey, RPC_URLS } from '../env';
 
 const appName = 'Swingby Bridge';
 const appUrl = 'https://bridge.swingby.network';
-
-const RPC_URLS = {
-  1: `https://mainnet.infura.io/v3/${infuraApiKey}`,
-  5: `https://goerli.infura.io/v3/${infuraApiKey}`,
-  56: 'https://bsc-dataseed1.binance.org:443',
-  97: 'https://data-seed-prebsc-1-s1.binance.org:8545',
-  137: 'https://rpc-mainnet.matic.network',
-  80001: 'https://rpc-mumbai.matic.today',
-} as const;
 
 export const initOnboard = ({
   networkId = 1,
