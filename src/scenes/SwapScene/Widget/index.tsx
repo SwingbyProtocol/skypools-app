@@ -6,9 +6,9 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
-import { useOnboard } from '../../../modules/onboard';
 import { useCreateSwap, useParaInchForm } from '../../../modules/para-inch-react';
 import { useAssertTermsSignature } from '../../../modules/terms';
+import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -67,7 +67,7 @@ export const Widget = () => {
     explorerLink,
   } = useCreateSwap();
 
-  const { address, network } = useOnboard();
+  const { address, network } = useWalletConnection();
   const { isSignedTerms } = useAssertTermsSignature();
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const btcNetwork = network === 'ROPSTEN' ? Network.testnet : Network.mainnet;
