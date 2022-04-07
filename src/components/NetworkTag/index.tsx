@@ -20,7 +20,7 @@ export const NetworkTag = ({
         id: network ? `network.full.${network}` : 'network.invalid',
       })}
     >
-      {network ? formatMessage({ id: `network.short.${network}` }) : '?'}
+      {network ? formatMessage({ id: `network.full.${network}` }) : '?'}
     </div>
   );
 };

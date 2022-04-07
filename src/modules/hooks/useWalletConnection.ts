@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useOnboard } from '../onboard';
 import { logger } from '../logger';
 import { IGNORED_STORE_WALLET_NAMES, LOCAL_STORAGE } from '../env';
+import { getDefaultNetwork } from '../networks';
 
 const useStoredWallet = () => {
   const localStorage = typeof window !== 'undefined' && window.localStorage;
@@ -43,6 +44,7 @@ const useStoredWallet = () => {
 export const useWalletConnection = () => {
   const { address, network, onboard, wallet } = useOnboard();
   const { deleteStoredWallet, storeWallet, storedWallet } = useStoredWallet();
+  const defaultNetwork = getDefaultNetwork();
 
   useEffect(() => {
     return () => {
@@ -75,6 +77,7 @@ export const useWalletConnection = () => {
     address,
     wallet,
     network,
+    defaultNetwork,
     storedWallet,
     onWalletConnect,
     onWalletDisconnect,
