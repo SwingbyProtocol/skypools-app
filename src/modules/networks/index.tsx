@@ -1,9 +1,20 @@
+// @ts-ignore
 import { Network } from '@prisma/client';
 import Web3 from 'web3';
 
-import { isProduction, RPC_URLS } from '../env';
+import { infuraApiKey, isProduction } from '../env';
 
 export { Network };
+
+const RPC_URLS: Record<number, string> = {
+  1: `https://mainnet.infura.io/v3/${infuraApiKey}`,
+  3: `https://ropsten.infura.io/v3/${infuraApiKey}`,
+  5: `https://goerli.infura.io/v3/${infuraApiKey}`,
+  56: 'https://bsc-dataseed1.binance.org:443',
+  97: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+  137: 'https://rpc-mainnet.matic.network',
+  80001: 'https://rpc-mumbai.matic.today',
+} as const;
 
 export const getNetworkId = (network: Network) => {
   switch (network) {
@@ -42,7 +53,7 @@ const web3HttpProviderOptions = {
   timeout: 10_000,
 };
 
-const getRpcServiceUrl = (chainID: number): string => {
+export const getRpcServiceUrl = (chainID: number): string => {
   return RPC_URLS[chainID];
 };
 
@@ -54,4 +65,48 @@ export const getWeb3ReadOnly = (network: Network): Web3 => {
     );
   }
   return web3ReadOnly[chainID];
+};
+
+export type ChainConfig = {
+  id: number;
+  name: string;
+  shortName: string;
+  chainId: number;
+  chainIdHex: string;
+  rpcUrl: string;
+  blockExplorerUrls: string[];
+  iconUrls: string[];
+  token: string;
+};
+
+const chainsConfig: Record<Network, ChainConfig> = {
+  [Network.ETHEREUM]: {
+    id: getNetworkId(Network.ETHEREUM),
+    name: 'Ethereum',
+    shortName: 'Ethereum',
+    chainId: getNetworkId(Network.ETHEREUM),
+    chainIdHex: '0x1',
+    rpcUrl: getRpcServiceUrl(Network.ETHEREUM),
+    blockExplorerUrls: ['https://polygonscan.com/'],
+    iconUrls: [],
+    token: 'ETH',
+  },
+  [Network.ROPSTEN]: {
+    id: getNetworkId(Network.ROPSTEN),
+    name: 'Ropsten',
+    shortName: 'Ropsten',
+    chainId: getNetworkId(Network.ROPSTEN),
+    chainIdHex: '0x3',
+    rpcUrl: getRpcServiceUrl(Network.ROPSTEN),
+    blockExplorerUrls: ['https://rinkeby.etherscan.io/'],
+    iconUrls: [],
+    token: 'ETH',
+  },
+};
+
+export const getNetworkConfig = (chainId: Network): ChainConfig => {
+  if (chainId !== Network.ETHEREUM && chainId !== Network.ROPSTEN) {
+    throw new Error('There is no network config for given network');
+  }
+  return chainsConfig[chainId];
 };

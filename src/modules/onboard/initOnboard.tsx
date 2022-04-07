@@ -1,7 +1,8 @@
 import Onboard from 'bnc-onboard';
 import type { Subscriptions } from 'bnc-onboard/dist/src/interfaces'; // eslint-disable-line import/no-internal-modules
 
-import { blocknativeApiKey, infuraApiKey, RPC_URLS } from '../env';
+import { blocknativeApiKey, infuraApiKey } from '../env';
+import { getRpcServiceUrl } from '../networks';
 
 const appName = 'Swingby Bridge';
 const appUrl = 'https://bridge.swingby.network';
@@ -10,10 +11,10 @@ export const initOnboard = ({
   networkId = 1,
   subscriptions,
 }: {
-  networkId?: keyof typeof RPC_URLS;
+  networkId?: number;
   subscriptions: Subscriptions;
 }) => {
-  const rpcUrl = RPC_URLS[networkId];
+  const rpcUrl = getRpcServiceUrl(networkId);
   if (!rpcUrl) {
     throw new Error(`Could not find RPC URL for network ID: "${networkId}"`);
   }
