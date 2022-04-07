@@ -18,13 +18,3 @@ export enum LOCAL_STORAGE {
   Terms = 'swingby-skypools.terms',
 }
 export const IGNORED_STORE_WALLET_NAMES = ['WalletConnect'];
-
-export const RPC_URLS: Record<number, string> = {
-  1: `https://mainnet.infura.io/v3/${infuraApiKey}`,
-  3: `https://ropsten.infura.io/v3/${infuraApiKey}`,
-  5: `https://goerli.infura.io/v3/${infuraApiKey}`,
-  56: 'https://bsc-dataseed1.binance.org:443',
-  97: 'https://data-seed-prebsc-1-s1.binance.org:8545',
-  137: 'https://rpc-mainnet.matic.network',
-  80001: 'https://rpc-mumbai.matic.today',
-} as const;
