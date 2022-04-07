@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
 
-import { ConnectWallet } from '../../components/ConnectWallet';
+import { ConnectWallet } from '../ConnectWallet';
 import { useOnboard } from '../../modules/onboard';
 import { Floats } from '../Floats';
+import { ConnectionStatus } from '../ConnectionStatus';
 
 import { connect, header, info, link, links, logo } from './styles';
 
@@ -40,6 +41,7 @@ export const Header = ({ className }: Props) => {
       </div>
       <div css={info}>
         <Floats />
+        <ConnectionStatus />
         <ConnectWallet css={connect} />
       </div>
     </header>

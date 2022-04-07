@@ -5,7 +5,6 @@ import Head from 'next/head';
 import { Layout } from '../../components/Layout';
 import { SwapPath } from '../../components/SwapPath';
 import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
-import { useOnboard } from '../../modules/onboard';
 import {
   buildSkypoolsContract,
   getERC20Address,
@@ -14,6 +13,7 @@ import {
 } from '../../modules/para-inch';
 import { useParaInchForm } from '../../modules/para-inch-react';
 import { pulseAnimationBlackAndWhite } from '../../modules/styles';
+import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
 
 import { OtherExchanges } from './OtherExchanges';
 import { Slippage } from './Slippage';
@@ -36,7 +36,7 @@ const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value']
 };
 
 export const SwapScene = () => {
-  const { network: onboardNetwork, wallet, address } = useOnboard();
+  const { address, wallet, network: onboardNetwork } = useWalletConnection();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInchForm();
   const [getPriceHistory, { data: priceHistoryData }] = usePriceHistoryLazyQuery();
 

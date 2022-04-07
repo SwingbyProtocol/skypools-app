@@ -12,6 +12,7 @@
   "network.short.bct": "BC (T)",
   "network.invalid": "Unsupported network",
   "wallet.connect": "Connect",
+  "wallet.disconnect": "Disconnect",
   "wallet.connect-wallet": "Connect Wallet",
   "link.swap": "Swap",
   "link.deposit": "Deposit",

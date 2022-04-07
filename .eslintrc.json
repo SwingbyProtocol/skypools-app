@@ -1,1 +1,6 @@
-{ "extends": ["@swingby-protocol/eslint-config"] }
+{
+  "extends": ["@swingby-protocol/eslint-config"],
+  "rules": {
+    "import/no-internal-modules": 0
+  }
+}
