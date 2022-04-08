@@ -5,9 +5,9 @@ import ABI from 'human-standard-token-abi';
 import { Big } from 'big.js';
 
 import { Network } from '../networks';
-import { useOnboard } from '../onboard';
 import { getWrappedBtcAddress, isFakeBtcToken, isFakeNativeToken } from '../para-inch';
 import { logger } from '../logger';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 const MAX_ALLOWANCE = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
@@ -20,7 +20,7 @@ export const useParaInchSwapApproval = ({
   spender: string | null | undefined;
   network: Network | null | undefined;
 }) => {
-  const { address, wallet } = useOnboard();
+  const { address, wallet } = useWalletConnection();
   const [isApprovalNeeded, setApprovalNeeded] = useState<boolean | null>(null);
 
   const token =

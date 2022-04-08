@@ -2,12 +2,12 @@ import { useRouter } from 'next/router';
 
 import { Layout } from '../../components/Layout';
 import { SkybridgeWidget } from '../../components/SkybridgeWidget';
-import { useOnboard } from '../../modules/onboard';
+import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
 
 import { DepositWithdraw } from './DepositWithdraw';
 
 export const DepositWithdrawScene = () => {
-  const { network } = useOnboard();
+  const { network } = useWalletConnection();
   const { query } = useRouter();
   const skybridgeId = query.skybridgeId;
 

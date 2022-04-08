@@ -2,16 +2,16 @@ import Link from 'next/link';
 import { FormattedMessage } from 'react-intl';
 
 import { ConnectWallet } from '../ConnectWallet';
-import { useOnboard } from '../../modules/onboard';
 import { Floats } from '../Floats';
 import { ConnectionStatus } from '../ConnectionStatus';
+import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
 
 import { connect, header, info, link, links, logo } from './styles';
 
 type Props = { className?: string };
 
 export const Header = ({ className }: Props) => {
-  const { network } = useOnboard();
+  const { network } = useWalletConnection();
 
   const swapUrl = `/swap/${
     network ? network.toLowerCase() : 'ethereum'

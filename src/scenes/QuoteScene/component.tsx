@@ -6,10 +6,10 @@ import ABI from 'human-standard-token-abi';
 import { SwapPath } from '../../components/SwapPath';
 import { isFakeNativeToken } from '../../modules/para-inch';
 import { useParaInchForm } from '../../modules/para-inch-react';
-import { useOnboard } from '../../modules/onboard';
 import { usePriceHistoryLazyQuery } from '../../generated/skypools-graphql';
 import { Layout } from '../../components/Layout';
 import { pulseAnimationBlackAndWhite } from '../../modules/styles';
+import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
 
 import { swapPathContainer, otherExchanges } from './styles';
 import { Widget } from './Widget';
@@ -32,7 +32,7 @@ const FAKE_QUOTE_ROUTE: React.ComponentPropsWithoutRef<typeof SwapPath>['value']
 };
 
 export const QuoteScene = () => {
-  const { network: onboardNetwork, wallet, address } = useOnboard();
+  const { network: onboardNetwork, wallet, address } = useWalletConnection();
   const { fromToken, toToken, network, setNetwork, setAmount, swapQuote } = useParaInchForm();
   const [getPriceHistory, { data: priceHistoryData }] = usePriceHistoryLazyQuery();
 

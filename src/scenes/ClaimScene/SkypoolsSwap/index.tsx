@@ -6,7 +6,7 @@ import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
 import { useSkypools, useSkypoolsDeposit } from '../../../modules/para-inch-react';
 import { SkypoolsSlippage } from '../SkypoolsSlippage';
-import { useOnboard } from '../../../modules/onboard';
+import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 
 import {
   address,
@@ -24,7 +24,7 @@ import {
 
 export const SkypoolsSwap = ({ destToken, swapId }: { destToken: string; swapId: string }) => {
   const [slippage, setSlippage] = useState<string>('1');
-  const { network } = useOnboard();
+  const { network } = useWalletConnection();
   const {
     handleClaim,
     minAmount,

@@ -5,9 +5,9 @@ import { stringifyUrl } from 'query-string';
 
 import { formatQuoteError, ParaInchToken } from '../para-inch';
 import { Network } from '../networks';
-import { useOnboard } from '../onboard';
 import { SwapQuoteQueryResult, useSwapQuoteLazyQuery } from '../../generated/skypools-graphql';
 import { availableNetwork, minimumReceiveBtcAmount } from '../env';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 export type ParaInchContextValue = {
   amount: string | null;
@@ -58,7 +58,7 @@ export const ParaInchTokenProvider = ({
     push,
     query: { skybridgeSwap },
   } = useRouter();
-  const { address } = useOnboard();
+  const { address } = useWalletConnection();
 
   const [amount, setAmount] = useState<string | null>(null);
   const [slippage, setSlippage] = useState<string>('1');

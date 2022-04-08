@@ -11,7 +11,6 @@ import {
 } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
 import { Network } from '../networks';
-import { useOnboard } from '../onboard';
 import {
   buildParaTxData,
   buildSkypoolsContract,
@@ -19,12 +18,13 @@ import {
   isFakeBtcToken,
   isFakeNativeToken,
 } from '../para-inch';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 import { useParaInchForm } from './useParaInchForm';
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useParaInchCreateSwap = () => {
-  const { address, wallet, network: onboardNetwork } = useOnboard();
+  const { address, wallet, network: onboardNetwork } = useWalletConnection();
   const { swapQuote, network, slippage, fromToken, amount, toToken } = useParaInchForm();
   const [createSwapError, setCreateSwapError] = useState<string>('');
 

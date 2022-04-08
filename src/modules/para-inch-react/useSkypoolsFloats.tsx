@@ -2,13 +2,13 @@ import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { logger } from '../logger';
-import { useOnboard } from '../onboard';
 import { buildSkypoolsContract, getWrappedBtcAddress } from '../para-inch';
 import { buildWBtcContract } from '../para-inch/buildWBtcContract';
 import { getDefaultNetwork } from '../networks';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 export const useSkypoolsFloats = () => {
-  const { network } = useOnboard();
+  const { network } = useWalletConnection();
   let contractsNetwork = network || getDefaultNetwork();
   const [floats, setFloats] = useState<{ btc: string; wrappedBtc: string }>({
     btc: '0',

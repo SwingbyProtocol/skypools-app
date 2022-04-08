@@ -20,11 +20,12 @@ import {
 } from '../para-inch';
 import { addBtcDeposits } from '../localstorage';
 import { buildLinkToTransaction } from '../web3';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 
 export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
-  const { address, wallet, network, onboard } = useOnboard();
+  const { address, wallet, network, walletCheck } = useWalletConnection();
   const [amount, setAmount] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>('');
@@ -88,17 +89,6 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
 
     return () => clearInterval(interval);
   }, [updateDepositedBalance]);
-
-  const walletCheck = useCallback(async () => {
-    if (!onboard) {
-      throw Error('Cannot detect onboard');
-    }
-
-    const result = await onboard?.walletCheck();
-    if (!result) {
-      throw Error('Invalid wallet connection');
-    }
-  }, [onboard]);
 
   useEffect(() => {
     setErrorMsg('');

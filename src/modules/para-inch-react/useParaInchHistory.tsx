@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 
-import { useOnboard } from '../onboard';
 import {
   useSwapsLazyQuery,
   StringFilterMode,
   SwapsQueryResult,
 } from '../../generated/skypools-graphql';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 import { useParaInchForm } from './useParaInchForm';
 
@@ -14,7 +14,7 @@ export type ParaInchHistoryItem = NonNullable<
 >['swaps']['edges'][number]['node'];
 
 export const useParaInchHistory = () => {
-  const { address } = useOnboard();
+  const { address } = useWalletConnection();
   const { network } = useParaInchForm();
   const [getSwaps, result] = useSwapsLazyQuery();
 

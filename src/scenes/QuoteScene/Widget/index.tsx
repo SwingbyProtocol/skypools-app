@@ -4,7 +4,7 @@ import { Big } from 'big.js';
 
 import { Button } from '../../../components/Button';
 import { useParaInchForm, useParaInchCreateSwap } from '../../../modules/para-inch-react';
-import { useOnboard } from '../../../modules/onboard';
+import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -40,7 +40,7 @@ export const Widget = () => {
   } = useParaInchForm();
   const { isApprovalNeeded, approve, createSwap, isLoading, isQuote, isSkypools, createSwapError } =
     useParaInchCreateSwap();
-  const { address } = useOnboard();
+  const { address } = useWalletConnection();
   const isSwapDisabled =
     isApprovalNeeded === null || isLoading || !isQuote || !address || errorMsg !== '';
 

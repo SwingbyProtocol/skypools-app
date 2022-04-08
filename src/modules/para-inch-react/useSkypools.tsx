@@ -10,15 +10,15 @@ import {
   useUpdateSwapMutation,
 } from '../../generated/skypools-graphql';
 import { logger } from '../logger';
-import { useOnboard } from '../onboard';
 import { buildSkypoolsContract, getERC20Symbol, getSkypoolsContractAddress } from '../para-inch';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 import { simpleSwapPriceRoute, txDataSpSimpleSwap } from './paraSkypools';
 import { useSkybridgeSwap } from './useSkybridgeSwap';
 import { useSkypoolsFloats } from './useSkypoolsFloats';
 
 export const useSkypools = ({ swapId, slippage }: { swapId: string; slippage: string }) => {
-  const { address, wallet, network: onboardNetwork } = useOnboard();
+  const { address, wallet, network: onboardNetwork } = useWalletConnection();
   const [btcAddress, setBtcAddress] = useState<string>('');
 
   const [updateSwap] = useUpdateSwapMutation();

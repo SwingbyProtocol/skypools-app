@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 
 import { CoinInfo } from '../../components/CoinInput';
 import { useTokensLazyQuery, Network } from '../../generated/skypools-graphql';
-import { useOnboard } from '../onboard';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 const initialState: CoinInfo[] = [
   {
@@ -16,7 +16,7 @@ const initialState: CoinInfo[] = [
 ];
 
 export const useTokens = (): { tokens: CoinInfo[] } => {
-  const { network } = useOnboard();
+  const { network } = useWalletConnection();
   const [fetchTokens, { data: newData, previousData }] = useTokensLazyQuery();
 
   useEffect(() => {

@@ -6,7 +6,6 @@ import Web3 from 'web3';
 import { TransactionConfig } from 'web3-eth';
 
 import { logger } from '../logger';
-import { useOnboard } from '../onboard';
 import {
   buildParaTxData,
   buildSkypoolsContract,
@@ -17,13 +16,14 @@ import {
   isFakeNativeToken,
 } from '../para-inch';
 import { buildLinkToTransaction } from '../web3';
+import { useWalletConnection } from '../hooks/useWalletConnection';
 
 import { simpleSwapPriceRoute, SimpleSwapQuote, txDataSpSimpleSwap } from './spSimpleSwap';
 import { useParaInchForm } from './useParaInchForm';
 import { useSkypoolsFloats } from './useSkypoolsFloats';
 
 export const useCreateSwap = () => {
-  const { address, wallet, onboard, network: onboardNetwork } = useOnboard();
+  const { address, wallet, walletCheck, network: onboardNetwork } = useWalletConnection();
   const { swapQuote, network, slippage, fromToken, amount, toToken, setAmount } = useParaInchForm();
 
   const { floats } = useSkypoolsFloats();
@@ -70,17 +70,6 @@ export const useCreateSwap = () => {
     };
     return simpleSwapQuoteData;
   }, [address, contractAddress, fromToken, isFromBtc, network, slippage, swapQuote, toToken]);
-
-  const walletCheck = useCallback(async () => {
-    if (!onboard) {
-      throw Error('Cannot detect onboard');
-    }
-
-    const result = await onboard?.walletCheck();
-    if (!result) {
-      throw Error('Invalid wallet connection');
-    }
-  }, [onboard]);
 
   const getWalletBalance = useCallback(async () => {
     if (!wallet || !fromToken || !address) return;
@@ -261,7 +250,10 @@ export const useCreateSwap = () => {
               'Will send transaction',
             );
 
-            await walletCheck();
+            const walletValidStatus = await walletCheck();
+            if (!walletValidStatus) {
+              throw Error('Invalid wallet connection');
+            }
             return web3.eth
               .sendTransaction({ ...transaction, gasPrice, gas })
               .once('transactionHash', (transactionHash) => {
@@ -276,7 +268,10 @@ export const useCreateSwap = () => {
               userAddress: address,
             });
 
-            await walletCheck();
+            const walletValidStatus = await walletCheck();
+            if (!walletValidStatus) {
+              throw Error('Invalid wallet connection');
+            }
             return web3.eth
               .sendTransaction(transaction)
               .once('transactionHash', (transactionHash) => {

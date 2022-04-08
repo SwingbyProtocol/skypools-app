@@ -110,6 +110,18 @@ export const useWalletConnection = () => {
     }
   };
 
+  const walletCheck = async (): Promise<boolean> => {
+    if (!onboard) {
+      throw Error('Cannot detect onboard');
+    }
+
+    const result = await onboard?.walletCheck();
+    if (!result) {
+      throw Error('Invalid wallet connection');
+    }
+    return true;
+  };
+
   return {
     address,
     wallet,
@@ -121,5 +133,6 @@ export const useWalletConnection = () => {
     onWalletConnect,
     onWalletDisconnect,
     pushNetwork,
+    walletCheck,
   };
 };

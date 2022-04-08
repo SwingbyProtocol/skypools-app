@@ -9,9 +9,9 @@ import { ConnectWalletButton } from '../../../components/ConnectWalletButton';
 import { BtcDeposit } from '../BtcDeposit';
 import { TextInput } from '../../../components/TextInput';
 import { useBtcDeposits } from '../../../modules/localstorage';
-import { useOnboard } from '../../../modules/onboard';
 import { useDepositWithdraw, useTokens } from '../../../modules/para-inch-react';
 import { availableNetwork } from '../../../modules/env';
+import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 
 import {
   buttonContainer,
@@ -32,7 +32,7 @@ import {
 export const DepositWithdraw = () => {
   const { tokens } = useTokens();
   const [fromToken, setFromToken] = useState<CoinInfo>(tokens[0]);
-  const { address, network } = useOnboard();
+  const { address, network } = useWalletConnection();
   const {
     depositedBalance,
     amount,
