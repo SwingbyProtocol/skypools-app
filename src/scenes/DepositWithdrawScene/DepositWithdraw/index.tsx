@@ -12,7 +12,6 @@ import { useBtcDeposits } from '../../../modules/localstorage';
 import { useOnboard } from '../../../modules/onboard';
 import { useDepositWithdraw, useTokens } from '../../../modules/para-inch-react';
 import { availableNetwork } from '../../../modules/env';
-import { useAssertTermsSignature } from '../../../modules/terms';
 
 import {
   buttonContainer,
@@ -34,7 +33,6 @@ export const DepositWithdraw = () => {
   const { tokens } = useTokens();
   const [fromToken, setFromToken] = useState<CoinInfo>(tokens[0]);
   const { address, network } = useOnboard();
-  const { isSignedTerms } = useAssertTermsSignature();
   const {
     depositedBalance,
     amount,
@@ -61,14 +59,14 @@ export const DepositWithdraw = () => {
     [fromToken],
   );
 
-  const isDisabledDeposit =
-    0 >= Number(amount) || !availableNetwork.includes(network ?? '') || !isSignedTerms;
+  // @todo (agustin) refactor with network check util function
+  const isDisabledDeposit = 0 >= Number(amount) || !availableNetwork.includes(network ?? '');
 
+  // @todo (agustin) refactor with network check util function
   const isDisabledWithdraw =
     Number(amount) > Number(depositedBalance.amount) ||
     Number(amount) === 0 ||
-    !availableNetwork.includes(network ?? '') ||
-    !isSignedTerms;
+    !availableNetwork.includes(network ?? '');
 
   const isMax = !isDeposit || (isDeposit && fromToken.symbol !== 'BTC');
 

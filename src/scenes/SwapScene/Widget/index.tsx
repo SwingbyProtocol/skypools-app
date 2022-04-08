@@ -7,7 +7,6 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
 import { useCreateSwap, useParaInchForm } from '../../../modules/para-inch-react';
-import { useAssertTermsSignature } from '../../../modules/terms';
 import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
@@ -68,7 +67,6 @@ export const Widget = () => {
   } = useCreateSwap();
 
   const { address, network } = useWalletConnection();
-  const { isSignedTerms } = useAssertTermsSignature();
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const btcNetwork = network === 'ROPSTEN' ? Network.testnet : Network.mainnet;
   const isToBtc = toToken?.symbol === 'BTC';
@@ -76,9 +74,7 @@ export const Widget = () => {
   const commonSwapDisabled = isLoading || !isQuote || !address || errorMsg !== '';
   const isSkypoolsDisabled = !isEnoughDeposit || isFloatShortage || (isToBtc && !isValidAddress);
 
-  const isSwapDisabled = isSkypools
-    ? isSkypoolsDisabled || !isSignedTerms || commonSwapDisabled
-    : commonSwapDisabled;
+  const isSwapDisabled = isSkypools ? isSkypoolsDisabled || commonSwapDisabled : commonSwapDisabled;
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
