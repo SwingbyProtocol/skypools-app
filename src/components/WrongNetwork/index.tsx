@@ -6,7 +6,7 @@ import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
 import { Modal } from '../Modal';
 import { Button } from '../Button';
 
-import { buttonContainer, button } from './styles';
+import { buttonContainer, button, modalContainer } from './styles';
 
 export const WrongNetwork = () => {
   const { connectedWallet, supportedNetwork, pushNetwork } = useWalletConnection();
@@ -28,8 +28,9 @@ export const WrongNetwork = () => {
   };
 
   return (
-    <Modal titleID="wallet.wrong-network">
+    <Modal css={modalContainer} titleID="wallet.wrong-network">
       <div css={buttonContainer}>
+        <p>Please, select one of the list available:</p>
         <Button
           variant="secondary"
           size="street"
