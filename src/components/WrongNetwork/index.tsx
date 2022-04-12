@@ -30,7 +30,7 @@ export const WrongNetwork = () => {
   return (
     <Modal css={modalContainer} titleID="wallet.wrong-network">
       <div css={buttonContainer}>
-        <p>Please, select one of the list available:</p>
+        <FormattedMessage id="wallet.select.network" />
         <Button
           variant="secondary"
           size="street"

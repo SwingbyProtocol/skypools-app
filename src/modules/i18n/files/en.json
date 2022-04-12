@@ -16,6 +16,7 @@
   "wallet.disconnect": "Disconnect",
   "wallet.connect-wallet": "Connect Wallet",
   "wallet.wrong-network": "Wrong network",
+  "wallet.select.network": "Please, select one of the list available:",
   "wallet.connect-ethereum": "Switch to Mainnet",
   "wallet.connect-ropsten": "Switch to Ropsten",
   "link.swap": "Swap",
