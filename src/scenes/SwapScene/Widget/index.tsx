@@ -6,8 +6,9 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
-import { useCreateSwap, useParaInchForm } from '../../../modules/para-inch-react';
+import { useParaInchForm } from '../../../modules/para-inch-react';
 import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
+import { useCreateSwap } from '../../../modules/para-inch-react/useCreateSwap/index';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -58,7 +59,7 @@ export const Widget = () => {
     balance,
     isLoading,
     isQuote,
-    isSkypools,
+    isSkyPools,
     createSwapError,
     isFloatShortage,
     minAmount,
@@ -74,7 +75,7 @@ export const Widget = () => {
   const commonSwapDisabled = isLoading || !isQuote || !address || errorMsg !== '';
   const isSkypoolsDisabled = !isEnoughDeposit || isFloatShortage || (isToBtc && !isValidAddress);
 
-  const isSwapDisabled = isSkypools ? isSkypoolsDisabled || commonSwapDisabled : commonSwapDisabled;
+  const isSwapDisabled = isSkyPools ? isSkypoolsDisabled || commonSwapDisabled : commonSwapDisabled;
 
   const from = useMemo(
     (): CoinAmountInputValue => ({
@@ -140,7 +141,7 @@ export const Widget = () => {
           <div css={rowBalance}>
             <div>
               <FormattedMessage
-                id={isSkypools ? 'swap.deposited-balance' : 'swap.wallet-balance'}
+                id={isSkyPools ? 'swap.deposited-balance' : 'swap.wallet-balance'}
               />
             </div>
             <div>
@@ -209,9 +210,9 @@ export const Widget = () => {
               setBtcAddress(evt.target.value);
               if (validate(evt.target.value, btcNetwork)) {
                 setIsValidAddress(true);
-              } else {
-                setIsValidAddress(false);
+                return;
               }
+              setIsValidAddress(false);
             }}
           />
           {btcAddress !== '' && !isValidAddress && (
@@ -222,7 +223,7 @@ export const Widget = () => {
         </div>
       )}
 
-      {(!address || isEnoughDeposit || !isSkypools) && (
+      {(!address || isEnoughDeposit || !isSkyPools) && (
         <Button
           variant="primary"
           size="state"
@@ -234,7 +235,7 @@ export const Widget = () => {
         </Button>
       )}
 
-      {address && isSkypools && !isEnoughDeposit && (
+      {address && isSkyPools && !isEnoughDeposit && (
         <div css={swapButton}>
           <Link href={'/deposit'}>
             <a href="/deposit" css={link}>
@@ -262,7 +263,7 @@ export const Widget = () => {
       {isAmountValid && swapQuote && (
         <table css={info}>
           <tbody>
-            {isSkypools && (
+            {isSkyPools && (
               <tr>
                 <td>
                   <FormattedMessage id="swap.min-receiving-amount" />
@@ -322,7 +323,7 @@ export const Widget = () => {
                 {fromToken?.symbol}
               </td>
             </tr>
-            {!!swapQuote.bestRoute.estimatedGasUsd && !isSkypools && (
+            {!!swapQuote.bestRoute.estimatedGasUsd && !isSkyPools && (
               <tr>
                 <td css={infoLabel}>
                   <FormattedMessage id="widget.details.gas" />
