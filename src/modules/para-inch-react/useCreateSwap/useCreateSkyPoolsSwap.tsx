@@ -15,6 +15,7 @@ import {
 } from '../../para-inch';
 import { useSkypoolsFloats } from '../useSkypoolsFloats';
 import { buildLinkToTransaction } from '../../web3';
+import { skyPoolsSwapFeePercent } from '../../env';
 
 import { SwapReturn, UseCreateSwapsProps } from './index';
 
@@ -114,9 +115,11 @@ export const useCreateSkyPoolsSwap = ({
       const simpleSwapQuoteData = getSimpleSwapData();
       if (!simpleSwapQuoteData) return;
       const { minAmount } = await simpleSwapPriceRoute(simpleSwapQuoteData);
+      const formattedMinAmount = ethers.utils.formatUnits(minAmount, toToken.decimals);
+      const minAmountMinusFees = Number(formattedMinAmount) * (1 - skyPoolsSwapFeePercent / 100);
 
       setMinAmount({
-        amount: ethers.utils.formatUnits(minAmount, toToken.decimals),
+        amount: String(minAmountMinusFees),
         token: toToken.symbol,
       });
     } catch (error) {
