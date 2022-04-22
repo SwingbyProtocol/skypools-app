@@ -6,9 +6,8 @@ import { FormattedMessage, FormattedNumber } from 'react-intl';
 
 import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
-import { useParaInchForm } from '../../../modules/para-inch-react';
+import { useParaInchForm, useCreateSwap } from '../../../modules/para-inch-react';
 import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
-import { useCreateSwap } from '../../../modules/para-inch-react/useCreateSwap/index';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
