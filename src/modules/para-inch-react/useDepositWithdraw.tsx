@@ -117,11 +117,21 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
     if (!isDeposit) {
       if (!depositedBalance.amount) return;
       setAmount(depositedBalance.amount);
-    } else {
-      const balance = (await getWalletBalance()) ?? '0';
-      setAmount(balance);
+      return;
     }
+    const balance = (await getWalletBalance()) ?? '0';
+    setAmount(balance);
   }, [setAmount, getWalletBalance, depositedBalance, isDeposit]);
+
+  useEffect(() => {
+    const loadInitBalance = async () => {
+      const balance = await getWalletBalance();
+      if (balance) {
+        setAmount(balance);
+      }
+    };
+    loadInitBalance();
+  }, [getWalletBalance, setAmount]);
 
   return useMemo(() => {
     return {
