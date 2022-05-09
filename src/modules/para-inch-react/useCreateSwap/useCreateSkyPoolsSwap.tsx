@@ -26,7 +26,6 @@ export type UseCreateSwapReturnSkyPools = SwapReturn & {
 export const useCreateSkyPoolsSwap = ({
   onboardNetwork,
   isFromBtc,
-  isSkyPools,
   wallet,
   walletCheck,
   address,
@@ -161,7 +160,6 @@ export const useCreateSkyPoolsSwap = ({
       isQuote: !!(amount && swapQuote),
       isEnoughDeposit: Number(balance.amount) >= Number(amount),
       balance,
-      isSkyPools,
       isLoading,
       isFloatShortage,
       createSwapError,
@@ -247,7 +245,6 @@ export const useCreateSkyPoolsSwap = ({
     isLoading,
     amount,
     btcAddress,
-    isSkyPools,
     fromToken,
     toToken,
     getSimpleSwapData,

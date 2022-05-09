@@ -15,7 +15,6 @@ import { SwapReturn, UseCreateSwapsProps } from './index';
 export const useCreateSwapAmongERC20S = ({
   onboardNetwork,
   isFromBtc,
-  isSkyPools,
   wallet,
   walletCheck,
   address,
@@ -107,7 +106,6 @@ export const useCreateSwapAmongERC20S = ({
       isQuote: !!(amount && swapQuote),
       isEnoughDeposit: Number(balance.amount) >= Number(amount),
       balance,
-      isSkyPools,
       isLoading,
       createSwapError,
       minAmount,
@@ -177,7 +175,6 @@ export const useCreateSwapAmongERC20S = ({
     isLoading,
     amount,
     btcAddress,
-    isSkyPools,
     fromToken,
     toToken,
     balance,

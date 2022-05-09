@@ -22,7 +22,6 @@ export type SwapReturn = {
 };
 
 export type UseCreateSwapsProps = {
-  isSkyPools: boolean;
   isFromBtc: boolean;
   address: string | null;
   wallet: Wallet | null;
@@ -39,7 +38,6 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
   const isSkyPools = isToBtc || isFromBtc;
 
   const skypoolsSwap = useCreateSkyPoolsSwap({
-    isSkyPools,
     isFromBtc,
     onboardNetwork,
     parainchValue,
@@ -49,7 +47,6 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
   });
 
   const erc20Swap = useCreateSwapAmongERC20S({
-    isSkyPools,
     isFromBtc,
     onboardNetwork,
     parainchValue,
@@ -58,7 +55,7 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
     address,
   });
 
-  if (skypoolsSwap) {
+  if (isSkyPools && skypoolsSwap) {
     return {
       isSkyPools,
       isFloatShortage: skypoolsSwap.isFloatShortage,
