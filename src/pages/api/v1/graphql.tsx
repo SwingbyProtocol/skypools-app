@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 import { corsMiddleware } from '../../../modules/server__cors';
-import { prisma } from '../../../modules/server__env';
+import prisma from '../../../modules/server__env';
 import { graphqlEndpoint } from '../../../modules/env';
 import { schema } from '../../../modules/server__gql-model';
 

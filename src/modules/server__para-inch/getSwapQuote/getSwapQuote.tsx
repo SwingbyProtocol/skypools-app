@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { ApolloError } from 'apollo-server';
 
 import { Network } from '../../networks';
-import { prisma } from '../../server__env';
+import prisma from '../../server__env';
 import { getWrappedBtcAddress, isFakeBtcToken } from '../../para-inch';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';

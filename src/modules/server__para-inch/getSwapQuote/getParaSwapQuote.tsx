@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
 import { getWrappedBtcAddress } from '../../para-inch';
-import { prisma } from '../../server__env';
+import prisma from '../../server__env';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
