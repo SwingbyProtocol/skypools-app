@@ -53,14 +53,18 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
       const web3 = new Web3(wallet.provider);
       const { swapQuote } = parainchValue;
 
-      if (!swapQuote) {
+      if (!swapQuote || !parainchValue.fromToken?.decimals) {
         return;
       }
+
+      const minAllowance =
+        Math.pow(10, parainchValue.fromToken?.decimals) * Number(swapQuote.srcTokenAmount);
 
       const enoughAllowance = await checkTokenAllowance(
         swapQuote.srcToken.address,
         swapQuote.bestRoute.spender,
         address,
+        minAllowance,
         web3,
       );
       setHasEnoughAllowance(enoughAllowance);
@@ -71,13 +75,22 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
   const requestAllowance = async () => {
     console.log('Requesting allowance..');
     const { swapQuote } = parainchValue;
-    if (!swapQuote || !wallet || !address) {
+    if (!swapQuote || !wallet || !address || !parainchValue.fromToken) {
       return;
     }
 
     const web3 = new Web3(wallet.provider);
 
-    await increaseAllowance(swapQuote.srcToken.address, swapQuote.bestRoute.spender, address, web3);
+    const minAllowance =
+      Math.pow(10, parainchValue.fromToken?.decimals) * Number(swapQuote.srcTokenAmount);
+
+    await increaseAllowance(
+      swapQuote.srcToken.address,
+      swapQuote.bestRoute.spender,
+      address,
+      minAllowance,
+      web3,
+    );
   };
 
   const skypoolsSwap = useCreateSkyPoolsSwap({
