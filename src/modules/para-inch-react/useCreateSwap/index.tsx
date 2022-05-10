@@ -42,13 +42,13 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
   const isToBtc = parainchValue.toToken?.symbol === 'BTC';
   const isSkyPools = isToBtc || isFromBtc;
   const [hasEnoughAllowance, setHasEnoughAllowance] = useState<boolean>(false);
+  const [loadingAllowance, setLoadingAllowance] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!wallet || !parainchValue.swapQuote || !address) {
+    if (!wallet || !parainchValue.swapQuote || !address || loadingAllowance) {
       return;
     }
 
-    // @todo (agustin) check if peridocally using intervals
     const verifyAllowance = async () => {
       const web3 = new Web3(wallet.provider);
       const { swapQuote } = parainchValue;
@@ -70,7 +70,7 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
       setHasEnoughAllowance(enoughAllowance);
     };
     verifyAllowance();
-  }, [wallet, parainchValue, address]);
+  }, [wallet, parainchValue, address, loadingAllowance]);
 
   const requestAllowance = async () => {
     console.log('Requesting allowance..');
@@ -83,14 +83,20 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
 
     const minAllowance =
       Math.pow(10, parainchValue.fromToken?.decimals) * Number(swapQuote.srcTokenAmount);
-
-    await increaseAllowance(
-      swapQuote.srcToken.address,
-      swapQuote.bestRoute.spender,
-      address,
-      minAllowance,
-      web3,
-    );
+    setLoadingAllowance(true);
+    try {
+      await increaseAllowance(
+        swapQuote.srcToken.address,
+        swapQuote.bestRoute.spender,
+        address,
+        minAllowance,
+        web3,
+      );
+    } catch (error) {
+      console.error('Error increasing allowance...', error);
+    } finally {
+      setLoadingAllowance(false);
+    }
   };
 
   const skypoolsSwap = useCreateSkyPoolsSwap({
@@ -117,6 +123,7 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
       hasEnoughAllowance,
       requestAllowance,
       ...skypoolsSwap,
+      isLoading: skypoolsSwap.isLoading || loadingAllowance,
     };
   }
 
@@ -126,5 +133,6 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
     hasEnoughAllowance,
     requestAllowance,
     ...(erc20Swap as UseCreateSwapAmongERC20S),
+    isLoading: erc20Swap?.isLoading || loadingAllowance,
   };
 };
