@@ -52,7 +52,7 @@ export const useParaInchCreateSwap = () => {
   return useMemo(() => {
     return {
       isApprovalNeeded: isFromBtc ? false : isApprovalNeeded,
-      isQuote: amount && swapQuote ? true : false,
+      isQuote: !!(amount && swapQuote),
       isSkypools: isToBtc || isFromBtc,
       isLoading,
       approve,
@@ -113,7 +113,8 @@ export const useParaInchCreateSwap = () => {
             });
 
             return callCreateSwap({ skybridgeSwapId: hash });
-          } else if (isFakeBtcToken(swapQuote.destToken.address)) {
+          }
+          if (isFakeBtcToken(swapQuote.destToken.address)) {
             const web3 = new Web3(wallet.provider);
             const contract = buildSkypoolsContract(network);
             const isNativeToken = isFakeNativeToken(swapQuote.srcToken.address);
@@ -149,18 +150,17 @@ export const useParaInchCreateSwap = () => {
               .once('transactionHash', async (hash) => {
                 return callCreateSwap({ skypoolsTransactionHash: hash });
               });
-          } else {
-            const web3 = new Web3(wallet.provider);
-            const transaction: TransactionConfig = await buildParaTxData({
-              priceRoute: JSON.parse(swapQuote.rawRouteData),
-              slippage,
-              userAddress: address,
-            });
-
-            return web3.eth.sendTransaction(transaction).once('transactionHash', async (hash) => {
-              return callCreateSwap({ skypoolsTransactionHash: hash });
-            });
           }
+          const web3 = new Web3(wallet.provider);
+          const transaction: TransactionConfig = await buildParaTxData({
+            priceRoute: JSON.parse(swapQuote.rawRouteData),
+            slippage,
+            userAddress: address,
+          });
+
+          return web3.eth.sendTransaction(transaction).once('transactionHash', async (hash) => {
+            return callCreateSwap({ skypoolsTransactionHash: hash });
+          });
         } catch (err: any) {
           logger.error(err);
           setCreateSwapError(err.message);
