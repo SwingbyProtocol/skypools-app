@@ -19,7 +19,10 @@ import { skyPoolsSwapFeePercent } from '../../env';
 
 import { SwapReturn, UseCreateSwapsProps } from './index';
 
-export type UseCreateSwapReturnSkyPools = SwapReturn & {
+export type UseCreateSwapReturnSkyPools = Omit<
+  SwapReturn,
+  'hasEnoughAllowance' | 'requestAllowance'
+> & {
   isFloatShortage: boolean;
 };
 

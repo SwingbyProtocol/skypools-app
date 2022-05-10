@@ -12,6 +12,8 @@ import { getMinimumAmount } from './utils';
 
 import { SwapReturn, UseCreateSwapsProps } from './index';
 
+export type UseCreateSwapAmongERC20S = Omit<SwapReturn, 'hasEnoughAllowance' | 'requestAllowance'>;
+
 export const useCreateSwapAmongERC20S = ({
   onboardNetwork,
   isFromBtc,
@@ -19,7 +21,7 @@ export const useCreateSwapAmongERC20S = ({
   walletCheck,
   address,
   parainchValue,
-}: UseCreateSwapsProps): SwapReturn | undefined => {
+}: UseCreateSwapsProps): UseCreateSwapAmongERC20S | undefined => {
   const { swapQuote, network, slippage, fromToken, amount, toToken, setAmount } = parainchValue;
   const [createSwapError, setCreateSwapError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
