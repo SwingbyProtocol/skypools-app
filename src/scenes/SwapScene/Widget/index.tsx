@@ -8,6 +8,7 @@ import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
 import { useParaInchForm, useCreateSwap } from '../../../modules/para-inch-react';
 import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
+import { Loading } from '../../../components/Loading';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -233,6 +234,7 @@ export const Widget = () => {
           onClick={createSwap ?? undefined}
         >
           <FormattedMessage id="widget.swap" values={{ value: fromToken?.symbol }} />
+          {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
         </Button>
       )}
 
@@ -245,6 +247,7 @@ export const Widget = () => {
           onClick={requestAllowance ?? undefined}
         >
           <FormattedMessage id="widget.approve" values={{ value: fromToken?.symbol }} />
+          {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
         </Button>
       )}
 
@@ -254,6 +257,7 @@ export const Widget = () => {
             <a href="/deposit" css={link}>
               <Button variant="secondary" size="state">
                 <FormattedMessage id="widget.deposit" values={{ value: fromToken?.symbol }} />
+                {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
               </Button>
             </a>
           </Link>
