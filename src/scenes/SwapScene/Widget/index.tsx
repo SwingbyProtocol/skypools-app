@@ -34,6 +34,7 @@ import {
   max,
   explorer,
   detailLink,
+  warning,
 } from './styles';
 
 export const Widget = () => {
@@ -49,6 +50,7 @@ export const Widget = () => {
     isAmountValid,
     swapQuote,
     errorMsg,
+    warningMsg,
   } = useParaInchForm();
 
   const {
@@ -264,6 +266,7 @@ export const Widget = () => {
         </div>
       )}
 
+      {warningMsg && <div css={warning}>{warningMsg}</div>}
       {errorMsg && <div css={error}>{errorMsg}</div>}
       {createSwapError && <div css={error}>{createSwapError}</div>}
       {explorerLink && (

@@ -26,6 +26,7 @@ export type ParaInchContextValue = {
   isAmountValid: boolean;
   swapQuote: NonNullable<SwapQuoteQueryResult['data']>['swapQuote'] | null;
   errorMsg: string;
+  warningMsg: string;
 };
 
 export const ParaInchContext = createContext<ParaInchContextValue>({
@@ -45,6 +46,7 @@ export const ParaInchContext = createContext<ParaInchContextValue>({
   isAmountValid: false,
   swapQuote: null,
   errorMsg: '',
+  warningMsg: '',
 });
 
 export const ParaInchTokenProvider = ({
@@ -66,6 +68,7 @@ export const ParaInchTokenProvider = ({
   const [toToken, setToTokenState] = useState<ParaInchToken | null>(valueProp.toToken);
   const [getSwapQuote, { data: swapQuoteData, error: quoteError }] = useSwapQuoteLazyQuery();
   const [errorMsg, setErrorMsg] = useState<string>('');
+  const [warningMsg, setWarningMsg] = useState<string>('');
 
   useEffect(() => {
     const isSkypools = fromToken?.symbol === 'BTC' || toToken?.symbol === 'BTC';
@@ -80,8 +83,21 @@ export const ParaInchTokenProvider = ({
       return;
     }
 
+    if (swapQuoteData?.swapQuote?.warningMessage) {
+      setWarningMsg(swapQuoteData.swapQuote.warningMessage);
+      return;
+    }
+
     setErrorMsg('');
-  }, [quoteError, address, valueProp.network, fromToken, toToken]);
+  }, [
+    quoteError,
+    address,
+    valueProp.network,
+    fromToken,
+    toToken,
+    setWarningMsg,
+    swapQuoteData?.swapQuote,
+  ]);
 
   useEffect(() => {
     if (!swapQuoteData || toToken?.symbol !== 'BTC') return;
@@ -237,6 +253,7 @@ export const ParaInchTokenProvider = ({
       setToken,
       setNetwork,
       errorMsg,
+      warningMsg,
       isAmountValid: ((): boolean => {
         try {
           return !!amount && new Big(amount).gt(0);
@@ -261,6 +278,7 @@ export const ParaInchTokenProvider = ({
       swapQuoteData,
       unlinkSkybridgeSwap,
       errorMsg,
+      warningMsg,
       setToken,
     ],
   );
