@@ -47,7 +47,7 @@ export const getParaSwapQuote = async ({
   const isToBtc = destTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
   const isParaSwap = !isToBtc && !isFromBtc;
 
-  // @todo (agustin) remove
+  // @todo (agustin) check if needed
   const option = isParaSwap
     ? undefined
     : network === 'ROPSTEN'
@@ -65,7 +65,7 @@ export const getParaSwapQuote = async ({
     srcTokenAmountParam.times(`1e${srcToken.decimals}`).toFixed(0),
     undefined,
     SwapSide.SELL,
-    option,
+    undefined,
     srcToken.decimals,
     destToken.decimals,
   );
