@@ -6,7 +6,7 @@ import { LockId } from '@prisma/client';
 import { Network } from '../networks';
 import { corsMiddleware } from '../server__cors';
 import { logger as loggerBase } from '../logger';
-import { prisma, server__processTaskSecret } from '../server__env';
+import prisma, { server__processTaskSecret } from '../server__env';
 
 const WARN_IF_SPENT_MORE_THAN = Duration.fromObject({ seconds: 30 });
 

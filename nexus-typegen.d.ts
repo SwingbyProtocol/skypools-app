@@ -197,6 +197,7 @@ export interface NexusGenObjects {
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     srcTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     srcTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
+    warningMessage?: string | null; // String
   };
   SwapQuoteBestRoute: {
     // root type
@@ -336,6 +337,7 @@ export interface NexusGenFieldTypes {
     srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
     srcTokenAmountUsd: NexusGenScalars['Decimal']; // Decimal!
     srcTokenPriceUsd: NexusGenScalars['Decimal']; // Decimal!
+    warningMessage: string | null; // String
   };
   SwapQuoteBestRoute: {
     // field return type
@@ -467,6 +469,7 @@ export interface NexusGenFieldTypeNames {
     srcTokenAmount: 'Decimal';
     srcTokenAmountUsd: 'Decimal';
     srcTokenPriceUsd: 'Decimal';
+    warningMessage: 'String';
   };
   SwapQuoteBestRoute: {
     // field return type name
@@ -584,6 +587,7 @@ export interface NexusGenArgTypes {
       network: NexusGenEnums['Network']; // Network!
       srcTokenAddress: string; // String!
       srcTokenAmount: NexusGenScalars['Decimal']; // Decimal!
+      warningMessage?: string | null; // String
     };
     swaps: {
       // args

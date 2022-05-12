@@ -1,5 +1,4 @@
 import { FormattedMessage } from 'react-intl';
-// @ts-ignore
 import { Network } from '@prisma/client';
 
 import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
