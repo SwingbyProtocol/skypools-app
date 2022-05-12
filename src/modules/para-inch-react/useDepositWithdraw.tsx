@@ -9,7 +9,6 @@ import ABI from 'human-standard-token-abi';
 
 import { CoinInfo } from '../../components/CoinInput';
 import { logger } from '../logger';
-import { useOnboard } from '../onboard';
 import {
   buildSkypoolsContract,
   getERC20Address,

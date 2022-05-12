@@ -75,6 +75,7 @@ const SwapQuote = objectType({
     t.nonNull.field('destTokenPriceUsd', { type: 'Decimal' });
     t.nonNull.field('rawRouteData', { type: 'String' });
     t.nonNull.field('bestRoute', { type: SwapQuoteBestRoute });
+    t.nullable.field('warningMessage', { type: 'String' });
     t.nonNull.list.nonNull.field('otherExchanges', { type: SwapQuoteOtherExchange });
   },
 });
@@ -97,6 +98,7 @@ export const SwapQuoteQuery = extendType({
         srcTokenAddress: nonNull(arg({ type: 'String' })),
         destTokenAddress: nonNull(arg({ type: 'String' })),
         network: nonNull(arg({ type: 'Network' })),
+        warningMessage: nullable(arg({ type: 'String' })),
       },
       async resolve(source, args, ctx, info) {
         return getSwapQuote(args);

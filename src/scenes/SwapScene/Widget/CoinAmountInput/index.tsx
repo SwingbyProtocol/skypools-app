@@ -131,7 +131,7 @@ const MenuList = ({
     <List
       width="100%"
       height={maxHeight}
-      itemCount={(children as any).length}
+      itemCount={(children as any).length ?? 0}
       itemSize={SELECT_ITEM_HEIGHT}
       initialScrollOffset={initialOffset}
     >

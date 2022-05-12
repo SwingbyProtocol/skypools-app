@@ -1,23 +1,22 @@
 import { Prisma } from '@prisma/client';
 import { ContractMethod, ParaSwap, SwapSide } from 'paraswap';
 import Web3 from 'web3';
+import { OptimalRate } from 'paraswap-core';
 
 import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
 import { getWrappedBtcAddress } from '../../para-inch';
-import { prisma } from '../../server__env';
+import prisma from '../../server__env';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
-
-type Result = SwapQuote;
 
 export const getParaSwapQuote = async ({
   destTokenAddress,
   network,
   srcTokenAddress,
   srcTokenAmount: srcTokenAmountParam,
-}: GetSwapQuoteParams): Promise<Result> => {
+}: GetSwapQuoteParams): Promise<SwapQuote> => {
   const { srcToken, destToken } = await (async () => {
     const web3 = new Web3();
     const srcToken = await prisma.token.findUnique({
@@ -48,6 +47,7 @@ export const getParaSwapQuote = async ({
   const isToBtc = destTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
   const isParaSwap = !isToBtc && !isFromBtc;
 
+  // @todo (agustin) check if needed
   const option = isParaSwap
     ? undefined
     : network === 'ROPSTEN'
@@ -59,19 +59,29 @@ export const getParaSwapQuote = async ({
         includeContractMethods: [ContractMethod.simpleSwap],
       };
 
-  const result = await paraSwap.getRate(
+  let result = await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
     srcTokenAmountParam.times(`1e${srcToken.decimals}`).toFixed(0),
     undefined,
     SwapSide.SELL,
-    option,
+    undefined,
     srcToken.decimals,
     destToken.decimals,
   );
+
   if (isParaSwapApiError(result)) {
     logger.error({ err: result }, 'Failed to get rate from ParaSwap');
     throw result;
+  }
+
+  let warningMessage;
+  // @ts-ignore
+  if (result.message) {
+    // @ts-ignore
+    warningMessage = result.message;
+    // @ts-ignore
+    result = result.data.priceRoute as OptimalRate;
   }
 
   if (!result.gasCost || !result.gasCostUSD) {
@@ -79,7 +89,8 @@ export const getParaSwapQuote = async ({
   }
 
   const spender = result.tokenTransferProxy;
-  if (typeof spender !== 'string' || !spender) {
+
+  if (!spender) {
     throw new Error(`Could not get spender address for network "${network}"`);
   }
 
@@ -90,7 +101,7 @@ export const getParaSwapQuote = async ({
   const destTokenPriceUsd = new Prisma.Decimal(result.destUSD).div(destTokenAmount);
   const nativeTokenPriceUsd = new Prisma.Decimal(result.gasCostUSD).div(result.gasCost);
 
-  const bestRoute: Result['bestRoute'] = {
+  const bestRoute: SwapQuote['bestRoute'] = {
     spender,
     path: await Promise.all(
       result.bestRoute.map(async (it): Promise<SwapQuote['bestRoute']['path'][number]> => {
@@ -172,6 +183,7 @@ export const getParaSwapQuote = async ({
 
     rawRouteData: JSON.stringify(result),
     bestRoute,
+    warningMessage,
 
     otherExchanges: (result.others ?? [])
       .map((it): SwapQuote['otherExchanges'][number] => {

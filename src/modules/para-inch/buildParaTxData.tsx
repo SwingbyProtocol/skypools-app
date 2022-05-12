@@ -1,5 +1,6 @@
 import { NetworkID, ParaSwap } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
+import { APIError, Transaction } from 'paraswap/build/types';
 
 import { swapMinAmount } from './swapMinAmount';
 
@@ -17,7 +18,8 @@ export const buildParaTxData = async ({
   const paraSwap = new ParaSwap(network as NetworkID);
 
   const referrer = 'skypools';
-  const txParams = await paraSwap.buildTx(
+
+  const result: Transaction | APIError = await paraSwap.buildTx(
     srcToken,
     destToken,
     srcAmount,
@@ -28,5 +30,11 @@ export const buildParaTxData = async ({
     userAddress,
   );
 
-  return txParams;
+  // @ts-ignore
+  if (result?.status) {
+    // @ts-ignore
+    throw new Error(result?.message);
+  }
+
+  return result as Transaction;
 };

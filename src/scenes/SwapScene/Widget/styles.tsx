@@ -78,9 +78,24 @@ export const error = css`
   background-color: hsl(var(--sp-color-danger-normal));
   padding: ${rem(size.drawer)};
   overflow-wrap: break-word;
-  max-width: ${rem(250)};
-  @media (min-width: ${rem(1440)}) {
-    max-width: ${rem(350)};
+  max-width: 100%;
+  @media (max-width: ${rem(1250)}) {
+    max-width: ${rem(250)};
+  }
+`;
+
+export const warning = css`
+  grid-area: error;
+  margin-block-start: ${rem(size.drawer)};
+  font-size: ${rem(size.room)};
+  color: black;
+  border-radius: ${rem(size.box)};
+  background-color: yellow;
+  padding: ${rem(size.drawer)};
+  overflow-wrap: break-word;
+  max-width: 100%;
+  @media (max-width: ${rem(1250)}) {
+    max-width: ${rem(250)};
   }
 `;
 
