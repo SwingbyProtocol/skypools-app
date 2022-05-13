@@ -15,6 +15,12 @@ export const availableNetwork = ['ETHEREUM', 'ROPSTEN'];
 
 export const isProduction: boolean = process.env.NEXT_PUBLIC_MODE === 'production';
 
+export const cloudinaryEnvs = {
+  apiKey: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || undefined,
+  apiSecret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET || undefined,
+  cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || undefined,
+};
+
 export enum LOCAL_STORAGE {
   btcPendingDeposits = 'btc-pending-deposits',
   Wallet = 'wallet',
