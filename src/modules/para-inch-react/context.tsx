@@ -89,6 +89,7 @@ export const ParaInchTokenProvider = ({
     }
 
     setErrorMsg('');
+    setWarningMsg('');
   }, [
     quoteError,
     address,
