@@ -47,7 +47,7 @@ export const getSwapQuote = async ({
 }: GetSwapQuoteParams): Promise<SwapQuote> => {
   const { srcToken, destToken } = await (async () => {
     const web3 = new Web3();
-    const srcToken = await prisma.token.findUnique({
+    const srcToken = await prisma?.token.findUnique({
       where: {
         network_address: { network, address: web3.utils.toChecksumAddress(srcTokenAddress) },
       },
@@ -56,7 +56,7 @@ export const getSwapQuote = async ({
       throw new Error(`Could not find token "${srcTokenAddress}" on network ${network}`);
     }
 
-    const destToken = await prisma.token.findUnique({
+    const destToken = await prisma?.token.findUnique({
       where: {
         network_address: { network, address: web3.utils.toChecksumAddress(destTokenAddress) },
       },
