@@ -3,6 +3,7 @@ import Web3 from 'web3';
 
 import { Network, getNetworkId, getNetwork } from '../networks';
 import { FAKE_BTC_ADDRESS, ParaInchToken } from '../para-inch';
+import { uploadTokenLogo } from '../server__images';
 
 import { isParaSwapApiError } from './isParaSwapApiError';
 
@@ -30,14 +31,20 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
 
   return (
     await Promise.all(
-      [BTC_TOKEN, ...tokens].map(async (it): Promise<ParaInchToken> => {
+      [BTC_TOKEN, ...tokens].map(async (it, index): Promise<ParaInchToken> => {
         const network = getNetwork(it.network)!;
+        const tokenID = buildTokenId({ network, tokenAddress: it.address });
+        let logoUri = null;
+
+        if (it.img) {
+          logoUri = await uploadTokenLogo(it.img, tokenID, network);
+        }
         return {
-          id: buildTokenId({ network, tokenAddress: it.address }),
+          id: tokenID,
           symbol: it.symbol ?? '',
           decimals: +it.decimals,
           address: web3.utils.toChecksumAddress(it.address),
-          logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
+          logoUri,
           network,
         };
       }),
