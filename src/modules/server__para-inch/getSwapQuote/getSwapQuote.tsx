@@ -22,7 +22,7 @@ const getParaSwapToken = async ({
 
   const address = getWrappedBtcAddress(network);
   const web3 = new Web3();
-  const result = await prisma.token.findUnique({
+  const result = await prisma?.token.findUnique({
     where: {
       network_address: {
         network,
