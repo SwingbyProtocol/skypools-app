@@ -11,6 +11,7 @@ module.exports = {
       'raw.githubusercontent.com',
       'assets.coingecko.com',
       'cdn.paraswap.io',
+      'res.cloudinary.com',
     ],
   },
   webpack(config) {
