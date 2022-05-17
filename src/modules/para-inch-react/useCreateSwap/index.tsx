@@ -1,6 +1,7 @@
 import { Wallet } from 'bnc-onboard/dist/src/interfaces';
 import { useEffect, useState } from 'react';
 import Web3 from 'web3';
+import { parseUnits } from 'ethers/lib/utils';
 
 import { useWalletConnection } from '../../hooks/useWalletConnection';
 import { useParaInchForm } from '../useParaInchForm';
@@ -81,8 +82,8 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
 
     const web3 = new Web3(wallet.provider);
 
-    const minAllowance =
-      Math.pow(10, parainchValue.fromToken?.decimals) * Number(swapQuote.srcTokenAmount);
+    const minAllowance = parseUnits(swapQuote.srcTokenAmount, parainchValue.fromToken?.decimals);
+
     setLoadingAllowance(true);
     try {
       await increaseAllowance(

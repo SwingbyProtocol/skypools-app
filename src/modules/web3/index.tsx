@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import { BigNumber } from 'ethers';
 
 import { Network } from '../networks';
 import { Erc20ABI } from '../abis/erc20';
@@ -60,11 +61,11 @@ export const increaseAllowance = async (
   tokenAddress: string,
   contractAddress: string,
   userAddress: string,
-  allowance: number,
+  allowance: BigNumber,
   web3: Web3,
 ): Promise<void> => {
   const tokenContract = new web3.eth.Contract(Erc20ABI as any, tokenAddress);
-  await tokenContract.methods.increaseAllowance(contractAddress, allowance).send({
+  await tokenContract.methods.approve(contractAddress, allowance).send({
     from: userAddress,
   });
 };
