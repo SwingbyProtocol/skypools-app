@@ -17,15 +17,18 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
 
   const paraSwap = new ParaSwap(getNetworkId(network));
   const tokens = await paraSwap.getTokens();
+
   if (isParaSwapApiError(tokens)) {
     throw new Error(`${tokens.status}: ${tokens.message}`);
   }
+
+  const wbtcToken = tokens.find((token) => token.symbol?.toLowerCase() === 'wbtc');
 
   const BTC_TOKEN: RelevantParaSwapToken = {
     address: FAKE_BTC_ADDRESS,
     decimals: 8,
     network: getNetworkId(network),
-    img: undefined,
+    img: wbtcToken?.img ?? undefined,
     symbol: 'BTC',
   };
 
