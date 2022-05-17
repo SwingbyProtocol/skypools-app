@@ -16,3 +16,4 @@ export { buildSkypoolsContract } from './buildSkypoolsContract';
 export { getSkypoolsContractAddress } from './getSkypoolsContractAddress';
 export type { ParaInchToken } from './ParaInchToken';
 export { swapMinAmount } from './swapMinAmount';
+export { isParaSwapApiError } from './utils';

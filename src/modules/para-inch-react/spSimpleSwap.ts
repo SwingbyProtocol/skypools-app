@@ -1,8 +1,9 @@
-import { ContractMethod, NetworkID, ParaSwap, SwapSide } from 'paraswap';
+import { NetworkID, ParaSwap, SwapSide } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
 
 import { getNetworkId, Network } from '../networks';
-import { swapMinAmount } from '../para-inch';
+import { isParaSwapApiError, swapMinAmount } from '../para-inch';
+import { logger } from '../logger';
 
 export interface SimpleSwapQuote {
   userAddress: string;
@@ -38,29 +39,20 @@ export const simpleSwapPriceRoute = async (
 
   const beneficiary = isFromBtc ? userAddress : skypoolsAddress;
 
-  const option =
-    network === 'ROPSTEN'
-      ? {
-          includeContractMethods: [ContractMethod.simpleSwap],
-          maxImpact: 100,
-        }
-      : {
-          includeContractMethods: [ContractMethod.simpleSwap],
-        };
-
   const result = (await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
     srcAmount,
     beneficiary,
     SwapSide.SELL,
-    option,
+    undefined,
     srcDecimals,
     destDecimals,
   )) as OptimalRate;
 
-  if (!result) {
-    throw Error('No route for this swap');
+  if (isParaSwapApiError(result)) {
+    logger.error({ err: result }, 'Failed to get rate from ParaSwap');
+    throw result;
   }
 
   const minAmount = swapMinAmount({ destAmount: result.destAmount, slippage });

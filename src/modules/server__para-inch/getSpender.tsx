@@ -1,8 +1,7 @@
 import { ParaSwap } from 'paraswap';
 
 import { Network, getNetworkId } from '../networks';
-
-import { isParaSwapApiError } from './isParaSwapApiError';
+import { isParaSwapApiError } from '../para-inch';
 
 export const getSpender = async ({ network }: { network: Network }): Promise<string> => {
   const result = await new ParaSwap(getNetworkId(network)).getAdapters();
