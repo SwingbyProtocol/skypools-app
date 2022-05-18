@@ -38,7 +38,7 @@ type Props = {
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
-  disabled?: 'amount' | 'all';
+  disabled?: 'amount' | 'erc20' | 'all';
 };
 
 const theme = (theme: Theme): Theme => ({
@@ -222,7 +222,7 @@ export const CoinAmountInput = ({
         filterOption={createFilter({
           stringify: (option: OptionType) => `${option.value.symbol} ${option.value.address}`,
         })}
-        isDisabled={disabled === 'all'}
+        isDisabled={disabled === 'all' || disabled === 'erc20'}
       />
 
       <div css={textInputContainer}>
