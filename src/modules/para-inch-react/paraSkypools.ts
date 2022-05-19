@@ -1,5 +1,5 @@
 import Big from 'big.js';
-import { NetworkID, ParaSwap, SwapSide } from 'paraswap';
+import { ContractMethod, NetworkID, ParaSwap, SwapSide } from 'paraswap';
 import { OptimalRate } from 'paraswap-core';
 
 import { SwapQuery } from '../../generated/skypools-graphql';
@@ -42,13 +42,23 @@ export const simpleSwapPriceRoute = async ({
     ? new Big(wbtcSrcAmount).times(`1e${srcDecimals}`).toFixed(0)
     : rawPriceRoute.srcAmount;
 
+  const option =
+    network === 'ROPSTEN'
+      ? {
+          includeContractMethods: [ContractMethod.simpleSwap],
+          maxImpact: 100,
+        }
+      : {
+          includeContractMethods: [ContractMethod.simpleSwap],
+        };
+
   const result = (await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
     srcAmount,
     beneficiary,
     SwapSide.SELL,
-    undefined,
+    option,
     srcDecimals,
     rawPriceRoute.destDecimals,
   )) as OptimalRate;
