@@ -2,6 +2,7 @@ import { ParaSwap, Token as ParaSwapToken } from 'paraswap';
 import Web3 from 'web3';
 
 import { Network, getNetworkId, getNetwork } from '../networks';
+import { uploadTokenLogo } from '../server__images';
 import { FAKE_BTC_ADDRESS, ParaInchToken, isParaSwapApiError } from '../para-inch';
 
 type RelevantParaSwapToken = Pick<
@@ -14,28 +15,37 @@ export const getTokens = async ({ network }: { network: Network }): Promise<Para
 
   const paraSwap = new ParaSwap(getNetworkId(network));
   const tokens = await paraSwap.getTokens();
+
   if (isParaSwapApiError(tokens)) {
     throw new Error(`${tokens.status}: ${tokens.message}`);
   }
+
+  const wbtcToken = tokens.find((token) => token.symbol?.toLowerCase() === 'wbtc');
 
   const BTC_TOKEN: RelevantParaSwapToken = {
     address: FAKE_BTC_ADDRESS,
     decimals: 8,
     network: getNetworkId(network),
-    img: undefined,
+    img: wbtcToken?.img ?? undefined,
     symbol: 'BTC',
   };
 
   return (
     await Promise.all(
-      [BTC_TOKEN, ...tokens].map(async (it): Promise<ParaInchToken> => {
+      [BTC_TOKEN, ...tokens].map(async (it, index): Promise<ParaInchToken> => {
         const network = getNetwork(it.network)!;
+        const tokenID = buildTokenId({ network, tokenAddress: it.address });
+        let logoUri = null;
+
+        if (it.img) {
+          logoUri = await uploadTokenLogo(it.img, tokenID, network);
+        }
         return {
-          id: buildTokenId({ network, tokenAddress: it.address }),
+          id: tokenID,
           symbol: it.symbol ?? '',
           decimals: +it.decimals,
           address: web3.utils.toChecksumAddress(it.address),
-          logoUri: (it.img === 'https://img.paraswap.network/token.png' ? null : it.img) || null,
+          logoUri,
           network,
         };
       }),

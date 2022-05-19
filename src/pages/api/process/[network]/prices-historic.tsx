@@ -11,11 +11,12 @@ export default createEndpoint({
   fn: async ({ res, network, prisma, logger, lock }) => {
     await lock(LockId.PRICES_HISTORIC);
     const failed: typeof tokens = [];
-    const tokens = await prisma.token.findMany({
-      where: { network },
-      orderBy: { priceHistoryUpdatedAt: 'asc' },
-      take: 5,
-    });
+    const tokens =
+      (await prisma?.token.findMany({
+        where: { network },
+        orderBy: { priceHistoryUpdatedAt: 'asc' },
+        take: 5,
+      })) || [];
 
     const priceHistorics = await Promise.all(
       tokens.map(async (it) => {
@@ -39,7 +40,7 @@ export default createEndpoint({
     );
 
     // We do this first to make sure that we rotate what tokens are processed each time.
-    await prisma.token.updateMany({
+    await prisma?.token.updateMany({
       where: { id: { in: tokens.map((it) => it.id) } },
       data: { priceHistoryUpdatedAt: DateTime.utc().toJSDate() },
     });
@@ -53,7 +54,7 @@ export default createEndpoint({
 
       try {
         logger.debug({ token }, 'Will save price history to DB');
-        await prisma.$transaction(
+        await prisma?.$transaction(
           priceHistoric.map((it) => {
             const tokenId = token.id;
             const at = it.at.toJSDate();

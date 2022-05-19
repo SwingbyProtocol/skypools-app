@@ -3,7 +3,7 @@ import { Network } from '@prisma/client';
 import Web3 from 'web3';
 
 import { infuraApiKey, isProduction } from '../env';
-import { getScanApiUrl } from '../web3';
+import { getScanApiUrl } from '../server__web3';
 
 export { Network };
 

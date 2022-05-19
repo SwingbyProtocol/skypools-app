@@ -8,13 +8,13 @@ import { useMeasure } from 'react-use';
 import { ListChildComponentProps, VariableSizeList as List } from 'react-window';
 import InfiniteLoader from 'react-window-infinite-loader';
 
-import { Coin } from '../../../components/Coin';
+import { Coin } from '../../Coin';
 import { SwapStatus } from '../../../generated/skypools-graphql';
 import { isFakeBtcToken } from '../../../modules/para-inch';
 import { ParaInchHistoryItem, useParaInchHistory } from '../../../modules/para-inch-react';
 import { shortenAddress } from '../../../modules/short-address';
 import { size } from '../../../modules/styles';
-import { buildLinkToTransaction } from '../../../modules/web3';
+import { buildLinkToTransaction } from '../../../modules/server__web3';
 
 import {
   amountIn,
