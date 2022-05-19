@@ -1,12 +1,12 @@
 import { Prisma } from '@prisma/client';
-import { ParaSwap, SwapSide } from 'paraswap';
+import { ContractMethod, ParaSwap, SwapSide } from 'paraswap';
 import Web3 from 'web3';
 import { OptimalRate } from 'paraswap-core';
 
 import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
+import { getWrappedBtcAddress, isParaSwapApiError } from '../../para-inch';
 import prisma from '../../server__env';
-import { isParaSwapApiError } from '../isParaSwapApiError';
 
 import type { GetSwapQuoteParams, SwapQuote } from './types';
 
@@ -41,13 +41,28 @@ export const getParaSwapQuote = async ({
 
   const paraSwap = new ParaSwap(getNetworkId(network));
 
+  const wbtcAddress = getWrappedBtcAddress(network);
+  const isFromBtc = srcTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
+  const isToBtc = destTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
+  const isParaSwap = !isToBtc && !isFromBtc;
+  const option = isParaSwap
+    ? undefined
+    : network === 'ROPSTEN'
+    ? {
+        includeContractMethods: [ContractMethod.simpleSwap],
+        maxImpact: 100,
+      }
+    : {
+        includeContractMethods: [ContractMethod.simpleSwap],
+      };
+
   let result = await paraSwap.getRate(
     srcTokenAddress,
     destTokenAddress,
     srcTokenAmountParam.times(`1e${srcToken.decimals}`).toFixed(0),
     undefined,
     SwapSide.SELL,
-    undefined,
+    option,
     srcToken.decimals,
     destToken.decimals,
   );

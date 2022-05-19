@@ -2,10 +2,8 @@ import { ParaSwap, Token as ParaSwapToken } from 'paraswap';
 import Web3 from 'web3';
 
 import { Network, getNetworkId, getNetwork } from '../networks';
-import { FAKE_BTC_ADDRESS, ParaInchToken } from '../para-inch';
 import { uploadTokenLogo } from '../server__images';
-
-import { isParaSwapApiError } from './isParaSwapApiError';
+import { FAKE_BTC_ADDRESS, ParaInchToken, isParaSwapApiError } from '../para-inch';
 
 type RelevantParaSwapToken = Pick<
   ParaSwapToken,

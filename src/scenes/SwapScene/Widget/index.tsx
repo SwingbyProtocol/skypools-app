@@ -75,6 +75,7 @@ export const Widget = () => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const btcNetwork = network === 'ROPSTEN' ? Network.testnet : Network.mainnet;
   const isToBtc = toToken?.symbol === 'BTC';
+  const fromBtc = fromToken?.symbol === 'BTC';
 
   const commonSwapDisabled = isLoading || !isQuote || !address || errorMsg !== '';
   const isSkypoolsDisabled = !isEnoughDeposit || isFloatShortage || (isToBtc && !isValidAddress);
@@ -140,6 +141,7 @@ export const Widget = () => {
               setFromToken(coin.address);
             }
           }}
+          disabled={fromBtc ? 'erc20' : undefined}
         />
         {address && (
           <div css={rowBalance}>
@@ -194,12 +196,12 @@ export const Widget = () => {
         css={toInput}
         availableCoins={toCoins}
         value={to}
-        disabled="amount"
         onChange={({ coin }) => {
           if (coin) {
             setToToken(coin.address);
           }
         }}
+        disabled={!fromBtc ? 'all' : 'amount'}
       />
 
       {isToBtc && isEnoughDeposit && (

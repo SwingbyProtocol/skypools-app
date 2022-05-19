@@ -4,7 +4,13 @@ import { OptimalRate } from 'paraswap-core';
 
 import { SwapQuery } from '../../generated/skypools-graphql';
 import { getNetworkId } from '../networks';
-import { getWrappedBtcAddress, getERC20Address, swapMinAmount } from '../para-inch';
+import {
+  getWrappedBtcAddress,
+  getERC20Address,
+  swapMinAmount,
+  isParaSwapApiError,
+} from '../para-inch';
+import { logger } from '../logger';
 
 // Ref: https://github.com/SwingbyProtocol/skybridge-contract/blob/skypools/scripts/paraswap.js#L62
 export const simpleSwapPriceRoute = async ({
@@ -57,8 +63,9 @@ export const simpleSwapPriceRoute = async ({
     rawPriceRoute.destDecimals,
   )) as OptimalRate;
 
-  if (!result) {
-    throw Error('No route for this swap');
+  if (isParaSwapApiError(result)) {
+    logger.error({ err: result }, 'Failed to get rate from ParaSwap');
+    throw result;
   }
 
   const minAmount = swapMinAmount({ destAmount: result.destAmount, slippage });

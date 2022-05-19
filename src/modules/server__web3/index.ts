@@ -1,5 +1,6 @@
 import { StringifiableRecord, stringifyUrl } from 'query-string';
 import Web3 from 'web3';
+import { BigNumber } from 'ethers';
 
 import { fetcher } from '../fetch';
 import { Network } from '../networks';
@@ -70,7 +71,7 @@ export const increaseAllowance = async (
   tokenAddress: string,
   contractAddress: string,
   userAddress: string,
-  allowance: number,
+  allowance: BigNumber,
   web3: Web3,
 ): Promise<void> => {
   const tokenContract = new web3.eth.Contract(Erc20ABI as any, tokenAddress);
