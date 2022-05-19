@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { TransactionConfig } from 'web3-eth';
 
 import { buildParaTxData, isFakeNativeToken } from '../../para-inch';
-import { buildLinkToTransaction } from '../../web3';
+import { buildLinkToTransaction } from '../../server__web3';
 import { logger } from '../../logger';
 
 import { getMinimumAmount } from './utils';

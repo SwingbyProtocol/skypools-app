@@ -1,11 +1,10 @@
 import { Prisma } from '@prisma/client';
-import { ContractMethod, ParaSwap, SwapSide } from 'paraswap';
+import { ParaSwap, SwapSide } from 'paraswap';
 import Web3 from 'web3';
 import { OptimalRate } from 'paraswap-core';
 
 import { logger } from '../../logger';
 import { getNetworkId } from '../../networks';
-import { getWrappedBtcAddress } from '../../para-inch';
 import prisma from '../../server__env';
 import { isParaSwapApiError } from '../isParaSwapApiError';
 
@@ -19,7 +18,7 @@ export const getParaSwapQuote = async ({
 }: GetSwapQuoteParams): Promise<SwapQuote> => {
   const { srcToken, destToken } = await (async () => {
     const web3 = new Web3();
-    const srcToken = await prisma.token.findUnique({
+    const srcToken = await prisma?.token.findUnique({
       where: {
         network_address: { network, address: web3.utils.toChecksumAddress(srcTokenAddress) },
       },
@@ -28,7 +27,7 @@ export const getParaSwapQuote = async ({
       throw new Error(`Could not find token "${srcTokenAddress}" on network ${network}`);
     }
 
-    const destToken = await prisma.token.findUnique({
+    const destToken = await prisma?.token.findUnique({
       where: {
         network_address: { network, address: web3.utils.toChecksumAddress(destTokenAddress) },
       },
@@ -41,23 +40,6 @@ export const getParaSwapQuote = async ({
   })();
 
   const paraSwap = new ParaSwap(getNetworkId(network));
-
-  const wbtcAddress = getWrappedBtcAddress(network);
-  const isFromBtc = srcTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
-  const isToBtc = destTokenAddress.toLowerCase() === wbtcAddress.toLowerCase();
-  const isParaSwap = !isToBtc && !isFromBtc;
-
-  // @todo (agustin) check if needed
-  const option = isParaSwap
-    ? undefined
-    : network === 'ROPSTEN'
-    ? {
-        includeContractMethods: [ContractMethod.simpleSwap],
-        maxImpact: 100,
-      }
-    : {
-        includeContractMethods: [ContractMethod.simpleSwap],
-      };
 
   let result = await paraSwap.getRate(
     srcTokenAddress,
@@ -120,11 +102,11 @@ export const getParaSwapQuote = async ({
                 const srcTokenAddress = web3.utils.toChecksumAddress(swap.srcToken);
                 const destTokenAddress = web3.utils.toChecksumAddress(swap.destToken);
 
-                const srcToken = await prisma.token.findUnique({
+                const srcToken = await prisma?.token.findUnique({
                   where: { network_address: { network, address: srcTokenAddress } },
                 });
 
-                const destToken = await prisma.token.findUnique({
+                const destToken = await prisma?.token.findUnique({
                   where: { network_address: { network, address: destTokenAddress } },
                 });
 

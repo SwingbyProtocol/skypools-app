@@ -1,50 +1,33 @@
 import NextImage from 'next/image';
-import { useEffect, useState } from 'react';
+import { ComponentPropsWithoutRef, useState } from 'react';
 
 import { coin } from './styles';
 
 const UNKNOWN = '/swap/unknown-coin.svg';
 
 export const Coin = ({
-  src: srcParam,
+  src,
   className,
   loading,
 }: {
   src: string | null | undefined;
   className?: string;
-  loading?: React.ComponentPropsWithoutRef<typeof NextImage>['loading'];
+  loading?: ComponentPropsWithoutRef<typeof NextImage>['loading'];
 }) => {
-  const [src, setSrc] = useState<string>(srcParam || UNKNOWN);
-
-  useEffect(() => {
-    if (!srcParam) {
-      setSrc(UNKNOWN);
-      return;
-    }
-
-    let cancelled = false;
-
-    const img = new Image();
-    img.onload = () => {
-      if (cancelled) return;
-      setSrc(srcParam);
-    };
-
-    img.onerror = () => {
-      if (cancelled) return;
-      setSrc(UNKNOWN);
-    };
-
-    img.src = srcParam;
-
-    return () => {
-      cancelled = true;
-    };
-  }, [srcParam]);
+  const [imgSrc, setImgSrc] = useState(src || UNKNOWN);
 
   return (
     <div css={coin} className={className}>
-      <NextImage src={src} layout="fill" loading={loading} />
+      <NextImage
+        src={imgSrc}
+        blurDataURL={UNKNOWN}
+        onError={() => {
+          setImgSrc(UNKNOWN);
+        }}
+        loading={loading}
+        width={24}
+        height={24}
+      />
     </div>
   );
 };

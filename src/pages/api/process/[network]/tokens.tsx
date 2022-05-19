@@ -3,16 +3,17 @@ import Web3 from 'web3';
 
 import { getTokens, buildTokenId } from '../../../../modules/server__para-inch';
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
+import { ParaInchToken } from '../../../../modules/para-inch';
 
 export default createEndpoint({
   isSecret: true,
   logId: 'process/tokens',
   fn: async ({ res, network, prisma, logger }) => {
-    const tokens = await getTokens({ network });
+    const tokens: ParaInchToken[] = await getTokens({ network });
     const failed: typeof tokens = [];
     for (let token of tokens) {
       try {
-        await prisma.token.upsert({
+        await prisma?.token.upsert({
           where: { network_address: { network, address: token.address } },
           create: {
             id: token.id,
@@ -38,20 +39,20 @@ export default createEndpoint({
     if (network === 'ROPSTEN') {
       const web3 = new Web3();
       const wbtc = web3.utils.toChecksumAddress('0x7cb2eac36b4bb7c36640f32e806d33e474d1d427');
-      await prisma.token.upsert({
+      await prisma?.token.upsert({
         where: { network_address: { network, address: wbtc } },
         create: {
           id: buildTokenId({ network, tokenAddress: wbtc }),
           network,
           address: wbtc,
           decimals: 8,
-          logoUri: 'https://img.paraswap.network/WBTC.png',
+          logoUri: 'http://img.paraswap.network/WBTC.png',
           symbol: 'WBTC',
         },
         update: {
           address: wbtc,
           decimals: 8,
-          logoUri: 'https://img.paraswap.network/WBTC.png',
+          logoUri: 'http://img.paraswap.network/WBTC.png',
           symbol: 'WBTC',
         },
       });

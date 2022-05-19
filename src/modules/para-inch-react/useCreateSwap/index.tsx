@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import { useWalletConnection } from '../../hooks/useWalletConnection';
 import { useParaInchForm } from '../useParaInchForm';
 import { ParaInchContextValue } from '../context';
-import { checkTokenAllowance, increaseAllowance } from '../../web3';
+import { checkTokenAllowance, increaseAllowance } from '../../server__web3';
 
 import { useCreateSkyPoolsSwap } from './useCreateSkyPoolsSwap';
 import { UseCreateSwapAmongERC20S, useCreateSwapAmongERC20S } from './useCreateSwapAmongERC20S';

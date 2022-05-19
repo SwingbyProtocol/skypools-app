@@ -14,7 +14,7 @@ import {
   isFakeBtcToken,
 } from '../../para-inch';
 import { useSkypoolsFloats } from '../useSkypoolsFloats';
-import { buildLinkToTransaction } from '../../web3';
+import { buildLinkToTransaction } from '../../server__web3';
 import { skyPoolsSwapFeePercent } from '../../env';
 
 import { SwapReturn, UseCreateSwapsProps } from './index';
