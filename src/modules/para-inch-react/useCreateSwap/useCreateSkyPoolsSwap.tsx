@@ -14,19 +14,21 @@ import {
   isFakeBtcToken,
 } from '../../para-inch';
 import { useSkypoolsFloats } from '../useSkypoolsFloats';
-import { buildLinkToTransaction } from '../../web3';
+import { buildLinkToTransaction } from '../../server__web3';
 import { skyPoolsSwapFeePercent } from '../../env';
 
 import { SwapReturn, UseCreateSwapsProps } from './index';
 
-export type UseCreateSwapReturnSkyPools = SwapReturn & {
+export type UseCreateSwapReturnSkyPools = Omit<
+  SwapReturn,
+  'hasEnoughAllowance' | 'requestAllowance'
+> & {
   isFloatShortage: boolean;
 };
 
 export const useCreateSkyPoolsSwap = ({
   onboardNetwork,
   isFromBtc,
-  isSkyPools,
   wallet,
   walletCheck,
   address,
@@ -161,7 +163,6 @@ export const useCreateSkyPoolsSwap = ({
       isQuote: !!(amount && swapQuote),
       isEnoughDeposit: Number(balance.amount) >= Number(amount),
       balance,
-      isSkyPools,
       isLoading,
       isFloatShortage,
       createSwapError,
@@ -247,7 +248,6 @@ export const useCreateSkyPoolsSwap = ({
     isLoading,
     amount,
     btcAddress,
-    isSkyPools,
     fromToken,
     toToken,
     getSimpleSwapData,

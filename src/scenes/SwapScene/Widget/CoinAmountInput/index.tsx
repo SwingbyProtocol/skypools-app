@@ -38,7 +38,7 @@ type Props = {
   value: CoinAmountInputValue;
   onChange?: (value: CoinAmountInputValue) => void;
   className?: string;
-  disabled?: 'amount' | 'all';
+  disabled?: 'amount' | 'erc20' | 'all';
 };
 
 const theme = (theme: Theme): Theme => ({
@@ -131,7 +131,7 @@ const MenuList = ({
     <List
       width="100%"
       height={maxHeight}
-      itemCount={(children as any).length}
+      itemCount={(children as any).length ?? 0}
       itemSize={SELECT_ITEM_HEIGHT}
       initialScrollOffset={initialOffset}
     >
@@ -222,7 +222,7 @@ export const CoinAmountInput = ({
         filterOption={createFilter({
           stringify: (option: OptionType) => `${option.value.symbol} ${option.value.address}`,
         })}
-        isDisabled={disabled === 'all'}
+        isDisabled={disabled === 'all' || disabled === 'erc20'}
       />
 
       <div css={textInputContainer}>

@@ -1,11 +1,15 @@
 import { Wallet } from 'bnc-onboard/dist/src/interfaces';
+import { useEffect, useState } from 'react';
+import Web3 from 'web3';
+import { parseUnits } from 'ethers/lib/utils';
 
 import { useWalletConnection } from '../../hooks/useWalletConnection';
 import { useParaInchForm } from '../useParaInchForm';
 import { ParaInchContextValue } from '../context';
+import { checkTokenAllowance, increaseAllowance } from '../../server__web3';
 
 import { useCreateSkyPoolsSwap } from './useCreateSkyPoolsSwap';
-import { useCreateSwapAmongERC20S } from './useCreateSwapAmongERC20S';
+import { UseCreateSwapAmongERC20S, useCreateSwapAmongERC20S } from './useCreateSwapAmongERC20S';
 
 export type SwapReturn = {
   btcAddress: string;
@@ -19,10 +23,11 @@ export type SwapReturn = {
   minAmount: { amount: string; token: string };
   isEnoughDeposit: boolean;
   explorerLink: string;
+  hasEnoughAllowance: boolean;
+  requestAllowance: () => void;
 };
 
 export type UseCreateSwapsProps = {
-  isSkyPools: boolean;
   isFromBtc: boolean;
   address: string | null;
   wallet: Wallet | null;
@@ -37,9 +42,65 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
   const isFromBtc = parainchValue.fromToken?.symbol === 'BTC';
   const isToBtc = parainchValue.toToken?.symbol === 'BTC';
   const isSkyPools = isToBtc || isFromBtc;
+  const [hasEnoughAllowance, setHasEnoughAllowance] = useState<boolean>(false);
+  const [loadingAllowance, setLoadingAllowance] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!wallet || !parainchValue.swapQuote || !address || loadingAllowance) {
+      return;
+    }
+
+    const verifyAllowance = async () => {
+      const web3 = new Web3(wallet.provider);
+      const { swapQuote } = parainchValue;
+
+      if (!swapQuote || !parainchValue.fromToken?.decimals) {
+        return;
+      }
+
+      const minAllowance =
+        Math.pow(10, parainchValue.fromToken?.decimals) * Number(swapQuote.srcTokenAmount);
+
+      const enoughAllowance = await checkTokenAllowance(
+        swapQuote.srcToken.address,
+        swapQuote.bestRoute.spender,
+        address,
+        minAllowance,
+        web3,
+      );
+      setHasEnoughAllowance(enoughAllowance);
+    };
+    verifyAllowance();
+  }, [wallet, parainchValue, address, loadingAllowance]);
+
+  const requestAllowance = async () => {
+    console.log('Requesting allowance..');
+    const { swapQuote } = parainchValue;
+    if (!swapQuote || !wallet || !address || !parainchValue.fromToken) {
+      return;
+    }
+
+    const web3 = new Web3(wallet.provider);
+
+    const minAllowance = parseUnits(swapQuote.srcTokenAmount, parainchValue.fromToken?.decimals);
+
+    setLoadingAllowance(true);
+    try {
+      await increaseAllowance(
+        swapQuote.srcToken.address,
+        swapQuote.bestRoute.spender,
+        address,
+        minAllowance,
+        web3,
+      );
+    } catch (error) {
+      console.error('Error increasing allowance...', error);
+    } finally {
+      setLoadingAllowance(false);
+    }
+  };
 
   const skypoolsSwap = useCreateSkyPoolsSwap({
-    isSkyPools,
     isFromBtc,
     onboardNetwork,
     parainchValue,
@@ -49,7 +110,6 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
   });
 
   const erc20Swap = useCreateSwapAmongERC20S({
-    isSkyPools,
     isFromBtc,
     onboardNetwork,
     parainchValue,
@@ -58,17 +118,22 @@ export const useCreateSwap = (): SwapReturn & { isSkyPools: boolean; isFloatShor
     address,
   });
 
-  if (skypoolsSwap) {
+  if (isSkyPools && skypoolsSwap) {
     return {
       isSkyPools,
-      isFloatShortage: skypoolsSwap.isFloatShortage,
-      ...(skypoolsSwap as SwapReturn),
+      hasEnoughAllowance,
+      requestAllowance,
+      ...skypoolsSwap,
+      isLoading: skypoolsSwap.isLoading || loadingAllowance,
     };
   }
 
   return {
     isSkyPools,
     isFloatShortage: false,
-    ...(erc20Swap as SwapReturn),
+    hasEnoughAllowance,
+    requestAllowance,
+    ...(erc20Swap as UseCreateSwapAmongERC20S),
+    isLoading: erc20Swap?.isLoading || loadingAllowance,
   };
 };

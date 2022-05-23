@@ -5,22 +5,23 @@ import { ethers } from 'ethers';
 import { TransactionConfig } from 'web3-eth';
 
 import { buildParaTxData, isFakeNativeToken } from '../../para-inch';
-import { buildLinkToTransaction } from '../../web3';
+import { buildLinkToTransaction } from '../../server__web3';
 import { logger } from '../../logger';
 
 import { getMinimumAmount } from './utils';
 
 import { SwapReturn, UseCreateSwapsProps } from './index';
 
+export type UseCreateSwapAmongERC20S = Omit<SwapReturn, 'hasEnoughAllowance' | 'requestAllowance'>;
+
 export const useCreateSwapAmongERC20S = ({
   onboardNetwork,
   isFromBtc,
-  isSkyPools,
   wallet,
   walletCheck,
   address,
   parainchValue,
-}: UseCreateSwapsProps): SwapReturn | undefined => {
+}: UseCreateSwapsProps): UseCreateSwapAmongERC20S | undefined => {
   const { swapQuote, network, slippage, fromToken, amount, toToken, setAmount } = parainchValue;
   const [createSwapError, setCreateSwapError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -107,7 +108,6 @@ export const useCreateSwapAmongERC20S = ({
       isQuote: !!(amount && swapQuote),
       isEnoughDeposit: Number(balance.amount) >= Number(amount),
       balance,
-      isSkyPools,
       isLoading,
       createSwapError,
       minAmount,
@@ -177,7 +177,6 @@ export const useCreateSwapAmongERC20S = ({
     isLoading,
     amount,
     btcAddress,
-    isSkyPools,
     fromToken,
     toToken,
     balance,

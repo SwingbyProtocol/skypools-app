@@ -6,7 +6,7 @@ import { LockId } from '@prisma/client';
 import { Network } from '../networks';
 import { corsMiddleware } from '../server__cors';
 import { logger as loggerBase } from '../logger';
-import { prisma, server__processTaskSecret } from '../server__env';
+import prisma, { server__processTaskSecret } from '../server__env';
 
 const WARN_IF_SPENT_MORE_THAN = Duration.fromObject({ seconds: 30 });
 
@@ -127,7 +127,7 @@ export const createEndpoint =
           ctx.logger = ctx.logger.child({ lockId: ctx.lockId });
           const network = ctx.network ?? getNetwork();
 
-          const lock = await prisma.locks.findUnique({ where: { id_network: { id, network } } });
+          const lock = await prisma?.locks.findUnique({ where: { id_network: { id, network } } });
           if (
             lock &&
             !DateTime.fromJSDate(lock.at, { zone: 'utc' }).equals(startedAt) &&
@@ -139,7 +139,7 @@ export const createEndpoint =
             throw new AlreadyLockedError(`"${id}" is already locked`);
           }
 
-          await prisma.locks.upsert({
+          await prisma?.locks.upsert({
             where: { id_network: { id, network } },
             create: { id, network, at: startedAt.toJSDate() },
             update: { at: startedAt.toJSDate() },
@@ -151,7 +151,7 @@ export const createEndpoint =
           if (!ctx.lockId) return;
           const network = ctx.network ?? getNetwork();
 
-          const lock = await prisma.locks.findUnique({
+          const lock = await prisma?.locks.findUnique({
             where: { id_network: { id: ctx.lockId, network } },
           });
           if (!lock || !DateTime.fromJSDate(lock.at, { zone: 'utc' }).equals(startedAt)) {

@@ -135,6 +135,7 @@ type Query {
     In human units. For example, of swapping USDT, "1" would represent 1 USDT.
     """
     srcTokenAmount: Decimal!
+    warningMessage: String
   ): SwapQuote!
   swaps(
     """
@@ -246,6 +247,7 @@ type SwapQuote {
   srcTokenAmount: Decimal!
   srcTokenAmountUsd: Decimal!
   srcTokenPriceUsd: Decimal!
+  warningMessage: String
 }
 
 type SwapQuoteBestRoute {

@@ -9,7 +9,6 @@ import ABI from 'human-standard-token-abi';
 
 import { CoinInfo } from '../../components/CoinInput';
 import { logger } from '../logger';
-import { useOnboard } from '../onboard';
 import {
   buildSkypoolsContract,
   getERC20Address,
@@ -19,8 +18,8 @@ import {
   isFakeNativeToken,
 } from '../para-inch';
 import { addBtcDeposits } from '../localstorage';
-import { buildLinkToTransaction } from '../web3';
 import { useWalletConnection } from '../hooks/useWalletConnection';
+import { buildLinkToTransaction } from '../server__web3';
 
 import { useParaInchSwapApproval } from './useParaInchSwapApproval';
 

@@ -8,6 +8,7 @@ import { Button } from '../../../components/Button';
 import { TextInput } from '../../../components/TextInput';
 import { useParaInchForm, useCreateSwap } from '../../../modules/para-inch-react';
 import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
+import { Loading } from '../../../components/Loading';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -33,6 +34,7 @@ import {
   max,
   explorer,
   detailLink,
+  warning,
 } from './styles';
 
 export const Widget = () => {
@@ -48,6 +50,7 @@ export const Widget = () => {
     isAmountValid,
     swapQuote,
     errorMsg,
+    warningMsg,
   } = useParaInchForm();
 
   const {
@@ -64,12 +67,15 @@ export const Widget = () => {
     minAmount,
     isEnoughDeposit,
     explorerLink,
+    hasEnoughAllowance,
+    requestAllowance,
   } = useCreateSwap();
 
   const { address, network } = useWalletConnection();
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const btcNetwork = network === 'ROPSTEN' ? Network.testnet : Network.mainnet;
   const isToBtc = toToken?.symbol === 'BTC';
+  const fromBtc = fromToken?.symbol === 'BTC';
 
   const commonSwapDisabled = isLoading || !isQuote || !address || errorMsg !== '';
   const isSkypoolsDisabled = !isEnoughDeposit || isFloatShortage || (isToBtc && !isValidAddress);
@@ -135,6 +141,7 @@ export const Widget = () => {
               setFromToken(coin.address);
             }
           }}
+          disabled={fromBtc ? 'erc20' : undefined}
         />
         {address && (
           <div css={rowBalance}>
@@ -189,12 +196,12 @@ export const Widget = () => {
         css={toInput}
         availableCoins={toCoins}
         value={to}
-        disabled="amount"
         onChange={({ coin }) => {
           if (coin) {
             setToToken(coin.address);
           }
         }}
+        disabled={!fromBtc ? 'all' : 'amount'}
       />
 
       {isToBtc && isEnoughDeposit && (
@@ -222,7 +229,7 @@ export const Widget = () => {
         </div>
       )}
 
-      {(!address || isEnoughDeposit || !isSkyPools) && (
+      {(!address || isEnoughDeposit || !isSkyPools) && hasEnoughAllowance && (
         <Button
           variant="primary"
           size="state"
@@ -231,6 +238,20 @@ export const Widget = () => {
           onClick={createSwap ?? undefined}
         >
           <FormattedMessage id="widget.swap" values={{ value: fromToken?.symbol }} />
+          {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
+        </Button>
+      )}
+
+      {!hasEnoughAllowance && (
+        <Button
+          variant="primary"
+          size="state"
+          css={swapButton}
+          disabled={isSwapDisabled}
+          onClick={requestAllowance ?? undefined}
+        >
+          <FormattedMessage id="widget.approve" values={{ value: fromToken?.symbol }} />
+          {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
         </Button>
       )}
 
@@ -240,12 +261,14 @@ export const Widget = () => {
             <a href="/deposit" css={link}>
               <Button variant="secondary" size="state">
                 <FormattedMessage id="widget.deposit" values={{ value: fromToken?.symbol }} />
+                {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
               </Button>
             </a>
           </Link>
         </div>
       )}
 
+      {warningMsg && <div css={warning}>{warningMsg}</div>}
       {errorMsg && <div css={error}>{errorMsg}</div>}
       {createSwapError && <div css={error}>{createSwapError}</div>}
       {explorerLink && (
