@@ -67,8 +67,6 @@ export const Widget = () => {
     minAmount,
     isEnoughDeposit,
     explorerLink,
-    hasEnoughAllowance,
-    requestAllowance,
   } = useCreateSwap();
 
   const { address, network } = useWalletConnection();
@@ -229,7 +227,7 @@ export const Widget = () => {
         </div>
       )}
 
-      {(!address || isEnoughDeposit || !isSkyPools) && hasEnoughAllowance && (
+      {(!address || isEnoughDeposit || !isSkyPools) && (
         <Button
           variant="primary"
           size="state"
@@ -238,19 +236,6 @@ export const Widget = () => {
           onClick={createSwap ?? undefined}
         >
           <FormattedMessage id="widget.swap" values={{ value: fromToken?.symbol }} />
-          {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
-        </Button>
-      )}
-
-      {!hasEnoughAllowance && (
-        <Button
-          variant="primary"
-          size="state"
-          css={swapButton}
-          disabled={isSwapDisabled}
-          onClick={requestAllowance ?? undefined}
-        >
-          <FormattedMessage id="widget.approve" values={{ value: fromToken?.symbol }} />
           {isLoading ? <Loading css={{ marginLeft: '7px' }} /> : null}
         </Button>
       )}

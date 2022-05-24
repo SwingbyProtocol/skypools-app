@@ -15,7 +15,7 @@ import { SwapScene } from '../../../../scenes/SwapScene';
 
 type Props = React.ComponentPropsWithoutRef<typeof ParaInchTokenProvider>['value'];
 
-export default function SwapPage({ fromToken, toToken, tokens, network }: Props) {
+const SwapPage = ({ fromToken, toToken, tokens, network }: Props) => {
   const value = useMemo(
     () => ({ fromToken, toToken, tokens, network }),
     [fromToken, toToken, tokens, network],
@@ -26,7 +26,7 @@ export default function SwapPage({ fromToken, toToken, tokens, network }: Props)
       <SwapScene />
     </ParaInchTokenProvider>
   );
-}
+};
 
 export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
   const fromCoinAddress = ctx.query.fromCoin;
@@ -103,3 +103,5 @@ export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
     },
   };
 };
+
+export default SwapPage;
