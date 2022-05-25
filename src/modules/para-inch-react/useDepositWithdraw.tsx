@@ -189,6 +189,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             web3.eth.getGasPrice(),
             walletCheck(),
           ]);
+          logger.info('Result...', nonce, gasPrice);
 
           const transaction: TransactionConfig = {
             nonce,
@@ -211,6 +212,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               setExplorerLink(url);
             });
         } catch (err: any) {
+          console.log("error", err)
           logger.error(err);
           setErrorMsg(err.message);
         } finally {
