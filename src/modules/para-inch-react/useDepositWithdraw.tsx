@@ -183,6 +183,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             )
             .encodeABI();
 
+          logger.info('Checking gas price...');
           const [nonce, gasPrice] = await Promise.all([
             web3.eth.getTransactionCount(address),
             web3.eth.getGasPrice(),
@@ -197,10 +198,12 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             data,
           };
 
+          logger.info('Estimating transaction...');
           const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
 
           logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
+          logger.info('Sending transaction...');
           return await web3.eth
             .sendTransaction({ ...transaction, gasPrice, gas })
             .once('transactionHash', (transactionHash) => {
