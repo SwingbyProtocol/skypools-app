@@ -212,7 +212,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               setExplorerLink(url);
             });
         } catch (err: any) {
-          console.log("error", err)
+          console.log('error', err);
           logger.error(err);
           setErrorMsg(err.message);
         } finally {
