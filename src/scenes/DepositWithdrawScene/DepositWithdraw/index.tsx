@@ -77,6 +77,13 @@ export const DepositWithdraw = () => {
     }
   }, [skybridgeId, tokens]);
 
+  const handleDepositWithdraw = async () => {
+    if (isDeposit) {
+      return await handleDeposit();
+    }
+    return await handleWithdraw();
+  };
+
   return (
     <>
       <Head>
@@ -148,7 +155,7 @@ export const DepositWithdraw = () => {
                 size="city"
                 shape="fit"
                 disabled={!isApprovalNeeded && (isDeposit ? isDisabledDeposit : isDisabledWithdraw)}
-                onClick={!!isApprovalNeeded ? approve : isDeposit ? handleDeposit : handleWithdraw}
+                onClick={!!isApprovalNeeded ? approve : handleDepositWithdraw}
               >
                 <FormattedMessage
                   id={
