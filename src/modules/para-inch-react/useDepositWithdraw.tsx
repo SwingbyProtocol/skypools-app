@@ -189,7 +189,6 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
             web3.eth.getGasPrice(),
             walletCheck(),
           ]);
-          logger.info('Result...', nonce, gasPrice);
 
           const transaction: TransactionConfig = {
             nonce,

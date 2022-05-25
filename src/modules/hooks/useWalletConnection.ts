@@ -111,13 +111,11 @@ export const useWalletConnection = () => {
   };
 
   const walletCheck = async (): Promise<boolean> => {
-    console.log('wallet check', onboard);
     if (!onboard) {
       throw Error('Cannot detect onboard');
     }
 
     const result = await onboard?.walletCheck();
-    console.log('wallet check result', result);
     if (!result) {
       throw Error('Invalid wallet connection');
     }
