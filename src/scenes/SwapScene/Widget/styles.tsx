@@ -94,6 +94,7 @@ export const warning = css`
   padding: ${rem(size.drawer)};
   overflow-wrap: break-word;
   max-width: 100%;
+  text-align: center;
   @media (max-width: ${rem(1250)}) {
     max-width: ${rem(250)};
   }

@@ -9,6 +9,7 @@ import { TextInput } from '../../../components/TextInput';
 import { useParaInchForm, useCreateSwap } from '../../../modules/para-inch-react';
 import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 import { Loading } from '../../../components/Loading';
+import { ParaSwapErrorEnum } from '../../../modules/para-inch/utils';
 
 import { CoinAmountInput, CoinAmountInputValue } from './CoinAmountInput';
 import {
@@ -268,7 +269,18 @@ export const Widget = () => {
         </div>
       )}
 
-      {warningMsg && <div css={warning}>{warningMsg}</div>}
+      {warningMsg && (
+        <div css={warning}>
+          {warningMsg === ParaSwapErrorEnum.ESTIMATED_LOSS_GREATER_THAN_MAX_IMPACT ? (
+            <FormattedMessage
+              id="swap.loss-greater-than-max-impact"
+              values={{ value: 'Etherscan' }}
+            />
+          ) : (
+            { warningMsg }
+          )}
+        </div>
+      )}
       {errorMsg && <div css={error}>{errorMsg}</div>}
       {createSwapError && <div css={error}>{createSwapError}</div>}
       {explorerLink && (
