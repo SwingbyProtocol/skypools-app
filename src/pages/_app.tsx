@@ -66,7 +66,7 @@ function MyApp({ Component, pageProps, router }: AppWithLayoutProps) {
 
                 {getLayout(<Component {...pageProps} />)}
               </>
-              {/*<WrongNetwork />*/}
+              <WrongNetwork />
             </OnboardProvider>
           </PulsarThemeProvider>
         </ErrorBoundary>

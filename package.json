@@ -17,7 +17,7 @@
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@emotion/react": "^11.5.0",
-    "@emotion/styled": "^11.3.0",
+    "@emotion/styled": "^11.8.1",
     "@prisma/client": "3.13.0",
     "@swingby-protocol/header": "^2.1.1",
     "@swingby-protocol/pulsar": "^3.15.3",
