@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { Wallet } from 'bnc-onboard/dist/src/interfaces';
 
 import { useWalletConnection } from '../../hooks/useWalletConnection';

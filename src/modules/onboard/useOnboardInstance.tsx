@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { API as OnboardInstance } from 'bnc-onboard/dist/src/interfaces'; // eslint-disable-line import/no-internal-modules
+// eslint-disable-next-line import/no-unresolved
+import { API as OnboardInstance } from 'bnc-onboard/dist/src/interfaces';
 import { useMedia } from 'react-use';
 
 import { getNetwork, isValidNetworkId } from '../networks';
