@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 
 import { createEndpoint } from '../../../../modules/server__api-endpoint';
 import { getTokenLogoFromCoingecko } from '../../../../modules/server__para-inch';
+import prisma from '../../../../modules/server__env';
 
 export default createEndpoint({
   isSecret: true,
