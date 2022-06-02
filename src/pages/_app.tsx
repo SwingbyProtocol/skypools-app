@@ -13,6 +13,7 @@ import { apolloClient } from '../modules/apollo';
 import { GeneralError } from '../components/GeneralError';
 import { WrongNetwork } from '../components/WrongNetwork';
 
+// @ts-ignore
 const intlOnError: React.ComponentPropsWithoutRef<typeof IntlProvider>['onError'] = (err) => {
   if (err.code === 'MISSING_TRANSLATION') {
     return;
