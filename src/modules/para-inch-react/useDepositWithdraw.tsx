@@ -148,6 +148,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
         try {
           setIsLoading(true);
           if (!coinInfo || !wallet || !network || !address) return;
+
           if (isFakeBtcToken(coinInfo.address)) {
             const context = await buildContext({
               mode: network === 'ROPSTEN' ? 'test' : 'production',
@@ -166,44 +167,49 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
               mode: network === 'ROPSTEN' ? 'test' : 'production',
             });
             return push(`/deposit/${hash}`);
-          } else {
-            const web3 = new Web3(wallet.provider);
-            const contract = buildSkypoolsContract(network);
-            const isNativeToken = isFakeNativeToken(coinInfo.address);
-
-            const contractAddress = getSkypoolsContractAddress(network);
-
-            const data = contract.methods
-              .spDeposit(
-                coinInfo.address,
-                isNativeToken
-                  ? '0'
-                  : web3.utils.toHex(new Big(amount).times(`1e${coinInfo.decimals}`).toFixed()),
-              )
-              .encodeABI();
-
-            const transaction: TransactionConfig = {
-              nonce: await web3.eth.getTransactionCount(address),
-              value: isNativeToken ? web3.utils.toWei(amount) : '0x0',
-              from: address,
-              to: contractAddress,
-              data,
-            };
-            const gasPrice = await web3.eth.getGasPrice();
-            const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
-            logger.debug(
-              { transaction: { ...transaction, gas, gasPrice } },
-              'Will send transaction',
-            );
-
-            await walletCheck();
-            return web3.eth
-              .sendTransaction({ ...transaction, gasPrice, gas })
-              .once('transactionHash', (transactionHash) => {
-                const url = buildLinkToTransaction({ network, transactionHash });
-                setExplorerLink(url);
-              });
           }
+
+          const web3 = new Web3(wallet.provider);
+          const contract = buildSkypoolsContract(network);
+          const isNativeToken = isFakeNativeToken(coinInfo.address);
+          const contractAddress = getSkypoolsContractAddress(network);
+
+          const data = contract.methods
+            .spDeposit(
+              coinInfo.address,
+              isNativeToken
+                ? '0'
+                : web3.utils.toHex(new Big(amount).times(`1e${coinInfo.decimals}`).toFixed()),
+            )
+            .encodeABI();
+
+          logger.info('Checking gas price...');
+          const [nonce, gasPrice] = await Promise.all([
+            web3.eth.getTransactionCount(address),
+            web3.eth.getGasPrice(),
+            walletCheck(),
+          ]);
+
+          const transaction: TransactionConfig = {
+            nonce,
+            value: isNativeToken ? web3.utils.toWei(amount) : '0x0',
+            from: address,
+            to: contractAddress,
+            data,
+          };
+
+          logger.info('Estimating transaction...');
+          const gas = await web3.eth.estimateGas({ ...transaction, gasPrice });
+
+          logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
+
+          logger.info('Sending transaction...');
+          return await web3.eth
+            .sendTransaction({ ...transaction, gasPrice, gas })
+            .once('transactionHash', (transactionHash) => {
+              const url = buildLinkToTransaction({ network, transactionHash });
+              setExplorerLink(url);
+            });
         } catch (err: any) {
           logger.error(err);
           setErrorMsg(err.message);
@@ -250,7 +256,7 @@ export const useDepositWithdraw = (coinInfo: CoinInfo | null) => {
           logger.debug({ transaction: { ...transaction, gas, gasPrice } }, 'Will send transaction');
 
           await walletCheck();
-          return web3.eth
+          return await web3.eth
             .sendTransaction({ ...transaction, gasPrice, gas })
             .once('transactionHash', (transactionHash) => {
               const url = buildLinkToTransaction({ network, transactionHash });

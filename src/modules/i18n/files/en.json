@@ -61,6 +61,7 @@
   "swap.wallet-balance": "Wallet Balance:",
   "swap.swap-src-amount": "Swap Source Amount:",
   "swap.min-receiving-amount": "Min Receiving Amount:",
+  "swap.loss-greater-than-max-impact": "You can potentially lose money due to lack of liquidity...",
   "token-amount": "{amount} {token}",
   "max": "(MAX)",
   "btc-destination-address": "Bitcoin Destination Address",

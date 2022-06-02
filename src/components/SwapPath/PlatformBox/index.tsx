@@ -30,7 +30,7 @@ export const PlatformBox = ({ withFractions, withNames, className, value }: Prop
       css={[platformBox, withNames && withNamesBox, withFractions && withFractionsBox]}
       className={className}
     >
-      {value.map((it) => {
+      {value.map((it, index) => {
         const fraction = (() => {
           try {
             return new Big(it.fraction).toNumber();
@@ -40,7 +40,7 @@ export const PlatformBox = ({ withFractions, withNames, className, value }: Prop
         })();
 
         return (
-          <div key={it.exchange} css={item}>
+          <div key={`${it.exchange}-${index}`} css={item}>
             <PlatformLogo css={itemLogo} name={it.exchange} />
             {!!withNames && (
               <span css={itemName}>

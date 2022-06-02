@@ -12,7 +12,6 @@ import {
   isFakeBtcToken,
 } from '../../modules/para-inch';
 import { useParaInchForm } from '../../modules/para-inch-react';
-import { pulseAnimationBlackAndWhite } from '../../modules/styles';
 import { useWalletConnection } from '../../modules/hooks/useWalletConnection';
 
 import { OtherExchanges } from './OtherExchanges';
@@ -94,13 +93,11 @@ export const SwapScene = () => {
         isSkybridgeWidget={false}
         afterPriceChart={
           <>
-            <div css={swapPathContainer}>
-              <SwapPath
-                css={swapQuote === null && pulseAnimationBlackAndWhite}
-                value={swapQuote?.bestRoute ?? FAKE_QUOTE_ROUTE}
-              />
-            </div>
-
+            {swapQuote ? (
+              <div css={swapPathContainer}>
+                <SwapPath value={swapQuote?.bestRoute ?? FAKE_QUOTE_ROUTE} />
+              </div>
+            ) : null}
             <OtherExchanges css={otherExchanges} />
           </>
         }
