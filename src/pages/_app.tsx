@@ -37,6 +37,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
   return (
     <ApolloProvider client={apolloClient}>
       <IntlProvider messages={messages} locale={locale} defaultLocale="en" onError={intlOnError}>
+        {/*  @ts-ignore */}
         <ErrorBoundary fallbackRender={(props) => <GeneralError {...props} />}>
           <OnboardProvider>
             <>
@@ -50,7 +51,7 @@ function MyApp({ Component, pageProps, router }: AppProps) {
               </Head>
 
               <Favicon />
-
+              {/*  @ts-ignore */}
               <Component {...pageProps} />
             </>
             <WrongNetwork />
