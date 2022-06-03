@@ -20,8 +20,6 @@ export const swapScene = css`
   padding-block-end: var(--sp-app-inset-bottom);
   padding-inline-start: var(--sp-app-inset-left);
   padding-inline-end: var(--sp-app-inset-right);
-  min-height: 100vh;
-  min-width: 100vw;
 
   @media (min-width: ${rem(768)}) {
     grid-template-columns: 1fr 1fr minmax(${rem(320)}, 1fr);
@@ -44,8 +42,6 @@ export const balanceScene = css`
   padding-block-end: var(--sp-app-inset-bottom);
   padding-inline-start: var(--sp-app-inset-left);
   padding-inline-end: var(--sp-app-inset-right);
-  min-height: 100vh;
-  min-width: 100vw;
 `;
 
 export const depositWithSkybridgeScene = css`

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { Icon } from '@swingby-protocol/pulsar';
 
 export const Header = styled.header`
@@ -117,4 +117,9 @@ export const ConnectButton = styled.button<{ variant: 'small' | 'big' | 'normal'
     box-shadow: 0 4px 8px rgba(var(--theme-blue600-rgb), 0.16);
     color: #fff;
   }
+`;
+
+export const OldHeaderContainer = styled.div`
+  display: flex;
+  margin: auto;
 `;

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Base = styled.a<{ size: 'small' | 'normal' | 'big'; iconOnly: boolean }>`
   display: flex;

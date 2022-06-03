@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Main = styled.main`
   grid-area: content;
@@ -8,6 +8,7 @@ export const Main = styled.main`
 export const LayoutContainer = styled.div`
   display: flex;
   min-height: 100vh;
+  min-width: 100vw;
   background: ${({ theme }) => theme.pulsar.color.bg.normal};
 
   @media (max-width: 768px) {

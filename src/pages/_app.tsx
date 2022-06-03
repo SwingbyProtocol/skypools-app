@@ -4,8 +4,9 @@ import { IntlProvider } from 'react-intl';
 import Head from 'next/head';
 import { ApolloProvider } from '@apollo/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import { PulsarGlobalStyles, PulsarThemeProvider } from '@swingby-protocol/pulsar';
+import { PulsarGlobalStyles, PulsarTheme } from '@swingby-protocol/pulsar';
 import { NextPage } from 'next';
+import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
 import { languages } from '../modules/i18n';
 import { Favicon } from '../components/Favicon';
@@ -49,8 +50,7 @@ function MyApp({ Component, pageProps, router }: AppWithLayoutProps) {
     <ApolloProvider client={apolloClient}>
       <IntlProvider messages={messages} locale={locale} defaultLocale="en" onError={intlOnError}>
         <ErrorBoundary fallbackRender={(props) => <GeneralError {...props} />}>
-          <PulsarThemeProvider theme={'auto'}>
-            <PulsarGlobalStyles />
+          <EmotionThemeProvider theme={PulsarTheme.PulsarDark}>
             <OnboardProvider>
               <>
                 <GlobalStyles />
@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps, router }: AppWithLayoutProps) {
               </>
               <WrongNetwork />
             </OnboardProvider>
-          </PulsarThemeProvider>
+          </EmotionThemeProvider>
         </ErrorBoundary>
       </IntlProvider>
     </ApolloProvider>

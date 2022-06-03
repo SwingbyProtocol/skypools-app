@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -159,7 +159,7 @@ export const SwapLabel = styled.p`
   letter-spacing: 0.03rem;
   margin-top: 0;
   margin-left: 16px;
-  color: ${({ theme }) => theme.pulsar.color.primary.normal};
+  color: ${({ theme }) => theme.pulsar.color.text.normal};
   margin-bottom: 9px;
 `;
 

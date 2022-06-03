@@ -13,6 +13,7 @@ function LayoutView({ children, ...props }) {
       <LayoutSideNav navOpen={navOpen} setNavOpen={setNavOpen} />
       <Body>
         <LayoutHeader navOpen={navOpen} setNavOpen={setNavOpen} />
+
         <Main>{children}</Main>
         {props.enableFoorter && <LayoutFooter />}
       </Body>

@@ -15,12 +15,10 @@ export const header = css`
   justify-items: start;
   grid-row-gap: ${rem(size.drawer)};
   min-block-size: ${rem(120)};
-  background: hsl(var(--sp-color-bg-normal));
   padding-block: 0;
   padding-inline: ${rem(size.town)};
   padding-inline-start: var(--sp-app-inset-right);
   padding-inline-end: var(--sp-app-inset-right);
-
   @media (min-width: ${rem(768)}) {
     grid-template-rows: none;
     grid-template-areas: 'logo links info';

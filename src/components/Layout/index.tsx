@@ -1,5 +1,4 @@
 import { Card } from '../Card';
-import { Header } from '../Header';
 import { TradingView } from '../TradingView';
 
 import {
@@ -7,7 +6,6 @@ import {
   balanceScene,
   chartContainer,
   depositWithSkybridgeScene,
-  headerContainer,
   priceAndPathCard,
   skybridgeCard,
   skybridgeWidgetCard,
@@ -37,8 +35,6 @@ export const Layout = ({
     : balanceScene;
   return (
     <div css={isAccountBalance ? depositWithdrawScene : swapScene}>
-      <Header css={headerContainer} />
-
       {!isAccountBalance && (
         <Card css={priceAndPathCard}>
           {!!priceHistory && priceHistory.length > 0 && (

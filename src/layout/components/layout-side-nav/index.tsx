@@ -59,7 +59,7 @@ function LayoutSideNav({ navOpen, setNavOpen }: NavHandlerProps) {
             <SwapLabel>Swap</SwapLabel>
           </NavLink>
           {sideNavItems.map(({ href, render, key, hint }) => {
-            const isCurrentRoute = render === 'Explorer';
+            const isCurrentRoute = render === 'Skypools';
             return (
               <NavLink href={href} key={key} currentRoute={isCurrentRoute}>
                 <Dot currentRoute={isCurrentRoute} />
@@ -74,7 +74,7 @@ function LayoutSideNav({ navOpen, setNavOpen }: NavHandlerProps) {
 
         <BottomContainer>
           <BottomItemContainer>
-            <LocaleSwitcher locale={locale} locales={locales} onChange={changeLocale} />
+            {/*<LocaleSwitcher locale={locale} locales={locales} onChange={changeLocale} />*/}
           </BottomItemContainer>
         </BottomContainer>
       </Aside>
