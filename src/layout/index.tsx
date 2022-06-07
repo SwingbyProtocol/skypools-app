@@ -5,7 +5,7 @@ import LayoutHeader from './components/layout-header';
 import LayoutSideNav from './components/layout-side-nav';
 import { Body, LayoutContainer, Main } from './styled';
 
-function LayoutView({ children, ...props }) {
+function LayoutView({ children, ...props }: { children: React.ReactNode; enableFooter: boolean }) {
   const [navOpen, setNavOpen] = useState(true);
 
   return (
@@ -15,7 +15,7 @@ function LayoutView({ children, ...props }) {
         <LayoutHeader navOpen={navOpen} setNavOpen={setNavOpen} />
 
         <Main>{children}</Main>
-        {props.enableFoorter && <LayoutFooter />}
+        {props.enableFooter && <LayoutFooter />}
       </Body>
     </LayoutContainer>
   );
