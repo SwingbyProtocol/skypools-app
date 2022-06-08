@@ -4,7 +4,7 @@ import { IntlProvider } from 'react-intl';
 import Head from 'next/head';
 import { ApolloProvider } from '@apollo/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import { PulsarGlobalStyles, PulsarTheme } from '@swingby-protocol/pulsar';
+import { PulsarTheme } from '@swingby-protocol/pulsar';
 import { NextPage } from 'next';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 

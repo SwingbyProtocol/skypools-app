@@ -3,3 +3,9 @@ import { PulsarThemeType } from '@swingby-protocol/pulsar/src/modules/themes/Pul
 declare module '@emotion/react' {
   export interface Theme extends PulsarThemeType {}
 }
+
+declare module 'react' {
+  interface Attributes {
+    css?: any;
+  }
+}
