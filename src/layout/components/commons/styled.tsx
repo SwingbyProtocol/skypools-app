@@ -108,3 +108,56 @@ export const SvgIcon = styled.svg`
     }
   }};
 `;
+
+export const ConnectButton = styled.button<{ variant: 'small' | 'big' | 'normal' }>`
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: ${({ variant }) => (variant === 'small' ? '12px' : '16px')};
+  text-align: center;
+  white-space: nowrap;
+  margin-right: 16px;
+
+  border: 1px solid transparent;
+
+  padding: ${({ variant }) => {
+    switch (variant) {
+      case 'small':
+        return '9px 24px';
+      case 'big':
+        return '19px 48px';
+      default:
+        // Its also normal
+        return '11px 32px';
+    }
+  }};
+
+  &:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  --theme-blue400-rgb: 114, 136, 234; // blue400
+  --theme-blue500-rgb: 79, 106, 230; // blue500
+  --theme-blue600-rgb: 51, 90, 222; // blue600
+
+  background-color: rgb(var(--theme-blue500-rgb));
+  box-shadow: 0 8px 16px rgba(var(--theme-blue500-rgb), 0.16);
+  border-radius: 4px;
+  color: #fff;
+
+  &:hover {
+    background-color: rgb(var(--theme-blue400-rgb));
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(var(--theme-blue400-rgb), 0.24);
+  }
+
+  &:active {
+    background-color: rgb(var(--theme-blue600-rgb));
+    box-shadow: 0 4px 8px rgba(var(--theme-blue600-rgb), 0.16);
+    color: #fff;
+  }
+`;

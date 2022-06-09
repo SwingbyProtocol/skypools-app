@@ -1,16 +1,9 @@
 import React from 'react';
 
-import { useWalletConnection } from '../../../modules/hooks/useWalletConnection';
 import { Header as OldHeader } from '../../../components/Header';
+import { ConnectWallet } from '../commons';
 
-import {
-  ArrowIcon,
-  BurgerButton,
-  ConnectButton,
-  Header,
-  OldHeaderContainer,
-  Tittle,
-} from './styled';
+import { ArrowIcon, BurgerButton, Header, OldHeaderContainer } from './styled';
 
 type NavHandlerProps = {
   navOpen: boolean;
@@ -18,8 +11,6 @@ type NavHandlerProps = {
 };
 
 function LayoutHeader({ navOpen, setNavOpen }: NavHandlerProps) {
-  const { address, onWalletConnect, onWalletDisconnect } = useWalletConnection();
-
   return (
     <Header>
       <BurgerButton onClick={() => setNavOpen(!navOpen)}>
@@ -29,9 +20,7 @@ function LayoutHeader({ navOpen, setNavOpen }: NavHandlerProps) {
       <OldHeaderContainer>
         <OldHeader />
       </OldHeaderContainer>
-      <ConnectButton variant={'small'} onClick={onWalletConnect}>
-        Connect
-      </ConnectButton>
+      <ConnectWallet />
     </Header>
   );
 }

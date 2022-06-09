@@ -16,7 +16,7 @@ export const Header = ({ className }: Props) => {
   const swapUrl = `/swap/${
     network ? network.toLowerCase() : 'ethereum'
   }/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/0x0b7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7cb7c`;
-  console.log(router);
+
   return (
     <>
       {/* <a css={logo} href="/">

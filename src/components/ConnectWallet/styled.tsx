@@ -26,5 +26,10 @@ export const walletWrapper = css`
 `;
 
 export const networkTag = css`
-  margin-inline-end: ${rem(size.drawer)};
+  margin: auto;
+`;
+
+export const addressStyle = css`
+  font-size: ${rem(size.closet)};
+  letter-spacing: 0.03rem;
 `;
