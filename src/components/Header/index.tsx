@@ -23,22 +23,6 @@ export const Header = ({ className }: Props) => {
         <img src="/skypools-logo.svg" alt="Skypool Logo" />
       </a>*/}
       <div css={links}>
-        <Link href={swapUrl}>
-          <a
-            href={swapUrl}
-            css={{
-              ...link,
-              ...(router.route.includes('swap')
-                ? css`
-                    border-bottom: 2px solid #31d5b8;
-                    text-decoration: none;
-                  `
-                : {}),
-            }}
-          >
-            <FormattedMessage id="link.swap" />
-          </a>
-        </Link>
         <Link href={'/deposit'}>
           <a
             href="/deposit"
@@ -53,6 +37,22 @@ export const Header = ({ className }: Props) => {
             }}
           >
             <FormattedMessage id="link.deposit" />
+          </a>
+        </Link>
+        <Link href={swapUrl}>
+          <a
+            href={swapUrl}
+            css={{
+              ...link,
+              ...(router.route.includes('swap')
+                ? css`
+                    border-bottom: 2px solid #31d5b8;
+                    text-decoration: none;
+                  `
+                : {}),
+            }}
+          >
+            <FormattedMessage id="link.swap" />
           </a>
         </Link>
         <Link href={'/withdraw'}>

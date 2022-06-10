@@ -168,7 +168,9 @@ export const ButtonText = styled.text`
   color: ${({ theme }) => theme.pulsar.color.text.normal};
 `;
 
-export const Mask = styled.div<{ navOpen: boolean }>`
+export const Mask = styled('div', {
+  shouldForwardProp: (prop) => prop !== 'navOpen',
+})<{ navOpen: boolean }>`
   background-color: rgba(19, 32, 43, 0.8);
   bottom: 0;
   height: 100%;

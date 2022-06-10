@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Header as OldHeader } from '../../../components/Header';
 import { ConnectWallet } from '../commons';
+import { Floats } from '../../../components/Floats';
 
 import { ArrowIcon, BurgerButton, Header, OldHeaderContainer } from './styled';
 
@@ -20,6 +21,7 @@ function LayoutHeader({ navOpen, setNavOpen }: NavHandlerProps) {
       <OldHeaderContainer>
         <OldHeader />
       </OldHeaderContainer>
+      <Floats />
       <ConnectWallet />
     </Header>
   );

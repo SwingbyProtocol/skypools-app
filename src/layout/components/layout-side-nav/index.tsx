@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { LocaleSwitcher } from '@swingby-protocol/header';
 import { useIntl } from 'react-intl';
 
 import { Icon } from '../commons';
