@@ -17,8 +17,10 @@
   "dependencies": {
     "@apollo/client": "^3.4.16",
     "@emotion/react": "^11.5.0",
-    "@emotion/styled": "^11.3.0",
+    "@emotion/styled": "^11.8.1",
     "@prisma/client": "3.13.0",
+    "@swingby-protocol/header": "^2.1.1",
+    "@swingby-protocol/pulsar": "^3.15.3",
     "@swingby-protocol/sdk": "^1.0.0-alpha.133",
     "@typescript-eslint/eslint-plugin": "5.2.0",
     "abi-decoder": "^2.4.0",
@@ -57,6 +59,7 @@
     "react-window": "^1.8.6",
     "react-window-infinite-loader": "^1.0.7",
     "sharp": "^0.29.3",
+    "styled-components": "^5.3.5",
     "web3": "^1.6.0"
   },
   "devDependencies": {
@@ -82,6 +85,8 @@
     "@types/react-select": "^4.0.17",
     "@types/react-window": "^1.8.5",
     "@types/react-window-infinite-loader": "^1.0.5",
+    "@types/styled-components": "^5.1.25",
+    "babel-plugin-styled-components": "^2.0.7",
     "cypress": "^8.7.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "^12.0.1",

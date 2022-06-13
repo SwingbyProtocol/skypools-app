@@ -11,6 +11,7 @@ export const floatsContainer = css`
     align-items: center;
     row-gap: ${rem(size.box)};
     font-size: ${rem(size.closet)};
+    margin-right: ${rem(size.street)};
   }
 `;
 
