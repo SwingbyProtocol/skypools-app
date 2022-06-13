@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import Link from 'next/link';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -56,6 +57,8 @@ export const LogoLabel = styled.text<{ navOpen: boolean }>`
 `;
 
 export const Nav = styled.nav``;
+
+export const NavNextLink = styled(Link)``;
 
 export const NavLink = styled.a<{ currentRoute?: boolean }>`
   text-decoration: none;

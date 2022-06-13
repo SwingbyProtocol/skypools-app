@@ -22,6 +22,7 @@ import {
   SwapLabel,
   ButtonHint,
   Dot,
+  NavNextLink,
 } from './styled';
 
 type NavHandlerProps = {
@@ -30,7 +31,7 @@ type NavHandlerProps = {
 };
 
 function LayoutSideNav({ navOpen, setNavOpen }: NavHandlerProps) {
-  const { push, asPath, locales = [] } = useRouter();
+  const { push, asPath, locales = [], pathname } = useRouter();
   const { sideNavItems } = useConfig();
   const { locale } = useIntl();
 
@@ -58,16 +59,26 @@ function LayoutSideNav({ navOpen, setNavOpen }: NavHandlerProps) {
             <SwapLabel>Swap</SwapLabel>
           </NavLink>
           {sideNavItems.map(({ href, render, key, hint }) => {
-            const isCurrentRoute = render === 'Skypools';
-            return (
-              <NavLink href={href} key={key} currentRoute={isCurrentRoute}>
+            const isCurrentRoute = href === pathname;
+            const isNormalRedirection = href.includes('https');
+            const body = (
+              <>
                 <Dot currentRoute={isCurrentRoute} />
                 <ButtonContent navOpen={navOpen}>
                   <ButtonLabel>{render}</ButtonLabel>
                   {hint && <ButtonHint>{hint}</ButtonHint>}
                 </ButtonContent>
-              </NavLink>
+              </>
             );
+            if (isNormalRedirection) {
+              //Normal redirection to external link, so never will be the current route inside the code
+              return <NavLink href={href}>{body}</NavLink>;
+            } else
+              return (
+                <NavNextLink href={href} key={key} passHref>
+                  <NavLink currentRoute={isCurrentRoute}>{body}</NavLink>
+                </NavNextLink>
+              );
           })}
         </Nav>
 
