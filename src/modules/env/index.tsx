@@ -1,3 +1,5 @@
+import { SkybridgeMode } from '@swingby-protocol/sdk';
+
 export const logLevel =
   process.env.NEXT_PUBLIC_LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'debug' : 'trace');
 
@@ -14,6 +16,8 @@ export const skyPoolsSwapFeePercent =
 export const availableNetwork = ['ETHEREUM', 'ROPSTEN'];
 
 export const isProduction: boolean = process.env.NEXT_PUBLIC_MODE === 'production';
+export const mode: SkybridgeMode =
+  process.env.NEXT_PUBLIC_MODE === 'production' ? 'production' : 'test';
 
 export const cloudinaryEnvs = {
   apiKey: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY || undefined,

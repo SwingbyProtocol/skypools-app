@@ -1,11 +1,35 @@
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { buildContext } from '@swingby-protocol/sdk';
 
 import { logger } from '../logger';
-import { buildSkypoolsContract, getWrappedBtcAddress } from '../para-inch';
-import { buildWBtcContract } from '../para-inch/buildWBtcContract';
 import { getDefaultNetwork } from '../networks';
 import { useWalletConnection } from '../hooks/useWalletConnection';
+import { fetcher } from '../fetch';
+import { mode } from '../env';
+
+export interface IFloatAmount {
+  amount: string;
+  currency: string;
+}
+
+const getFloatBalance = (currency: string, floatInfos: IFloatAmount[]): string => {
+  let floatBalance = '';
+  try {
+    floatInfos.forEach((floatInfo) => {
+      if (floatInfo.currency === currency) {
+        floatBalance = floatInfo.amount;
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+  return floatBalance;
+};
+
+const tokensSymbol = {
+  btc: 'BTC',
+  wbtc: 'WBTC',
+};
 
 export const useSkypoolsFloats = () => {
   const { network } = useWalletConnection();
@@ -18,26 +42,18 @@ export const useSkypoolsFloats = () => {
   const floatsInformation = useCallback(async () => {
     if (!contractsNetwork) return;
     try {
-      const btcDecimals = 8;
-      const token = {
-        btc: '0x0000000000000000000000000000000000000000',
-        wrappedBtc: getWrappedBtcAddress(contractsNetwork),
+      const context = await buildContext({ mode });
+      const floatBalanceUrl = context.servers.swapNode.btc_skypool + '/api/v1/floats/balances';
+
+      const results = await fetcher<IFloatAmount[]>(floatBalanceUrl);
+      const floats = {
+        btc: getFloatBalance(tokensSymbol.btc, results),
+        wbtc: getFloatBalance(tokensSymbol.wbtc, results),
       };
 
-      const wBtcContract = buildWBtcContract(contractsNetwork);
-      const contract = buildSkypoolsContract(contractsNetwork);
-
-      const results = await Promise.all([
-        contract.methods.getFloatReserve(token.btc, token.wrappedBtc).call(),
-        wBtcContract.methods.decimals().call(),
-      ]);
-      const floats = results[0];
-      const btc = ethers.utils.formatUnits(floats[0], btcDecimals);
-      const wrappedBtc = ethers.utils.formatUnits(floats[1], results[1]);
-
       setFloats({
-        btc,
-        wrappedBtc,
+        btc: floats.btc,
+        wrappedBtc: floats.wbtc,
       });
     } catch (error) {
       logger.error(error);
